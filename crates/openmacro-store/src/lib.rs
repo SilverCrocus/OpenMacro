@@ -15,6 +15,7 @@ use openmacro_core::expenditure::DayStatus;
 use openmacro_core::food::{Food, FoodSource, Serving};
 use openmacro_core::log::LogEntry;
 use openmacro_core::nutrients::NutrientProfile;
+use openmacro_core::recipe::Recipe;
 use openmacro_core::trend::WeighIn;
 use rusqlite::{Connection, OptionalExtension, params};
 use serde::Serialize;
@@ -123,6 +124,9 @@ const MIGRATIONS: &[&str] = &[
         updated_at TEXT NOT NULL,
         deleted_at TEXT
     );
+",
+    "
+    ALTER TABLE custom_food ADD COLUMN recipe TEXT;
 ",
 ];
 
@@ -335,19 +339,45 @@ impl Store {
 
     /// Saves a food the user created; returns its id. Nutrients are per 100 g.
     pub fn insert_custom_food(&self, food: &Food) -> Result<i64> {
+        self.insert_food_row(food, None)
+    }
+
+    /// Saves a recipe as a custom food that keeps its ingredients; returns its id.
+    pub fn insert_recipe(&self, recipe: &Recipe) -> Result<i64> {
+        self.insert_food_row(&recipe.to_food(""), Some(serde_json::to_string(recipe)?))
+    }
+
+    fn insert_food_row(&self, food: &Food, recipe: Option<String>) -> Result<i64> {
         self.conn.execute(
-            "INSERT INTO custom_food (name, brand, barcode, nutrients, servings, updated_at)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+            "INSERT INTO custom_food (name, brand, barcode, nutrients, servings, recipe, updated_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
             params![
                 food.name,
                 food.brand,
                 food.barcode,
                 serde_json::to_string(&food.per_100g)?,
                 serde_json::to_string(&food.servings)?,
+                recipe,
                 now()
             ],
         )?;
         Ok(self.conn.last_insert_rowid())
+    }
+
+    /// The ingredients behind a recipe food, if `id` is a live recipe.
+    pub fn recipe(&self, id: i64) -> Result<Option<Recipe>> {
+        let json: Option<Option<String>> = self
+            .conn
+            .query_row(
+                "SELECT recipe FROM custom_food WHERE id = ?1 AND deleted_at IS NULL",
+                [id],
+                |r| r.get(0),
+            )
+            .optional()?;
+        Ok(json
+            .flatten()
+            .map(|j| serde_json::from_str(&j))
+            .transpose()?)
     }
 
     pub fn delete_custom_food(&self, id: i64) -> Result<()> {
@@ -362,8 +392,8 @@ impl Store {
     /// Every live custom food, newest first, with ids of the form `custom:<id>`.
     pub fn custom_foods(&self) -> Result<Vec<Food>> {
         let mut stmt = self.conn.prepare(
-            "SELECT id, name, brand, barcode, nutrients, servings FROM custom_food
-             WHERE deleted_at IS NULL ORDER BY id DESC",
+            "SELECT id, name, brand, barcode, nutrients, servings, recipe IS NOT NULL
+             FROM custom_food WHERE deleted_at IS NULL ORDER BY id DESC",
         )?;
         let rows = stmt.query_map([], |r| {
             Ok((
@@ -373,15 +403,20 @@ impl Store {
                 r.get::<_, Option<String>>(3)?,
                 r.get::<_, String>(4)?,
                 r.get::<_, String>(5)?,
+                r.get::<_, bool>(6)?,
             ))
         })?;
         rows.map(|row| {
-            let (id, name, brand, barcode, nutrients, servings) = row?;
+            let (id, name, brand, barcode, nutrients, servings, is_recipe) = row?;
             Ok(Food {
                 id: format!("custom:{id}"),
                 name,
                 brand,
-                source: FoodSource::Custom,
+                source: if is_recipe {
+                    FoodSource::Recipe
+                } else {
+                    FoodSource::Custom
+                },
                 barcode,
                 per_100g: serde_json::from_str::<NutrientProfile>(&nutrients)?,
                 servings: serde_json::from_str::<Vec<Serving>>(&servings)?,
@@ -651,6 +686,44 @@ mod tests {
         );
         store.delete_custom_food(id).unwrap();
         assert!(store.custom_foods().unwrap().is_empty());
+    }
+
+    #[test]
+    fn recipes_are_custom_foods_that_keep_their_ingredients() {
+        use openmacro_core::recipe::Ingredient;
+        let store = Store::open_in_memory().unwrap();
+        let recipe = Recipe {
+            name: "Overnight oats".into(),
+            servings: 2.0,
+            cooked_grams: None,
+            ingredients: vec![
+                Ingredient {
+                    name: "Oats".into(),
+                    amount: "80 g".into(),
+                    grams: Some(80.0),
+                    nutrients: NutrientProfile::from_macros(300.0, 10.0, 6.0, 50.0),
+                    food_id: Some("afcd:F006121".into()),
+                },
+                Ingredient {
+                    name: "Milk".into(),
+                    amount: "250 ml (258 g)".into(),
+                    grams: Some(258.0),
+                    nutrients: NutrientProfile::from_macros(160.0, 8.5, 8.0, 12.0),
+                    food_id: None,
+                },
+            ],
+        };
+        let id = store.insert_recipe(&recipe).unwrap();
+        let foods = store.custom_foods().unwrap();
+        assert_eq!(foods, vec![recipe.to_food(format!("custom:{id}"))]);
+        assert_eq!(foods[0].source, FoodSource::Recipe);
+        assert_eq!(store.recipe(id).unwrap(), Some(recipe));
+
+        // Plain custom foods have no recipe.
+        let plain = store.insert_custom_food(&foods[0]).unwrap();
+        assert_eq!(store.recipe(plain).unwrap(), None);
+        store.delete_custom_food(id).unwrap();
+        assert_eq!(store.recipe(id).unwrap(), None);
     }
 
     #[test]

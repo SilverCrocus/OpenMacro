@@ -11,6 +11,7 @@ use openmacro_core::nutrients::Nutrient;
 use openmacro_core::targets::MacroTargets;
 
 use super::{Icon, fmt0, fmt1};
+use crate::back::use_back_handler;
 use crate::state::{AppState, CoachSnapshot, day_totals, today};
 
 fn due(state: &AppState, coach: &CoachSnapshot) -> NaiveDate {
@@ -72,6 +73,7 @@ pub fn CheckInCard(only_when_due: bool) -> Element {
 pub fn CheckInSheet() -> Element {
     let mut state = use_context::<AppState>();
     let mut step = use_signal(|| 0usize);
+    use_back_handler(move |_| state.check_in_open.set(false));
     let titles = ["Weigh in", "Review your week", "Your new targets"];
     let current = step();
 

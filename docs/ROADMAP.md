@@ -22,14 +22,15 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | ✅ Weekly check-in | Check-in day setting, due card on Plan and Dashboard. Three steps: weigh-in, review of unlogged and partly logged days, then new targets. Targets stay fixed until the next check-in |
 | ✅ Data export | CSV files for the food log (every nutrient), weigh-ins and a daily summary (intake, weight, trend, expenditure, targets). Saved to Downloads/OpenMacro on Android |
 | ✅ Insight pages | Tap the Expenditure, Weight trend or Energy balance tile for a chart with 1W–All ranges. Expenditure shows its likely range; weight shows scale weigh-ins and trend change over 3–90 days; energy balance shows each complete day's surplus or deficit and the weight change it implies |
+| ✅ Recipes | Put the ingredients on the plate and tap *Save as recipe*: name, servings and an optional cooked weight. Recipes appear in search and the Library and log by the serving, the whole recipe or by weight. Ingredients are kept for editing later |
 
 ## Next
 
 | # | Feature | Plan |
 |---|---|---|
-| 1 | ⏭ **Recipes** | Build from ingredients with a cooked weight; log by serving or grams. |
-| 2 | ⏭ **Backup and restore** | One file with all data that can be restored on a new phone. |
-| 3 | ⏭ **More insight pages** | Goal progress, macros over time, and weekly or monthly averages on the charts. |
+| 1 | ⏭ **Backup and restore** | One file with all data that can be restored on a new phone. |
+| 2 | ⏭ **More insight pages** | Goal progress, macros over time, and weekly or monthly averages on the charts. |
+| 3 | ⏭ **Edit recipes and foods** | Change a recipe's ingredients or a custom food's nutrients. |
 
 ## Later
 
@@ -37,7 +38,7 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 |---|---|
 | 🕓 Nutrition label scan | Photograph a label to fill in a custom food. Needs an AI vision model (see below). |
 | 🕓 AI photo logging | *Snap* a meal or *Describe* it. The model names foods and portions, and the app matches them to real foods in the database. **Bring your own API key** in settings; the first provider is still to be chosen (Claude, Gemini or OpenAI). Nothing is sent unless the user turns it on. |
-| 🕓 More recipe features | Import from a link (schema.org Recipe), split a logged recipe into ingredients |
+| 🕓 More recipe features | Import from a link (schema.org Recipe), split a logged recipe into ingredients, recipes inside recipes |
 | 🕓 Weight trend V2 | Kalman smoother with a noise band; calibrated expenditure uncertainty band |
 | 🕓 Body metrics and progress photos | Measurements, front/side/back photos with comparison |
 | 🕓 Health Connect | Read weight, body fat and steps; write nutrition |

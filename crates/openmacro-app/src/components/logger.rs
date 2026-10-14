@@ -9,6 +9,7 @@ use openmacro_core::nutrients::{
 };
 
 use super::{Icon, fmt0, fmt1, hour_label, macro_line};
+use crate::back::use_back_handler;
 use crate::food_search::{self, Database, FoundFood};
 use crate::foods::plate_item;
 use crate::keypad::{self, Key};
@@ -26,11 +27,13 @@ enum Tab {
 pub fn Logger() -> Element {
     let mut state = use_context::<AppState>();
     let coach = use_context::<Memo<CoachSnapshot>>();
+    use_back_handler(move |_| state.close_plate());
     let mut tab = use_signal(|| Tab::Search);
     let mut detail = use_signal(|| None::<Food>);
     // Set when a scanned barcode isn't found, to prefill a new custom food.
     let mut new_barcode = use_signal(|| None::<String>);
     let query = use_signal(String::new);
+    let mut saving_recipe = use_signal(|| false);
 
     let plate = state.plate.read().clone();
     let plate_kcal = plate.totals().get_or_zero(Nutrient::Energy);
@@ -79,27 +82,31 @@ pub fn Logger() -> Element {
                 if count > 0 {
                     PlateView { items: plate.items.clone() }
                 }
-                nav { class: "sheet-tabs",
-                    for (value , label) in [
-                        (Tab::Search, "Search"),
-                        (Tab::Scan, "Scan"),
-                        (Tab::QuickAdd, "Quick Add"),
-                        (Tab::Library, "Library"),
-                    ]
-                    {
-                        button {
-                            key: "{label}",
-                            class: if tab() == value && detail().is_none() { "active" },
-                            onclick: move |_| {
-                                detail.set(None);
-                                tab.set(value);
-                            },
-                            "{label}"
+                if !saving_recipe() {
+                    nav { class: "sheet-tabs",
+                        for (value , label) in [
+                            (Tab::Search, "Search"),
+                            (Tab::Scan, "Scan"),
+                            (Tab::QuickAdd, "Quick Add"),
+                            (Tab::Library, "Library"),
+                        ]
+                        {
+                            button {
+                                key: "{label}",
+                                class: if tab() == value && detail().is_none() { "active" },
+                                onclick: move |_| {
+                                    detail.set(None);
+                                    tab.set(value);
+                                },
+                                "{label}"
+                            }
                         }
                     }
                 }
                 div { class: "sheet-body",
-                    {
+                    if saving_recipe() {
+                        super::recipe::RecipeForm { items: plate.items.clone(), on_done: move |_| saving_recipe.set(false) }
+                    } else {
                         match (detail(), tab()) {
                             (Some(food), _) => rsx! {
                                 FoodDetail { food, on_back: move |_| detail.set(None) }
@@ -125,9 +132,12 @@ pub fn Logger() -> Element {
                         }
                     }
                 }
-                if count > 0 && detail().is_none() {
-                    footer { class: "sheet-footer",
-                        button { class: "primary wide", onclick: move |_| state.log_plate(), "{log_text}" }
+                if count > 0 && detail().is_none() && !saving_recipe() {
+                    footer { class: "sheet-footer plate-actions",
+                        if count > 1 {
+                            button { onclick: move |_| saving_recipe.set(true), "Save as recipe" }
+                        }
+                        button { class: "primary", onclick: move |_| state.log_plate(), "{log_text}" }
                     }
                 }
             }
@@ -299,6 +309,7 @@ fn default_summary(food: &Food) -> String {
 #[component]
 fn FoodDetail(food: Food, on_back: EventHandler<()>) -> Element {
     let state = use_context::<AppState>();
+    use_back_handler(move |_| on_back.call(()));
     let coach = use_context::<Memo<CoachSnapshot>>();
     let food = Rc::new(food);
     let units = keypad::units(&food);
@@ -581,6 +592,7 @@ fn QuickAdd() -> Element {
                         name: if label.trim().is_empty() { "Quick add".into() } else { label.trim().to_string() },
                         amount: "1 entry".into(),
                         nutrients: NutrientProfile::from_macros(energy, p, f, c),
+                        grams: None,
                     });
                 for mut field in [name, kcal, protein, fat, carbs] {
                     field.set(String::new());

@@ -11,8 +11,8 @@ Early development.
 | [`openmacro-core`](crates/openmacro-core) | Working and tested: nutrient model (55 nutrients), foods and servings, BMR equations, trend weight, adaptive expenditure (Kalman-style estimator with an uncertainty band), goal-driven calorie targets, weekly calorie shifting, macro splits |
 | [`openmacro-store`](crates/openmacro-store) | SQLite storage on the device: food log, weigh-ins, day status, custom foods, favorites, check-ins and settings |
 | [`openmacro-foods`](crates/openmacro-foods) | Food database: 58k foods from USDA, the Australian AFCD and Open Food Facts (AU + US), with full-text search; see [docs/FOOD_DATA.md](docs/FOOD_DATA.md) |
-| [`openmacro-app`](crates/openmacro-app) | Dioxus app (Rust; Android and web preview). Dashboard, food log timeline, logging sheet (search, barcode scanning, quick add, custom foods, favorites), plan settings, weekly check-ins, insight charts and CSV export. Data is saved on the device, and the app updates itself from GitHub Releases. |
-| Recipes, backup and restore, AI photo logging, Health Connect | Planned; see [docs/ROADMAP.md](docs/ROADMAP.md) |
+| [`openmacro-app`](crates/openmacro-app) | Dioxus app (Rust; Android and web preview). Dashboard, food log timeline, logging sheet (search, barcode scanning, quick add, custom foods, recipes, favorites), plan settings, weekly check-ins, insight charts and CSV export. Data is saved on the device, and the app updates itself from GitHub Releases. |
+| Backup and restore, AI photo logging, Health Connect | Planned; see [docs/ROADMAP.md](docs/ROADMAP.md) |
 
 ## Docs
 

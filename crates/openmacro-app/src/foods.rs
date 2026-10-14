@@ -372,6 +372,7 @@ pub fn plate_item(food: &Food, amount: Amount) -> Option<PlateItem> {
         name: food.name.clone(),
         amount: amount_label(food, amount)?,
         nutrients: food.nutrients_for(amount)?,
+        grams: food.grams(amount),
     })
 }
 

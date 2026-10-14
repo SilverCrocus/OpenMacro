@@ -9,6 +9,7 @@ mod library;
 mod logger;
 mod more;
 mod plan;
+mod recipe;
 mod scan;
 mod update;
 
@@ -39,6 +40,8 @@ pub fn Shell() -> Element {
     use_effect(use_reactive((&route,), |_| {
         document::eval("window.scrollTo(0, 0)");
     }));
+    #[cfg(target_os = "android")]
+    crate::back::use_system_back(route != Route::Dashboard {});
 
     rsx! {
         div { class: "app",

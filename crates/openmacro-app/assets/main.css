@@ -588,3 +588,9 @@ a.link-tile:active { border-color: var(--accent); }
 .insight-table th { text-align: left; font-weight: 500; color: var(--muted); font-size: 13px; padding: 4px 0; }
 .insight-table td { padding: 6px 0; border-top: 1px solid var(--border); }
 .insight-table th:not(:first-child), .insight-table td:not(:first-child) { text-align: right; }
+
+/* Recipes */
+
+.plate-actions { display: flex; gap: 8px; padding-top: 12px; }
+.plate-actions button { flex: 1; padding: 14px; }
+.recipe-preview { font-variant-numeric: tabular-nums; margin: 8px 0; }

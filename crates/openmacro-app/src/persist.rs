@@ -9,6 +9,7 @@ use openmacro_core::checkin::CheckIn;
 use openmacro_core::expenditure::DayStatus;
 use openmacro_core::food::Food;
 use openmacro_core::log::{Goal, LogEntry, Profile};
+use openmacro_core::recipe::Recipe;
 use openmacro_core::targets::CoachedProgram;
 use openmacro_core::trend::WeighIn;
 
@@ -17,7 +18,7 @@ use crate::state::Data;
 #[cfg(not(target_arch = "wasm32"))]
 pub use native::Persistence;
 #[cfg(all(not(target_arch = "wasm32"), feature = "bundled-foods"))]
-pub use native::data_dir;
+pub use native::{data_dir, no_backup_dir};
 #[cfg(target_arch = "wasm32")]
 pub use web::Persistence;
 
@@ -142,6 +143,12 @@ mod native {
             Some(format!("custom:{id}"))
         }
 
+        /// Saves a recipe; returns its food id (`custom:<n>`).
+        pub fn insert_recipe(&self, recipe: &Recipe) -> Option<String> {
+            let id = report("save a recipe", self.store.as_ref()?.insert_recipe(recipe))?;
+            Some(format!("custom:{id}"))
+        }
+
         pub fn delete_custom_food(&self, id: &str) {
             let (Some(store), Some(n)) = (
                 &self.store,
@@ -221,9 +228,26 @@ mod native {
     /// The app's private data folder.
     #[cfg(target_os = "android")]
     pub fn data_dir() -> Option<PathBuf> {
+        context_dir("getFilesDir")
+    }
+
+    /// A private folder that Android's automatic backup skips, for large
+    /// files the app can recreate (the bundled food database).
+    #[cfg(all(target_os = "android", feature = "bundled-foods"))]
+    pub fn no_backup_dir() -> Option<PathBuf> {
+        context_dir("getNoBackupFilesDir")
+    }
+
+    #[cfg(all(not(target_os = "android"), feature = "bundled-foods"))]
+    pub fn no_backup_dir() -> Option<PathBuf> {
+        data_dir()
+    }
+
+    /// A folder from one of the Context's `File`-returning getters.
+    #[cfg(target_os = "android")]
+    fn context_dir(getter: &str) -> Option<PathBuf> {
         use jni::objects::{JObject, JString};
 
-        // The app's private files directory, from Context.getFilesDir().
         let ctx = ndk_context::android_context();
         // SAFETY: ndk-context holds a valid JavaVM pointer and a global
         // reference to the Android context for the life of the process.
@@ -231,7 +255,7 @@ mod native {
         let mut env = vm.attach_current_thread().ok()?;
         let context = unsafe { JObject::from_raw(ctx.context().cast()) };
         let dir = env
-            .call_method(&context, "getFilesDir", "()Ljava/io/File;", &[])
+            .call_method(&context, getter, "()Ljava/io/File;", &[])
             .ok()?
             .l()
             .ok()?;
@@ -293,6 +317,10 @@ mod web {
         }
 
         pub fn insert_custom_food(&self, _food: &Food) -> Option<String> {
+            None
+        }
+
+        pub fn insert_recipe(&self, _recipe: &Recipe) -> Option<String> {
             None
         }
 

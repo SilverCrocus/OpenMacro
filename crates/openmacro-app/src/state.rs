@@ -12,6 +12,7 @@ use openmacro_core::expenditure::{
 };
 use openmacro_core::food::Food;
 use openmacro_core::nutrients::{Nutrient, NutrientProfile};
+use openmacro_core::recipe::Recipe;
 use openmacro_core::targets::{self, CalorieTarget, CoachedProgram, MacroTargets};
 use openmacro_core::trend::{self, TrendPoint, TrendSmoothing, WeighIn};
 
@@ -44,6 +45,8 @@ pub struct PlateItem {
     pub nutrients: NutrientProfile,
     /// Stable id of the food, so the log can offer it again later.
     pub food_id: Option<String>,
+    /// Weight, when known (not for quick adds); used to weigh recipes.
+    pub grams: Option<f64>,
 }
 
 /// Foods staged for logging together at one date and hour.
@@ -400,6 +403,27 @@ impl AppState {
             });
         self.custom_foods.write().insert(0, food.clone());
         food
+    }
+
+    /// Saves a recipe; it becomes a food in the Library and search.
+    pub fn add_recipe(mut self, recipe: &Recipe) -> Food {
+        let id = self
+            .persist
+            .read()
+            .insert_recipe(recipe)
+            .unwrap_or_else(|| {
+                let n = *self.next_id.peek();
+                self.next_id.set(n + 1);
+                format!("custom:{n}")
+            });
+        let food = recipe.to_food(id);
+        self.custom_foods.write().insert(0, food.clone());
+        food
+    }
+
+    /// Replaces everything on the plate with one item.
+    pub fn set_plate_items(mut self, items: Vec<PlateItem>) {
+        self.plate.write().items = items;
     }
 
     /// Records a completed check-in; its targets become the active ones.

@@ -1,10 +1,11 @@
 //! The Library tab: the user's own foods, and the form to create one.
 
 use dioxus::prelude::*;
-use openmacro_core::food::Food;
+use openmacro_core::food::{Food, FoodSource};
 use openmacro_core::nutrients::Nutrient;
 
 use super::{Icon, fmt0, macro_line};
+use crate::back::use_back_handler;
 use crate::custom_food::{self, Basis, Input, LabelStyle};
 use crate::food_search::FoodRegion;
 use crate::foods::{amount_label, plate_item};
@@ -61,7 +62,7 @@ pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<Stri
         }
         if foods.is_empty() {
             p { class: "muted pad",
-                "Foods you create appear here and in search. Add things the database doesn't have, like home cooking or local products."
+                "Foods you create appear here and in search. Add things the database doesn't have, like home cooking or local products. To make a recipe, put its ingredients on the plate and tap Save as recipe."
             }
         }
         ul { class: "results",
@@ -71,7 +72,8 @@ pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<Stri
                         let amount = food.default_amount();
                         match (food.nutrients_for(amount), amount_label(&food, amount)) {
                             (Some(n), Some(label)) => format!(
-                                "{} kcal · {} · {}",
+                                "{}{} kcal · {} · {}",
+                                if food.source == FoodSource::Recipe { "Recipe · " } else { "" },
                                 fmt0(n.get_or_zero(Nutrient::Energy)),
                                 macro_line(&n),
                                 label
@@ -107,7 +109,12 @@ pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<Stri
 /// A text field that reports edits without writing its value back, so fast
 /// typing never loses characters.
 #[component]
-fn Field(label: String, initial: String, numeric: bool, on_input: EventHandler<String>) -> Element {
+pub(super) fn Field(
+    label: String,
+    initial: String,
+    numeric: bool,
+    on_input: EventHandler<String>,
+) -> Element {
     rsx! {
         label { class: "field",
             span { "{label}" }
@@ -124,6 +131,7 @@ fn Field(label: String, initial: String, numeric: bool, on_input: EventHandler<S
 #[component]
 fn CustomFoodForm(barcode: String, on_done: EventHandler<()>) -> Element {
     let state = use_context::<AppState>();
+    use_back_handler(move |_| on_done.call(()));
     let region = (state.region)();
     let mut form = use_signal(|| Input {
         barcode: barcode.clone(),

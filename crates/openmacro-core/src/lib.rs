@@ -20,6 +20,7 @@ pub mod expenditure;
 pub mod food;
 pub mod log;
 pub mod nutrients;
+pub mod recipe;
 pub mod targets;
 pub mod trend;
 pub mod units;

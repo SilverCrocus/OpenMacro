@@ -62,6 +62,18 @@ pub struct FoundFood {
     pub source: &'static str,
 }
 
+/// One of the user's own foods or recipes.
+fn yours(food: &Food) -> FoundFood {
+    FoundFood {
+        food: food.clone(),
+        source: if food.source == FoodSource::Recipe {
+            "Your recipe"
+        } else {
+            "Your food"
+        },
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Results {
     /// The user's own custom foods.
@@ -89,10 +101,7 @@ pub fn search_custom(custom: &[Food], query: &str) -> Vec<FoundFood> {
                 format!("{} {}", f.name, f.brand.as_deref().unwrap_or_default()).to_lowercase();
             words.iter().all(|w| text.contains(w.as_str()))
         })
-        .map(|f| FoundFood {
-            food: f.clone(),
-            source: "Your food",
-        })
+        .map(yours)
         .collect()
 }
 
@@ -182,10 +191,7 @@ pub fn history_counts(log: &[LogEntry]) -> HashMap<String, usize> {
 /// Finds a food by its stable id in the user's foods, the samples or the database.
 fn resolve(db: Option<&Database>, custom: &[Food], id: &str) -> Option<FoundFood> {
     if id.starts_with("custom:") {
-        return custom.iter().find(|f| f.id == id).map(|f| FoundFood {
-            food: f.clone(),
-            source: "Your food",
-        });
+        return custom.iter().find(|f| f.id == id).map(yours);
     }
     if id.starts_with("sample:") {
         return crate::foods::food_by_id(id).map(|f| FoundFood {
@@ -265,10 +271,7 @@ pub fn by_barcode(db: Option<&Database>, custom: &[Food], code: &str) -> Option<
         .iter()
         .find(|f| f.barcode.as_ref().is_some_and(|b| variants.contains(b)))
     {
-        return Some(FoundFood {
-            food: food.clone(),
-            source: "Your food",
-        });
+        return Some(yours(food));
     }
     #[cfg(not(target_arch = "wasm32"))]
     if let Some(db) = db {
@@ -314,8 +317,9 @@ mod bundled {
     pub static FOOD_DB: Asset = asset!("/assets/foods.db");
 }
 
-/// Copies the bundled food database into the app's data folder (once per
-/// build of the database) and opens it. `None` when no database is bundled.
+/// Copies the bundled food database into a private folder that isn't backed
+/// up (once per build of the database) and opens it. `None` when no
+/// database is bundled.
 pub async fn open_bundled() -> Option<Database> {
     #[cfg(all(not(target_arch = "wasm32"), feature = "bundled-foods"))]
     {
@@ -323,7 +327,7 @@ pub async fn open_bundled() -> Option<Database> {
 
         use dioxus::logger::tracing::warn;
 
-        let dir = crate::persist::data_dir()?;
+        let dir = crate::persist::no_backup_dir()?;
         let mut hasher = std::collections::hash_map::DefaultHasher::new();
         bundled::FOOD_DB.to_string().hash(&mut hasher);
         let name = format!("foods-{:016x}.db", hasher.finish());
@@ -339,11 +343,15 @@ pub async fn open_bundled() -> Option<Database> {
                 .and_then(|_| std::fs::rename(&partial, &path))
                 .map_err(|e| warn!("could not install the food database: {e}"))
                 .ok()?;
-            // Remove copies from earlier builds.
-            for entry in std::fs::read_dir(&dir).ok()?.flatten() {
-                let file = entry.file_name().to_string_lossy().into_owned();
-                if file.starts_with("foods-") && file != name {
-                    let _ = std::fs::remove_file(entry.path());
+            // Remove copies from earlier builds, including ones that older
+            // versions kept in the backed-up data folder.
+            let old_dirs = [Some(dir.clone()), crate::persist::data_dir()];
+            for old in old_dirs.iter().flatten() {
+                for entry in std::fs::read_dir(old).into_iter().flatten().flatten() {
+                    let file = entry.file_name().to_string_lossy().into_owned();
+                    if file.starts_with("foods-") && entry.path() != path {
+                        let _ = std::fs::remove_file(entry.path());
+                    }
                 }
             }
         }
