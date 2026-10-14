@@ -34,6 +34,8 @@ To build for Android, set `ANDROID_HOME`, `ANDROID_NDK_HOME` and `JAVA_HOME` (JD
 dx build --package openmacro-app --platform android --target aarch64-linux-android
 ```
 
+The APK lands in `target/dx/open-macro/debug/android/app/app/build/outputs/apk/debug/`. Install it with `adb install -r <apk>`.
+
 ## Clean-room policy
 
 OpenMacro is an independent project. It is not affiliated with, endorsed by, or connected to MacroFactor or Stronger By Science.

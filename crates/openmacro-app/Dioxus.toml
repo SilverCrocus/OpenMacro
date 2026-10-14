@@ -4,3 +4,6 @@ title = "OpenMacro"
 [bundle]
 identifier = "dev.openmacro.app"
 publisher = "OpenMacro"
+
+[android.application]
+theme = "@style/Theme.AppCompat.NoActionBar"

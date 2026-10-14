@@ -23,6 +23,13 @@ use logger::Logger;
 pub fn Shell() -> Element {
     let state = use_context::<AppState>();
     let plate_open = state.plate.read().open;
+
+    // Each tab starts at the top instead of inheriting the previous tab's scroll position.
+    let route = use_route::<Route>();
+    use_effect(use_reactive((&route,), |_| {
+        document::eval("window.scrollTo(0, 0)");
+    }));
+
     rsx! {
         div { class: "app",
             main { class: "content", Outlet::<Route> {} }

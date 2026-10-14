@@ -8,6 +8,10 @@ repository.workspace = true
 rust-version.workspace = true
 publish = false
 
+[[bin]]
+name = "open-macro"
+path = "src/main.rs"
+
 [dependencies]
 openmacro-core = { path = "../openmacro-core" }
 dioxus = { version = "0.7.10", features = ["router"] }
