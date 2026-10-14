@@ -20,6 +20,7 @@ Early development.
 - [Algorithms](docs/ALGORITHMS.md): trend weight, expenditure, targets and macros
 - [Architecture](docs/ARCHITECTURE.md): crates, storage, food data, UI plan
 - [Food data](docs/FOOD_DATA.md): sources, licences and how to build `foods.db`
+- [Roadmap](docs/ROADMAP.md): what's done and what's next
 
 ## Development
 

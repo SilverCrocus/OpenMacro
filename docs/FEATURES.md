@@ -48,10 +48,10 @@ The logger sheet has five tabs:
 | Tab | Behavior | Priority |
 |---|---|---|
 | **Search** | Text search across the food database. Results are grouped as *Common* (generic foods) and *Branded*, with "see more" on each group. Each row shows calories, P/F/C and the default serving, and has a one-tap add. History, favorites, custom foods and recipes appear as their own sections. | P0 |
-| **Scan** | Barcode scanning with the camera, or typing the barcode. When a barcode isn't found, the user can create a custom food, optionally from photos of the label. | P0 |
+| **Scan** | Two modes: *Barcode* (live camera with a torch toggle) and *Label* (photograph a nutrition label, AI-assisted). A keyboard button opens manual barcode entry with a "Look up" button. When a barcode isn't found, the user can create a custom food with that barcode. | P0 (barcode), P2 (label) |
 | **Quick Add** | Enter energy (kcal or kJ) plus optional protein, fat, carbs and alcohol in grams. Shows the calories implied by the macro grams for comparison. | P0 |
 | **Library** | The user's Recipes, custom Foods and Favorites, with a filter box and a "+" to create new items. | P0 |
-| **AI** | *Snap*: photograph a meal. *Describe*: free text of up to about 500 characters, plus up to 3 photos. The AI returns plate items mapped onto real database foods with quantities and units. Composite dishes expand into editable ingredient rows. A disclaimer asks users to verify the results. | P2 (pluggable provider) |
+| **AI** | *Snap*: photograph a meal. *Describe*: free text of up to about 500 characters, plus up to 3 photos. The AI returns plate items mapped onto real database foods with quantities and units. Composite dishes expand into editable ingredient rows. A disclaimer asks users to verify the results. Users bring their own API key, and nothing is sent unless they turn it on. | P2 (pluggable provider) |
 
 ### 2.3 Food detail (P0)
 - **Header:** calories, then protein, fat and carbs in grams, each with its percentage of the food's calories.
@@ -67,7 +67,13 @@ The logger sheet has five tabs:
 - **Day notes:** free-text notes attached to a day.
 
 ### 2.5 Custom foods and recipes (P0 custom foods, P1 recipes)
-- **Custom food:** name, brand and serving definitions. Nutrition can be entered per serving, per 100 g or per 100 ml.
+- **Custom food:** a 4-step form:
+  1. how to build it (from scratch or AI-assisted);
+  2. name (required), brand and an optional barcode with a Scan button;
+  3. nutrition basis (per serving, per 100 g or per 100 ml), serving weight in grams and serving size (e.g. "4 pieces");
+  4. nutrients, in a US-label, non-US-label or full-detail layout. Energy can be kcal or kJ, and sodium can be entered as salt.
+
+  Finish with "Create" or "Create & Add" (also adds it to the plate).
 - **Recipe creation:** one of three methods:
   - build from scratch: name, number of servings, optional total cooked weight, and ingredients;
   - import from a web link (P1, by parsing schema.org `Recipe` markup);
@@ -218,7 +224,13 @@ The program card shows a 7-day bar chart with calories and P/F/C for each weekda
 
 ---
 
-## 8. Out of scope (for now)
+## 8. Distribution and updates (P0)
+
+- **Release builds:** signed release APKs are built by CI and published as GitHub Releases. All updates must be signed with the same key.
+- **In-app updater:** on launch the app checks the latest GitHub Release. If it's newer, the app shows "Update available" with the release notes, downloads the APK and hands it to Android's package installer. Android asks the user once to allow installs from OpenMacro, and the user confirms each update.
+- **Later:** Google Play or F-Droid listings for silent updates.
+
+## 9. Out of scope (for now)
 
 - A workout / strength-training logger. The reference app ships this as a separate product.
 - Paywalls, subscriptions and usage quotas. OpenMacro is free.
