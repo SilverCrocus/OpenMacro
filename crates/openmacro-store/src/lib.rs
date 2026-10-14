@@ -881,7 +881,7 @@ mod tests {
         use openmacro_core::recipe::Ingredient;
         use openmacro_core::targets::MacroTargets;
 
-        let mut source = Store::open_in_memory().unwrap();
+        let source = Store::open_in_memory().unwrap();
         let first = source.insert_log_entry(&entry(12, 8, 400.0)).unwrap();
         source.delete_log_entry(first).unwrap();
         let soup = Recipe {
