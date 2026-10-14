@@ -37,6 +37,7 @@ mod native {
     const REGION: &str = "food_region";
     const CHECK_IN_DAY: &str = "check_in_day";
     const MANUAL_TARGETS: &str = "manual_targets";
+    const PREFS: &str = "display";
 
     pub struct Persistence {
         store: Option<Store>,
@@ -201,6 +202,16 @@ mod native {
             if let Some(store) = &self.store {
                 report("save a check-in", store.insert_check_in(check_in));
             }
+        }
+
+        pub fn save_prefs(&self, prefs: &crate::prefs::Prefs) {
+            if let Some(store) = &self.store {
+                report("save display settings", store.set_setting(PREFS, prefs));
+            }
+        }
+
+        pub fn load_prefs(&self) -> Option<crate::prefs::Prefs> {
+            report("load display settings", self.store.as_ref()?.setting(PREFS))?
         }
 
         pub fn save_manual_targets(&self, targets: Option<MacroTargets>) {
@@ -402,6 +413,12 @@ mod web {
         }
 
         pub fn insert_check_in(&self, _check_in: &CheckIn) {}
+
+        pub fn save_prefs(&self, _prefs: &crate::prefs::Prefs) {}
+
+        pub fn load_prefs(&self) -> Option<crate::prefs::Prefs> {
+            None
+        }
 
         pub fn save_manual_targets(&self, _targets: Option<MacroTargets>) {}
 

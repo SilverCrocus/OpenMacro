@@ -11,6 +11,7 @@ mod food_search;
 mod foods;
 mod keypad;
 mod persist;
+mod prefs;
 mod seed;
 mod state;
 mod updater;
@@ -55,6 +56,18 @@ fn App() -> Element {
     // The full food database, installed from the app bundle on first launch.
     let foods = use_resource(food_search::open_bundled);
     use_context_provider(|| foods);
+
+    // Display preferences: load once, then apply and save on every change.
+    use_hook(move || {
+        if let Some(saved) = state.persist.peek().load_prefs() {
+            *prefs::PREFS.write() = saved;
+        }
+    });
+    use_effect(move || {
+        let current = prefs::PREFS();
+        prefs::apply_theme(current.theme);
+        state.persist.peek().save_prefs(&current);
+    });
 
     // Save the manual program's targets whenever they change.
     use_effect(move || {

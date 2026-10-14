@@ -12,9 +12,54 @@
   --protein: #f08a5d;
   --fat: #f2c14e;
   --carbs: #5cc98a;
+  --trend: #b28cff;
+  --badge-ink: #1a0d05;
+  --tabbar-bg: rgba(15, 17, 21, 0.94);
   --radius: 14px;
   --tabbar-h: 68px;
   color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --surface-2: #eceef2;
+  --border: #d9dde4;
+  --text: #15181d;
+  --muted: #5d6471;
+  --accent: #0f9a70;
+  --accent-ink: #ffffff;
+  --danger: #d23f3f;
+  --kcal: #2f74e6;
+  --protein: #dc6a35;
+  --fat: #c99212;
+  --carbs: #24a05c;
+  --trend: #7c4fe0;
+  --badge-ink: #ffffff;
+  --tabbar-bg: rgba(255, 255, 255, 0.94);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root[data-theme="system"] {
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --surface-2: #eceef2;
+    --border: #d9dde4;
+    --text: #15181d;
+    --muted: #5d6471;
+    --accent: #0f9a70;
+    --accent-ink: #ffffff;
+    --danger: #d23f3f;
+    --kcal: #2f74e6;
+    --protein: #dc6a35;
+    --fat: #c99212;
+    --carbs: #24a05c;
+    --trend: #7c4fe0;
+    --badge-ink: #ffffff;
+    --tabbar-bg: rgba(255, 255, 255, 0.94);
+    color-scheme: light;
+  }
 }
 
 * { box-sizing: border-box; }
@@ -147,7 +192,7 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   align-items: center;
-  background: rgba(15, 17, 21, 0.94);
+  background: var(--tabbar-bg);
   backdrop-filter: blur(12px);
   border-top: 1px solid var(--border);
   z-index: 10;
@@ -188,7 +233,7 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 
 .spark { width: 100%; height: 40px; margin-top: 8px; display: block; }
 .spark.exp { color: var(--protein); }
-.spark.trend { color: #b28cff; }
+.spark.trend { color: var(--trend); }
 
 /* Food log */
 
@@ -574,13 +619,13 @@ a.link-tile:active { border-color: var(--accent); }
 .chart-bar.below { fill: var(--carbs); }
 .chart-bar.above { fill: var(--protein); }
 .chart.exp { color: var(--protein); }
-.chart.trend { color: #b28cff; }
+.chart.trend { color: var(--trend); }
 .legend { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 8px 0 0; }
 .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-left: 6px; }
 .swatch:first-child { margin-left: 0; }
 .swatch.exp { background: var(--protein); }
 .swatch.band { background: var(--protein); opacity: 0.25; }
-.swatch.trend { background: #b28cff; }
+.swatch.trend { background: var(--trend); }
 .swatch.dot { background: var(--text); opacity: 0.55; border-radius: 50%; width: 8px; height: 8px; }
 .swatch.below { background: var(--carbs); }
 .swatch.above { background: var(--protein); }
@@ -614,18 +659,17 @@ a.link-tile:active { border-color: var(--accent); }
 .copy-day { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; }
 .copy-day .icon { width: 14px; height: 14px; }
 .hour-copy { margin-left: 0; color: var(--muted); }
-input[type="date"] { color-scheme: dark; }
 .chart-dashed { fill: none; stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 4 4; opacity: 0.7; }
 .chart-level { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 6 4; }
-.chart-bar.intake { fill: #6ea8fe; }
+.chart-bar.intake { fill: var(--kcal); }
 .chart.macros { color: var(--text); }
-.chart.goal { color: #b28cff; }
+.chart.goal { color: var(--trend); }
 .swatch.dashed { background: none; border-top: 2px dashed var(--text); border-radius: 0; height: 0; width: 14px; }
 .swatch.level { background: none; border-top: 2px dashed var(--accent); border-radius: 0; height: 0; width: 14px; }
-.swatch.intake { background: #6ea8fe; }
+.swatch.intake { background: var(--kcal); }
 .macro-chips .chip { min-width: 0; }
 .goal-progress { margin-top: 14px; }
-.goal-fill { background: #b28cff; }
+.goal-fill { background: var(--trend); }
 .tile-progress { margin: 8px 0 6px; }
 
 /* Plate */
@@ -640,7 +684,7 @@ input[type="date"] { color-scheme: dark; }
   padding: 0 5px;
   border-radius: 10px;
   background: var(--protein);
-  color: #1a0d05;
+  color: var(--badge-ink);
   font-size: 12px;
   font-weight: 700;
   display: grid;

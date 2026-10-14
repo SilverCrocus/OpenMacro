@@ -404,6 +404,9 @@ impl AppState {
         self.favorites.set(saved.favorites);
         self.check_in_day.set(saved.check_in_day);
         self.recipes.set(saved.recipes);
+        if let Some(prefs) = self.persist.peek().load_prefs() {
+            *crate::prefs::PREFS.write() = prefs;
+        }
         self.recipe_edit.set(None);
         self.check_in_open.set(false);
         self.editing.set(None);

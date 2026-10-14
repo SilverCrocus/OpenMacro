@@ -6,6 +6,7 @@ use openmacro_core::bmr::{self, ActivityLevel, BmrEquation, Sex};
 use super::fmt0;
 use crate::export;
 use crate::food_search::{self, Database, FoodRegion};
+use crate::prefs::{PREFS, Theme};
 use crate::state::{AppState, CoachSnapshot, Data, today};
 
 #[component]
@@ -123,6 +124,7 @@ pub fn More() -> Element {
             }
             p { class: "muted pad", "Starting estimate: {prior_text}" }
         }
+        DisplaySettings {}
         section { class: "card",
             h2 { "Food database" }
             label { class: "field",
@@ -343,6 +345,45 @@ fn ExportData() -> Element {
                 p { class: "error", "{message}" }
             },
             None => rsx! {},
+        }
+    }
+}
+
+/// Theme and clock.
+#[component]
+fn DisplaySettings() -> Element {
+    let prefs = PREFS();
+    rsx! {
+        section { class: "card",
+            h2 { "Display" }
+            div { class: "choice",
+                span { class: "choice-label", "Theme" }
+                div { class: "segmented",
+                    for theme in Theme::ALL {
+                        button {
+                            key: "{theme.label()}",
+                            class: if prefs.theme == theme { "active" },
+                            onclick: move |_| PREFS.write().theme = theme,
+                            "{theme.label()}"
+                        }
+                    }
+                }
+            }
+            div { class: "choice",
+                span { class: "choice-label", "Clock" }
+                div { class: "segmented",
+                    button {
+                        class: if !prefs.clock_24h { "active" },
+                        onclick: move |_| PREFS.write().clock_24h = false,
+                        "12-hour"
+                    }
+                    button {
+                        class: if prefs.clock_24h { "active" },
+                        onclick: move |_| PREFS.write().clock_24h = true,
+                        "24-hour"
+                    }
+                }
+            }
         }
     }
 }

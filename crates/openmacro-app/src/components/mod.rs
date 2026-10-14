@@ -291,7 +291,15 @@ pub fn fmt1(v: f64) -> String {
     format!("{:.1}", v)
 }
 
+/// An hour in the user's clock format.
 pub fn hour_label(hour: u32) -> String {
+    hour_text(hour, crate::prefs::PREFS.read().clock_24h)
+}
+
+fn hour_text(hour: u32, clock_24h: bool) -> String {
+    if clock_24h {
+        return format!("{hour:02}:00");
+    }
     match hour {
         0 => "12 AM".into(),
         1..=11 => format!("{hour} AM"),
@@ -316,9 +324,12 @@ mod tests {
 
     #[test]
     fn hour_labels() {
-        assert_eq!(hour_label(0), "12 AM");
-        assert_eq!(hour_label(9), "9 AM");
-        assert_eq!(hour_label(12), "12 PM");
-        assert_eq!(hour_label(23), "11 PM");
+        assert_eq!(hour_text(0, false), "12 AM");
+        assert_eq!(hour_text(9, false), "9 AM");
+        assert_eq!(hour_text(12, false), "12 PM");
+        assert_eq!(hour_text(23, false), "11 PM");
+        assert_eq!(hour_text(0, true), "00:00");
+        assert_eq!(hour_text(9, true), "09:00");
+        assert_eq!(hour_text(23, true), "23:00");
     }
 }
