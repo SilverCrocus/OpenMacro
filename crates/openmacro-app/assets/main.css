@@ -698,3 +698,7 @@ a.link-tile:active { border-color: var(--accent); }
 .goal-history { list-style: none; padding: 0; margin: 0; }
 .goal-history li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); }
 .goal-history li:first-child { border-top: none; }
+.weigh-in-list { list-style: none; padding: 0; margin: 0; }
+.weigh-in-list li { display: flex; align-items: center; gap: 12px; padding: 6px 0; border-top: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+.weigh-in-list li:first-child { border-top: none; }
+.weigh-in-list li span { flex: 1; color: var(--muted); }

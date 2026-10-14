@@ -131,6 +131,12 @@ mod native {
             }
         }
 
+        pub fn delete_weigh_in(&self, weigh_in: &WeighIn) {
+            if let Some(store) = &self.store {
+                report("delete a weigh-in", store.delete_weigh_in(weigh_in));
+            }
+        }
+
         pub fn set_day_status(&self, date: NaiveDate, status: DayStatus) {
             if let Some(store) = &self.store {
                 report("save the day status", store.set_day_status(date, status));
@@ -392,6 +398,8 @@ mod web {
         pub fn delete_entry(&self, _id: i64) {}
 
         pub fn insert_weigh_in(&self, _weigh_in: &WeighIn) {}
+
+        pub fn delete_weigh_in(&self, _weigh_in: &WeighIn) {}
 
         pub fn set_day_status(&self, _date: NaiveDate, _status: DayStatus) {}
 

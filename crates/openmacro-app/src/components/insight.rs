@@ -359,6 +359,52 @@ fn WeightInsight(range: Range) -> Element {
                 "Trend weight smooths out day-to-day swings from water, salt and food in your gut, so it shows the direction you're really heading."
             }
         }
+        WeighIns { start }
+    }
+}
+
+/// The weigh-ins in the range, newest first, so a mistyped one can be removed.
+#[component]
+fn WeighIns(start: NaiveDate) -> Element {
+    let state = use_context::<AppState>();
+    let mut showing_all = use_signal(|| false);
+    let mut list: Vec<_> = state
+        .weigh_ins
+        .read()
+        .iter()
+        .filter(|w| w.date >= start)
+        .copied()
+        .collect();
+    list.reverse();
+    let total = list.len();
+    if !showing_all() {
+        list.truncate(10);
+    }
+    if total == 0 {
+        return rsx! {};
+    }
+
+    rsx! {
+        section { class: "card",
+            h2 { "Weigh-ins" }
+            ul { class: "weigh-in-list",
+                for (i , w) in list.into_iter().enumerate() {
+                    li { key: "{i}-{w.date}-{w.kg}",
+                        span { {w.date.format("%a %-d %b").to_string()} }
+                        strong { {prefs::weight_text(w.kg, 1)} }
+                        button {
+                            class: "icon-btn small",
+                            aria_label: "Delete the weigh-in on {w.date}",
+                            onclick: move |_| state.delete_weigh_in(w),
+                            Icon { name: "close" }
+                        }
+                    }
+                }
+            }
+            if total > 10 && !showing_all() {
+                button { class: "link-btn", onclick: move |_| showing_all.set(true), "Show all {total}" }
+            }
+        }
     }
 }
 

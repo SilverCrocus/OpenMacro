@@ -715,6 +715,14 @@ impl AppState {
         self.weigh_ins.write().push(weigh_in);
     }
 
+    pub fn delete_weigh_in(mut self, weigh_in: WeighIn) {
+        self.persist.read().delete_weigh_in(&weigh_in);
+        let mut list = self.weigh_ins.write();
+        if let Some(i) = list.iter().rposition(|w| *w == weigh_in) {
+            list.remove(i);
+        }
+    }
+
     pub fn set_day_status(mut self, date: NaiveDate, status: DayStatus) {
         self.persist.read().set_day_status(date, status);
         let mut map = self.day_status.write();

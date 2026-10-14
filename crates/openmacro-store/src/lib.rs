@@ -317,6 +317,18 @@ impl Store {
         Ok(self.conn.last_insert_rowid())
     }
 
+    /// Removes one weigh-in with this date and weight (there may be several
+    /// a day). Returns whether one was found.
+    pub fn delete_weigh_in(&self, weigh_in: &WeighIn) -> Result<bool> {
+        let changed = self.conn.execute(
+            "UPDATE weigh_in SET deleted_at = ?1, updated_at = ?1 WHERE id = (
+                 SELECT id FROM weigh_in WHERE date = ?2 AND kg = ?3 AND deleted_at IS NULL
+                 ORDER BY id DESC LIMIT 1)",
+            params![now(), weigh_in.date.to_string(), weigh_in.kg],
+        )?;
+        Ok(changed > 0)
+    }
+
     pub fn weigh_ins(&self) -> Result<Vec<WeighIn>> {
         let mut stmt = self
             .conn
@@ -1034,6 +1046,34 @@ mod tests {
         // New rows don't collide with restored ids.
         let next = target.insert_log_entry(&entry(14, 8, 100.0)).unwrap();
         assert!(next > restored[0].id);
+    }
+
+    #[test]
+    fn one_weigh_in_is_deleted_at_a_time() {
+        let store = Store::open_in_memory().unwrap();
+        let w = WeighIn {
+            date: date(12),
+            kg: 70.4,
+        };
+        store.insert_weigh_in(&w).unwrap();
+        store.insert_weigh_in(&w).unwrap();
+        store
+            .insert_weigh_in(&WeighIn {
+                date: date(13),
+                kg: 70.1,
+            })
+            .unwrap();
+        assert!(store.delete_weigh_in(&w).unwrap());
+        assert_eq!(store.weigh_ins().unwrap().len(), 2);
+        assert!(store.delete_weigh_in(&w).unwrap());
+        assert!(!store.delete_weigh_in(&w).unwrap());
+        assert_eq!(
+            store.weigh_ins().unwrap(),
+            vec![WeighIn {
+                date: date(13),
+                kg: 70.1
+            }]
+        );
     }
 
     #[test]
