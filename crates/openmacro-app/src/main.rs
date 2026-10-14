@@ -1,6 +1,7 @@
 mod components;
 mod foods;
 mod keypad;
+mod persist;
 mod seed;
 mod state;
 
@@ -31,9 +32,22 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    let state = use_context_provider(AppState::demo);
+    let state = use_context_provider(AppState::load);
     let coach = use_memo(move || state::CoachSnapshot::compute(&state.data(), today()));
     use_context_provider(|| coach);
+
+    // Save profile, goal and program whenever any of them changes.
+    use_effect(move || {
+        let (profile, goal, program) = (
+            *state.profile.read(),
+            *state.goal.read(),
+            state.program.read().clone(),
+        );
+        state
+            .persist
+            .peek()
+            .save_settings(&profile, &goal, &program);
+    });
 
     rsx! {
         document::Title { "OpenMacro" }

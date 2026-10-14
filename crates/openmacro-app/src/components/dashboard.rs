@@ -97,9 +97,26 @@ pub fn Dashboard() -> Element {
     });
     let balance_text = balance.map_or("—".into(), |b| format!("{b:+.0}"));
 
+    let empty = state.is_empty();
+    drop((log, weigh_ins));
+
     rsx! {
         header { class: "page-header",
             h1 { "Dashboard" }
+        }
+        if empty {
+            section { class: "card welcome",
+                h2 { "Welcome to OpenMacro" }
+                p { class: "muted",
+                    "Log what you eat with the + button and weigh in when you can. After a few days your expenditure estimate starts adapting to you."
+                }
+                p { class: "muted", "Set your age, height and weight under More so the starting estimate fits you." }
+                button {
+                    class: "primary",
+                    onclick: move |_| state.replace_data(crate::seed::demo(today)),
+                    "Explore with demo data"
+                }
+            }
         }
         section { class: "card hero",
             Ring { fraction: today_kcal / today_target.max(1.0), size: 88 }

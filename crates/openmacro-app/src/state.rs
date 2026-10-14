@@ -5,13 +5,17 @@ use std::collections::BTreeMap;
 
 use chrono::{Datelike, Duration, Local, NaiveDate, Timelike};
 use dioxus::prelude::*;
-use openmacro_core::bmr::{self, ActivityLevel, BmrEquation, BodyStats};
+use openmacro_core::bmr::{self, ActivityLevel, BmrEquation, BodyStats, Sex};
 use openmacro_core::expenditure::{
     self, DayRecord, DayStatus, EstimateStatus, ExpenditureConfig, ExpenditurePoint,
 };
 use openmacro_core::nutrients::{Nutrient, NutrientProfile};
 use openmacro_core::targets::{self, CalorieTarget, CoachedProgram, MacroTargets};
 use openmacro_core::trend::{self, TrendPoint, TrendSmoothing, WeighIn};
+
+pub use openmacro_core::log::{Goal, LogEntry, Profile, day_totals};
+
+use crate::persist::Persistence;
 
 pub fn today() -> NaiveDate {
     Local::now().date_naive()
@@ -28,16 +32,6 @@ pub fn weekday_index(date: NaiveDate) -> usize {
 
 pub fn week_start(date: NaiveDate) -> NaiveDate {
     date - Duration::days(weekday_index(date) as i64)
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct LogEntry {
-    pub id: u64,
-    pub date: NaiveDate,
-    pub hour: u32,
-    pub name: String,
-    pub amount: String,
-    pub nutrients: NutrientProfile,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -71,18 +65,19 @@ impl Plate {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Profile {
-    pub stats: BodyStats,
-    pub activity: ActivityLevel,
-    pub equation: BmrEquation,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Goal {
-    pub goal_weight_kg: f64,
-    /// Percent of body weight per week; negative to lose.
-    pub rate_pct_per_week: f64,
+/// Starting profile for a new account until the user edits it under More.
+pub fn default_profile() -> Profile {
+    Profile {
+        stats: BodyStats {
+            sex: Sex::Male,
+            age_years: 30.0,
+            height_cm: 175.0,
+            weight_kg: 75.0,
+            body_fat_fraction: None,
+        },
+        activity: ActivityLevel::Moderate,
+        equation: BmrEquation::MifflinStJeor,
+    }
 }
 
 /// Everything the user owns, as plain values.
@@ -116,13 +111,6 @@ impl Data {
             },
         }
     }
-}
-
-pub fn day_totals(log: &[LogEntry], date: NaiveDate) -> NutrientProfile {
-    log.iter()
-        .filter(|e| e.date == date)
-        .map(|e| &e.nutrients)
-        .sum()
 }
 
 /// Expenditure, trend and targets derived from [`Data`].
@@ -206,7 +194,9 @@ fn day_records(data: &Data, today: NaiveDate) -> Vec<DayRecord> {
         .collect()
 }
 
-/// Reactive handles to the user's data, shared through context.
+/// Reactive handles to the user's data, shared through context. Changes to
+/// the log, weigh-ins and day status are written through to the device
+/// immediately; profile, goal and program are saved by an effect in `App`.
 #[derive(Clone, Copy)]
 pub struct AppState {
     pub log: Signal<Vec<LogEntry>>,
@@ -217,16 +207,22 @@ pub struct AppState {
     pub program: Signal<CoachedProgram>,
     pub plate: Signal<Plate>,
     pub selected_date: Signal<NaiveDate>,
-    next_id: Signal<u64>,
+    pub persist: Signal<Persistence>,
+    /// Ids for entries when nothing is saved (web preview).
+    next_id: Signal<i64>,
 }
 
-fn next_id_after(log: &[LogEntry]) -> u64 {
+fn next_id_after(log: &[LogEntry]) -> i64 {
     log.iter().map(|e| e.id).max().unwrap_or(0) + 1
 }
 
 impl AppState {
-    pub fn demo() -> Self {
-        let data = crate::seed::demo(today());
+    /// Opens the device database and loads saved data; a first launch starts empty.
+    pub fn load() -> Self {
+        let persist = Persistence::open();
+        let data = persist
+            .load()
+            .unwrap_or_else(|| Data::empty(default_profile()));
         Self {
             next_id: Signal::new(next_id_after(&data.log)),
             log: Signal::new(data.log),
@@ -237,6 +233,7 @@ impl AppState {
             program: Signal::new(data.program),
             plate: Signal::new(Plate::closed(today())),
             selected_date: Signal::new(today()),
+            persist: Signal::new(persist),
         }
     }
 
@@ -251,7 +248,16 @@ impl AppState {
         }
     }
 
-    pub fn replace_data(mut self, data: Data) {
+    /// True when the account has no history at all.
+    pub fn is_empty(&self) -> bool {
+        self.log.read().is_empty() && self.weigh_ins.read().is_empty()
+    }
+
+    /// Replaces everything, e.g. to load demo data or clear the account.
+    pub fn replace_data(mut self, mut data: Data) {
+        if let Some(saved) = self.persist.write().replace_history(&data) {
+            data.log = saved;
+        }
         self.next_id.set(next_id_after(&data.log));
         self.log.set(data.log);
         self.weigh_ins.set(data.weigh_ins);
@@ -294,32 +300,45 @@ impl AppState {
             plate.open = false;
             (plate.date, plate.hour, std::mem::take(&mut plate.items))
         };
-        let mut next_id = self.next_id.write();
-        let mut log = self.log.write();
-        for item in items {
-            log.push(LogEntry {
-                id: *next_id,
-                date,
-                hour,
-                name: item.name,
-                amount: item.amount,
-                nutrients: item.nutrients,
-            });
-            *next_id += 1;
-        }
-        drop((log, next_id));
+        let entries: Vec<LogEntry> = items
+            .into_iter()
+            .map(|item| {
+                let mut entry = LogEntry {
+                    id: 0,
+                    date,
+                    hour,
+                    name: item.name,
+                    amount: item.amount,
+                    nutrients: item.nutrients,
+                };
+                entry.id = match self.persist.read().insert_entry(&entry) {
+                    Some(id) => id,
+                    None => {
+                        let id = *self.next_id.peek();
+                        self.next_id.set(id + 1);
+                        id
+                    }
+                };
+                entry
+            })
+            .collect();
+        self.log.write().extend(entries);
         self.selected_date.set(date);
     }
 
-    pub fn delete_entry(mut self, id: u64) {
+    pub fn delete_entry(mut self, id: i64) {
+        self.persist.read().delete_entry(id);
         self.log.write().retain(|e| e.id != id);
     }
 
     pub fn add_weigh_in(mut self, date: NaiveDate, kg: f64) {
-        self.weigh_ins.write().push(WeighIn { date, kg });
+        let weigh_in = WeighIn { date, kg };
+        self.persist.read().insert_weigh_in(&weigh_in);
+        self.weigh_ins.write().push(weigh_in);
     }
 
     pub fn set_day_status(mut self, date: NaiveDate, status: DayStatus) {
+        self.persist.read().set_day_status(date, status);
         let mut map = self.day_status.write();
         if status == DayStatus::Normal {
             map.remove(&date);

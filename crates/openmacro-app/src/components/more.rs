@@ -18,6 +18,7 @@ pub fn More() -> Element {
         .unwrap_or_default();
     let prior_text = format!("{} kcal/day", fmt0(prior));
     let mut confirm_clear = use_signal(|| false);
+    let saved_at = state.persist.read().location();
 
     rsx! {
         header { class: "page-header",
@@ -116,10 +117,13 @@ pub fn More() -> Element {
         section { class: "card",
             h2 { "Data" }
             p { class: "muted small",
-                "This preview keeps data in memory only. Local storage on the device is the next milestone."
+                match &saved_at {
+                    Some(path) => rsx! { "Saved on this device: {path}" },
+                    None => rsx! { "Not saved: this preview keeps data in memory until you close it." },
+                }
             }
             div { class: "button-row",
-                button { onclick: move |_| state.replace_data(crate::seed::demo(today())), "Load demo data" }
+                button { onclick: move |_| state.replace_data(crate::seed::demo(today())), "Replace with demo data" }
                 if confirm_clear() {
                     button {
                         class: "danger",
