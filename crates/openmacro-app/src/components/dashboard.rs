@@ -104,6 +104,7 @@ pub fn Dashboard() -> Element {
         header { class: "page-header",
             h1 { "Dashboard" }
         }
+        super::update::UpdateCard {}
         if empty {
             section { class: "card welcome",
                 h2 { "Welcome to OpenMacro" }

@@ -464,3 +464,11 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 @media (max-width: 380px) {
   .field-grid, .tiles { grid-template-columns: 1fr; }
 }
+
+/* Updates */
+
+.update-card { border-color: var(--accent); }
+.update-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.update-head h2 { margin-bottom: 4px; }
+.update-notes { white-space: pre-line; font-size: 13px; color: var(--muted); margin: 8px 0; }
+.update-card .primary { margin-top: 8px; }

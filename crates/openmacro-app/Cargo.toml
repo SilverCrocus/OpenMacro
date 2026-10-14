@@ -1,6 +1,6 @@
 [package]
 name = "openmacro-app"
-version = "0.1.0"
+version = "0.2.0"
 description = "OpenMacro cross-platform app (Dioxus)"
 edition.workspace = true
 license.workspace = true
@@ -16,6 +16,7 @@ path = "src/main.rs"
 openmacro-core = { path = "../openmacro-core" }
 dioxus = { version = "0.7.10", features = ["router"] }
 chrono = { workspace = true, features = ["clock", "wasmbind"] }
+serde_json.workspace = true
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 openmacro-store = { path = "../openmacro-store" }
@@ -24,6 +25,7 @@ openmacro-foods = { path = "../openmacro-foods" }
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.21"
 ndk-context = "0.1"
+tokio = { version = "1", features = ["time"] }
 
 [features]
 default = ["web"]

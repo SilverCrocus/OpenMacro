@@ -40,6 +40,20 @@ dx build --package openmacro-app --platform android --target aarch64-linux-andro
 
 The APK lands in `target/dx/open-macro/debug/android/app/app/build/outputs/apk/debug/`. Install it with `adb install -r <apk>`.
 
+## Releasing
+
+1. Bump `version` in `crates/openmacro-app/Cargo.toml` and commit.
+2. Tag with release notes and push:
+
+   ```bash
+   git tag -a v0.3.0 -m "What changed in this release"
+   git push origin v0.3.0
+   ```
+
+3. The [release workflow](.github/workflows/release.yml) builds the food database, builds and signs the arm64 and x86_64 APKs, and publishes a GitHub Release. Installed apps find it on their next launch and offer the update.
+
+Releases are signed with the project's release key, stored in the repository secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD` and `ANDROID_KEY_ALIAS`. Every update must be signed with the same key.
+
 ## Clean-room policy
 
 OpenMacro is an independent project. It is not affiliated with, endorsed by, or connected to MacroFactor or Stronger By Science.

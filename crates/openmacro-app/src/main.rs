@@ -5,10 +5,11 @@ mod keypad;
 mod persist;
 mod seed;
 mod state;
+mod updater;
 
 use dioxus::prelude::*;
 
-use components::{Dashboard, FoodLog, More, Plan, Shell};
+use components::{Dashboard, FoodLog, More, Plan, Shell, check_for_update};
 use state::{AppState, today};
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
@@ -36,6 +37,10 @@ fn App() -> Element {
     let state = use_context_provider(AppState::load);
     let coach = use_memo(move || state::CoachSnapshot::compute(&state.data(), today()));
     use_context_provider(|| coach);
+
+    // Look for a newer release once per launch (Android only).
+    let update = use_context_provider(|| Signal::new(updater::UpdateState::Idle));
+    use_hook(move || check_for_update(update));
 
     // The full food database, installed from the app bundle on first launch.
     let foods = use_resource(food_search::open_bundled);

@@ -172,7 +172,7 @@ pub fn More() -> Element {
         }
         section { class: "card",
             h2 { "About" }
-            p { "OpenMacro {env!(\"CARGO_PKG_VERSION\")} · MIT licensed" }
+            super::update::UpdateCheck {}
             p { class: "muted small",
                 "An independent, open-source nutrition tracker. Not affiliated with any commercial app."
             }

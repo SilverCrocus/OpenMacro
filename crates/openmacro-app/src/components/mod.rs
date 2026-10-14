@@ -5,11 +5,13 @@ mod food_log;
 mod logger;
 mod more;
 mod plan;
+mod update;
 
 pub use dashboard::Dashboard;
 pub use food_log::FoodLog;
 pub use more::More;
 pub use plan::Plan;
+pub use update::check_for_update;
 
 use dioxus::prelude::*;
 use openmacro_core::nutrients::{Nutrient, NutrientProfile};

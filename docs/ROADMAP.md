@@ -19,7 +19,7 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 
 | # | Feature | Plan |
 |---|---|---|
-| 1 | ⏭ **Releases and in-app updates** | Signed release APK built by GitHub Actions on a version tag and published as a GitHub Release. The app checks the latest release on launch, shows "Update available", downloads the APK and opens Android's installer. Users allow "install unknown apps" once. Also works with Obtainium (optional). |
+| 1 | 🚧 **Releases and in-app updates** | Signed release APK built by GitHub Actions on a version tag and published as a GitHub Release. The app checks the latest release on launch, shows "Update available", downloads the APK and opens Android's installer. Users allow "install unknown apps" once. Also works with Obtainium (optional). |
 | 2 | ⏭ **Barcode scanning** | Scan tab with Barcode mode (live camera, torch toggle) and manual barcode entry. Look up the local database first, then Open Food Facts online. Not found: create a custom food with that barcode. |
 | 3 | ⏭ **Custom foods** | 4-step form: name and brand (+ barcode), nutrition basis (serving / 100 g / 100 ml with serving weight), nutrients in US-label or non-US-label layout. Searchable in the Library and in search results. |
 | 4 | ⏭ **Recents and favorites** | Search boosts foods you've logged before. History and favorites appear in Library. |
