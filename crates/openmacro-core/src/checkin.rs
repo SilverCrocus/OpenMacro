@@ -8,6 +8,7 @@
 use chrono::{Datelike, Duration, NaiveDate, Weekday};
 
 use crate::expenditure::DayStatus;
+use crate::log::Goal;
 use crate::targets::MacroTargets;
 
 /// A completed check-in and the targets it set.
@@ -19,6 +20,10 @@ pub struct CheckIn {
     pub trend_kg: Option<f64>,
     /// Monday through Sunday.
     pub week: Vec<MacroTargets>,
+    /// The goal in force at the check-in, for the goal history. Absent in
+    /// check-ins saved before it was recorded.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub goal: Option<Goal>,
 }
 
 /// The next date on or after `from` that falls on `weekday`.

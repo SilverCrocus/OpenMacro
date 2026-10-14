@@ -172,7 +172,9 @@ impl CoachSnapshot {
             Some(c) => (c.expenditure_kcal, c.trend_kg.unwrap_or(live_weight)),
             None => (live_kcal, live_weight),
         };
-        let rate = data.goal.rate_pct_per_week;
+        // Maintaining corrects towards the goal weight from outside its band.
+        let rate = data.goal.effective_rate(weight);
+        let live_rate = data.goal.effective_rate(live_weight);
         let floor = data.program.floor;
         let (average_target, week, live_target, live_week) = match data.manual_targets {
             // A manual program sets the same targets every day; check-ins
@@ -187,8 +189,8 @@ impl CoachSnapshot {
             None => (
                 targets::average_daily_target(kcal, weight, rate, floor),
                 targets::weekly_plan(&data.program, kcal, weight, rate),
-                targets::average_daily_target(live_kcal, live_weight, rate, floor),
-                targets::weekly_plan(&data.program, live_kcal, live_weight, rate),
+                targets::average_daily_target(live_kcal, live_weight, live_rate, floor),
+                targets::weekly_plan(&data.program, live_kcal, live_weight, live_rate),
             ),
         };
         Self {
@@ -739,6 +741,7 @@ mod tests {
             expenditure_kcal: 2000.0,
             trend_kg: Some(72.0),
             week: Vec::new(),
+            goal: None,
         });
         let locked = CoachSnapshot::compute(&data, date());
         let expected =
@@ -747,9 +750,17 @@ mod tests {
         assert_eq!(locked.live_week, live.live_week);
 
         // A goal change applies straight away, still from the locked basis.
-        data.goal.rate_pct_per_week = 0.0;
+        // Maintaining at the locked trend weight eats at expenditure...
+        data.goal = Goal {
+            goal_weight_kg: 72.0,
+            rate_pct_per_week: 0.0,
+        };
         let maintain = CoachSnapshot::compute(&data, date());
         assert_eq!(maintain.average_target.kcal, 2000.0);
+        // ...and well above the goal weight, corrects gently downwards.
+        data.goal.goal_weight_kg = 68.0;
+        let correcting = CoachSnapshot::compute(&data, date());
+        assert!(correcting.average_target.kcal < 2000.0);
     }
 
     #[test]

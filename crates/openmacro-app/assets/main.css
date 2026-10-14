@@ -695,3 +695,6 @@ a.link-tile:active { border-color: var(--accent); }
 .entry-open:disabled { opacity: 1; cursor: default; }
 .copy-food { margin: -4px 0 8px; font-size: 14px; }
 .copy-food .icon { width: 16px; height: 16px; }
+.goal-history { list-style: none; padding: 0; margin: 0; }
+.goal-history li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); }
+.goal-history li:first-child { border-top: none; }

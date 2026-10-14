@@ -24,6 +24,7 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | ✅ Insight pages | Tap the Expenditure, Weight trend or Energy balance tile for a chart with 1W–All ranges. Expenditure shows its likely range; weight shows scale weigh-ins and trend change over 3–90 days; energy balance shows each complete day's surplus or deficit and the weight change it implies |
 | ✅ Recipes | Put the ingredients on the plate and tap *Save as recipe*: name, servings and an optional cooked weight. Recipes appear in search and the Library and log by the serving, the whole recipe or by weight. Ingredients are kept for editing later |
 | ✅ Backup and restore | One JSON file with everything (log, weigh-ins, check-ins, your foods and recipes, favorites, settings), saved to Downloads/OpenMacro and restored with the system file picker after a confirmation. The food database is kept out of Android's automatic backup so the user's own data fits its 25 MB limit |
+| ✅ Maintain and goal history | Lose, Maintain or Gain. Maintaining holds steady within ±1.5% of the goal weight and corrects by 0.25%/week outside it. Check-ins record the goal, and the Goal page lists past goals to reuse |
 | ✅ Units and theme | kcal or kJ, kg or lb, 12- or 24-hour clock; dark, light or system theme. Data stays in kcal and kg; only display and input convert |
 | ✅ Manual program | Program style *Coached* or *Manual*. Manual uses calories and macros you enter, every day; check-ins still update expenditure but leave them alone |
 | ✅ Plate improvements | Back keeps the plate (the + button shows how many items wait), discarding asks first, plate items can be re-measured, and any food can be copied to your own foods |
@@ -38,7 +39,7 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | # | Feature | Plan |
 |---|---|---|
 | 1 | ⏭ **Micronutrient targets** | Floors, targets and ceilings for vitamins and minerals, with a nutrient explorer. |
-| 2 | ⏭ **Goal history and maintenance** | Keep past goals; a maintain goal that corrects gently when the trend leaves a band (spec P0). |
+| 2 | ⏭ **Trend smoothing and fixed expenditure** | Choose how fast the weight trend reacts, and optionally keep expenditure fixed (spec P0 settings). |
 | 3 | ⏭ **Steps and body measurements** | Manual entry first; Health Connect later. |
 
 ## Later

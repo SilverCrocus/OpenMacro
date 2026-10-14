@@ -695,6 +695,65 @@ fn GoalInsight(range: Range) -> Element {
             p { class: "muted", "{summary}" }
             p { class: "muted small", "Started is your first trend weight in OpenMacro." }
         }
+        GoalHistory {}
+    }
+}
+
+/// Goals in force at past check-ins, newest first, to look back on or reuse.
+#[component]
+fn GoalHistory() -> Element {
+    let mut state = use_context::<AppState>();
+    let current = (state.goal)();
+    let check_ins = state.check_ins.read();
+    // One row per change of goal.
+    let mut history: Vec<(NaiveDate, openmacro_core::log::Goal)> = Vec::new();
+    for c in check_ins.iter() {
+        if let Some(goal) = c.goal {
+            if history.last().is_none_or(|(_, last)| *last != goal) {
+                history.push((c.date, goal));
+            }
+        }
+    }
+    history.reverse();
+    if history.is_empty() {
+        return rsx! {};
+    }
+    let describe = |g: &openmacro_core::log::Goal| {
+        if g.is_maintain() {
+            format!("Maintain {}", prefs::weight_text(g.goal_weight_kg, 1))
+        } else {
+            format!(
+                "{} to {} at {:+.2}% a week",
+                if g.rate_pct_per_week < 0.0 {
+                    "Lose"
+                } else {
+                    "Gain"
+                },
+                prefs::weight_text(g.goal_weight_kg, 1),
+                g.rate_pct_per_week
+            )
+        }
+    };
+
+    rsx! {
+        section { class: "card",
+            h2 { "Goal history" }
+            ul { class: "goal-history",
+                for (date , goal) in history {
+                    li { key: "{date}",
+                        div {
+                            div { "{describe(&goal)}" }
+                            div { class: "muted small", "From the check-in on {date.format(\"%-d %B %Y\")}" }
+                        }
+                        if goal == current {
+                            span { class: "muted small", "Current" }
+                        } else {
+                            button { class: "chip", onclick: move |_| state.goal.set(goal), "Use" }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

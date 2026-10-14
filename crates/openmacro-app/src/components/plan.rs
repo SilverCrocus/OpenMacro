@@ -4,6 +4,7 @@ use chrono::Weekday;
 use dioxus::prelude::*;
 use openmacro_core::KCAL_PER_KG_BODY_MASS;
 use openmacro_core::expenditure::EstimateStatus;
+use openmacro_core::log::{MAINTAIN_BAND, MAINTAIN_CORRECTION_PCT};
 use openmacro_core::nutrients::{KCAL_PER_G_CARBS, KCAL_PER_G_FAT, KCAL_PER_G_PROTEIN};
 use openmacro_core::targets::{
     CalorieFloor, DietType, HIGH_DAY_MULTIPLIER, MacroTargets, ProteinPreference,
@@ -36,7 +37,9 @@ pub fn Plan() -> Element {
     let weight = coach
         .trend_kg()
         .unwrap_or(state.profile.read().stats.weight_kg);
-    let weekly_kg = weight * goal.rate_pct_per_week / 100.0;
+    // Maintaining can still plan a gentle correction back towards the goal.
+    let rate = goal.effective_rate(weight);
+    let weekly_kg = weight * rate / 100.0;
     let daily_delta = weekly_kg * KCAL_PER_KG_BODY_MASS / 7.0;
     let to_go = goal.goal_weight_kg - weight;
     let eta = if weekly_kg.abs() < 1e-6 || to_go.signum() != weekly_kg.signum() {
@@ -48,7 +51,7 @@ pub fn Plan() -> Element {
     let energy_unit = prefs::energy_symbol();
     let rate_text = format!(
         "{:+.2}% / week ({:+.2} {unit})",
-        goal.rate_pct_per_week,
+        rate,
         prefs::weight_value(weekly_kg)
     );
     let high_days = match &program.distribution {
@@ -123,19 +126,50 @@ pub fn Plan() -> Element {
                     },
                 }
             }
-            label { class: "field",
-                span { "Rate: {rate_text}" }
-                input {
-                    r#type: "range",
-                    min: "-1",
-                    max: "0.5",
-                    step: "0.05",
-                    value: "{goal.rate_pct_per_week}",
-                    oninput: move |e| {
-                        if let Ok(v) = e.value().parse::<f64>() {
-                            state.goal.write().rate_pct_per_week = v;
+            Choice { label: "Goal", even: true,
+                button {
+                    class: if goal.rate_pct_per_week < 0.0 { "active" },
+                    onclick: move |_| {
+                        if goal.rate_pct_per_week >= 0.0 {
+                            state.goal.write().rate_pct_per_week = -0.5;
                         }
                     },
+                    "Lose"
+                }
+                button {
+                    class: if goal.is_maintain() { "active" },
+                    onclick: move |_| state.goal.write().rate_pct_per_week = 0.0,
+                    "Maintain"
+                }
+                button {
+                    class: if goal.rate_pct_per_week > 0.0 { "active" },
+                    onclick: move |_| {
+                        if goal.rate_pct_per_week <= 0.0 {
+                            state.goal.write().rate_pct_per_week = 0.25;
+                        }
+                    },
+                    "Gain"
+                }
+            }
+            if goal.is_maintain() {
+                p { class: "muted small",
+                    "Your targets hold your weight within {prefs::weight_text(goal.goal_weight_kg * MAINTAIN_BAND, 1)} of your goal. If your trend drifts further, they correct gently by {MAINTAIN_CORRECTION_PCT}% of body weight a week."
+                }
+            } else {
+                label { class: "field",
+                    span { "Rate: {rate_text}" }
+                    input {
+                        r#type: "range",
+                        min: if goal.rate_pct_per_week < 0.0 { "-1" } else { "0.05" },
+                        max: if goal.rate_pct_per_week < 0.0 { "-0.05" } else { "0.5" },
+                        step: "0.05",
+                        value: "{goal.rate_pct_per_week}",
+                        oninput: move |e| {
+                            if let Ok(v) = e.value().parse::<f64>() {
+                                state.goal.write().rate_pct_per_week = v;
+                            }
+                        },
+                    }
                 }
             }
         }
@@ -307,7 +341,7 @@ pub fn Plan() -> Element {
                     }
                     li {
                         strong { "Average target: {prefs::energy(coach.average_target.kcal)} {energy_unit}/day. " }
-                        "Your rate of {goal.rate_pct_per_week:+.2}% of body weight per week is about {prefs::weight_value(weekly_kg):+.2} {unit}, or {prefs::energy_value(daily_delta):+.0} {energy_unit}/day relative to expenditure.{floor_note}"
+                        "Your rate of {rate:+.2}% of body weight per week is about {prefs::weight_value(weekly_kg):+.2} {unit}, or {prefs::energy_value(daily_delta):+.0} {energy_unit}/day relative to expenditure.{floor_note}"
                     }
                     if shifting {
                         li {

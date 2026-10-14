@@ -997,6 +997,10 @@ mod tests {
                     fat_g: 63.0,
                     carbs_g: 212.0,
                 }],
+                goal: Some(Goal {
+                    goal_weight_kg: 68.0,
+                    rate_pct_per_week: -0.5,
+                }),
             })
             .unwrap();
         let soup_food = source.custom_foods().unwrap().remove(0);
@@ -1081,12 +1085,14 @@ mod tests {
             expenditure_kcal: 2250.0,
             trend_kg: Some(70.1),
             week: vec![targets; 7],
+            goal: None,
         };
         let earlier = CheckIn {
             date: date(12),
             expenditure_kcal: 2300.0,
             trend_kg: None,
             week: vec![targets; 7],
+            goal: None,
         };
         store.insert_check_in(&later).unwrap();
         store.insert_check_in(&earlier).unwrap();

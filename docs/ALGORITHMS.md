@@ -231,4 +231,4 @@ Planned:
 - a logging-break explanation when the estimate is holding;
 - switching individual modules off.
 
-For a **Maintain** goal, the rate is 0 while the trend weight stays within ±1.5 % of the goal weight. Outside that band, a gentle ±0.25 %/week correction applies until the trend is back inside.
+For a **Maintain** goal (rate 0), the rate stays 0 while the trend weight is within ±1.5 % of the goal weight. Outside that band, a gentle ±0.25 %/week correction applies until the trend is back inside (`Goal::effective_rate`). Each check-in records the goal in force, which gives the goal history.

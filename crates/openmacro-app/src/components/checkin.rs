@@ -282,6 +282,7 @@ fn UpdateStep() -> Element {
         expenditure_kcal: new_kcal,
         trend_kg: coach.trend_kg(),
         week: week.to_vec(),
+        goal: Some((state.goal)()),
     };
     let change = |old: f64, new: f64| {
         let diff = new - old;

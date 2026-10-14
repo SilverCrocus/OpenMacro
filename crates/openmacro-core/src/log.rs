@@ -45,8 +45,37 @@ pub struct Profile {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Goal {
     pub goal_weight_kg: f64,
-    /// Percent of body weight per week; negative to lose.
+    /// Percent of body weight per week; negative to lose, zero to maintain.
     pub rate_pct_per_week: f64,
+}
+
+/// How far (as a share of the goal weight) the trend may drift while
+/// maintaining before a correction starts.
+pub const MAINTAIN_BAND: f64 = 0.015;
+/// The correction while outside the band, in % of body weight per week.
+pub const MAINTAIN_CORRECTION_PCT: f64 = 0.25;
+
+impl Goal {
+    pub fn is_maintain(&self) -> bool {
+        self.rate_pct_per_week == 0.0
+    }
+
+    /// The rate to plan with at `trend_kg`. Losing and gaining use the
+    /// chosen rate. Maintaining holds steady inside a band around the goal
+    /// weight and nudges back towards it from outside.
+    pub fn effective_rate(&self, trend_kg: f64) -> f64 {
+        if !self.is_maintain() {
+            return self.rate_pct_per_week;
+        }
+        let band = self.goal_weight_kg * MAINTAIN_BAND;
+        if trend_kg > self.goal_weight_kg + band {
+            -MAINTAIN_CORRECTION_PCT
+        } else if trend_kg < self.goal_weight_kg - band {
+            MAINTAIN_CORRECTION_PCT
+        } else {
+            0.0
+        }
+    }
 }
 
 #[cfg(test)]
@@ -64,6 +93,24 @@ mod tests {
             nutrients: NutrientProfile::from_macros(kcal, 5.0, 3.0, 27.0),
             food_id: Some("sample:oats".into()),
         }
+    }
+
+    #[test]
+    fn maintaining_corrects_only_outside_the_band() {
+        let maintain = Goal {
+            goal_weight_kg: 70.0,
+            rate_pct_per_week: 0.0,
+        };
+        // The band is ±1.05 kg around 70 kg.
+        assert_eq!(maintain.effective_rate(70.9), 0.0);
+        assert_eq!(maintain.effective_rate(69.1), 0.0);
+        assert_eq!(maintain.effective_rate(71.2), -MAINTAIN_CORRECTION_PCT);
+        assert_eq!(maintain.effective_rate(68.8), MAINTAIN_CORRECTION_PCT);
+        let lose = Goal {
+            rate_pct_per_week: -0.5,
+            ..maintain
+        };
+        assert_eq!(lose.effective_rate(90.0), -0.5);
     }
 
     #[test]

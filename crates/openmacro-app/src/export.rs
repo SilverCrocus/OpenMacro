@@ -380,6 +380,7 @@ mod tests {
             expenditure_kcal: 2200.0,
             trend_kg: Some(71.0),
             week: Vec::new(),
+            goal: None,
         });
         let coach = CoachSnapshot::compute(&data, today);
         let csv = daily(&data, &coach, today);
