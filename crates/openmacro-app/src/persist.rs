@@ -14,6 +14,8 @@ use crate::state::Data;
 
 #[cfg(not(target_arch = "wasm32"))]
 pub use native::Persistence;
+#[cfg(all(not(target_arch = "wasm32"), feature = "bundled-foods"))]
+pub use native::data_dir;
 #[cfg(target_arch = "wasm32")]
 pub use web::Persistence;
 
@@ -29,6 +31,7 @@ mod native {
     const PROFILE: &str = "profile";
     const GOAL: &str = "goal";
     const PROGRAM: &str = "program";
+    const REGION: &str = "food_region";
 
     pub struct Persistence {
         store: Option<Store>,
@@ -126,6 +129,19 @@ mod native {
             }
         }
 
+        pub fn save_region(&self, code: &str) {
+            if let Some(store) = &self.store {
+                report("save the food region", store.set_setting(REGION, &code));
+            }
+        }
+
+        pub fn load_region(&self) -> Option<String> {
+            report(
+                "load the food region",
+                self.store.as_ref()?.setting::<String>(REGION),
+            )?
+        }
+
         /// Replaces all history; returns the log with the ids it was saved under.
         pub fn replace_history(&mut self, data: &Data) -> Option<Vec<LogEntry>> {
             report(
@@ -137,8 +153,9 @@ mod native {
         }
     }
 
+    /// The app's private data folder.
     #[cfg(target_os = "android")]
-    fn data_dir() -> Option<PathBuf> {
+    pub fn data_dir() -> Option<PathBuf> {
         use jni::objects::{JObject, JString};
 
         // The app's private files directory, from Context.getFilesDir().
@@ -162,8 +179,9 @@ mod native {
         Some(PathBuf::from(path))
     }
 
+    /// The app's private data folder.
     #[cfg(not(target_os = "android"))]
-    fn data_dir() -> Option<PathBuf> {
+    pub fn data_dir() -> Option<PathBuf> {
         std::env::var_os("XDG_DATA_HOME")
             .map(PathBuf::from)
             .or_else(|| {
@@ -206,6 +224,12 @@ mod web {
         pub fn save_settings(&self, _profile: &Profile, _goal: &Goal, _program: &CoachedProgram) {}
 
         pub fn replace_history(&mut self, _data: &Data) -> Option<Vec<LogEntry>> {
+            None
+        }
+
+        pub fn save_region(&self, _code: &str) {}
+
+        pub fn load_region(&self) -> Option<String> {
             None
         }
     }

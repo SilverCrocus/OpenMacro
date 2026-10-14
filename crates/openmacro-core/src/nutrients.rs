@@ -305,7 +305,10 @@ mod tests {
     #[test]
     fn keys_match_serde_names() {
         for &n in Nutrient::ALL {
-            assert_eq!(serde_json::to_string(&n).unwrap(), format!("\"{}\"", n.key()));
+            assert_eq!(
+                serde_json::to_string(&n).unwrap(),
+                format!("\"{}\"", n.key())
+            );
         }
     }
 

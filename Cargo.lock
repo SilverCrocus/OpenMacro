@@ -3663,6 +3663,7 @@ dependencies = [
  "jni 0.21.1",
  "ndk-context",
  "openmacro-core",
+ "openmacro-foods",
  "openmacro-store",
 ]
 

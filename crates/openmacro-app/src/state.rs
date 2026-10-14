@@ -15,6 +15,7 @@ use openmacro_core::trend::{self, TrendPoint, TrendSmoothing, WeighIn};
 
 pub use openmacro_core::log::{Goal, LogEntry, Profile, day_totals};
 
+use crate::food_search::FoodRegion;
 use crate::persist::Persistence;
 
 pub fn today() -> NaiveDate {
@@ -208,6 +209,8 @@ pub struct AppState {
     pub plate: Signal<Plate>,
     pub selected_date: Signal<NaiveDate>,
     pub persist: Signal<Persistence>,
+    /// Which country's products and spellings search prefers.
+    pub region: Signal<FoodRegion>,
     /// Ids for entries when nothing is saved (web preview).
     next_id: Signal<i64>,
 }
@@ -223,7 +226,12 @@ impl AppState {
         let data = persist
             .load()
             .unwrap_or_else(|| Data::empty(default_profile()));
+        let region = persist
+            .load_region()
+            .and_then(|code| FoodRegion::from_code(&code))
+            .unwrap_or_default();
         Self {
+            region: Signal::new(region),
             next_id: Signal::new(next_id_after(&data.log)),
             log: Signal::new(data.log),
             weigh_ins: Signal::new(data.weigh_ins),

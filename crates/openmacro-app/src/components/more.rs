@@ -4,6 +4,7 @@ use dioxus::prelude::*;
 use openmacro_core::bmr::{self, ActivityLevel, BmrEquation, Sex};
 
 use super::fmt0;
+use crate::food_search::{self, Database, FoodRegion};
 use crate::state::{AppState, Data, today};
 
 #[component]
@@ -19,6 +20,13 @@ pub fn More() -> Element {
     let prior_text = format!("{} kcal/day", fmt0(prior));
     let mut confirm_clear = use_signal(|| false);
     let saved_at = state.persist.read().location();
+    let foods = use_context::<Resource<Option<Database>>>();
+    let (food_count, credits) = {
+        let guard = foods.read();
+        let db = guard.as_ref().and_then(Option::as_ref);
+        (food_search::food_count(db), food_search::attribution(db))
+    };
+    let region = (state.region)();
 
     rsx! {
         header { class: "page-header",
@@ -113,6 +121,30 @@ pub fn More() -> Element {
                 }
             }
             p { class: "muted pad", "Starting estimate: {prior_text}" }
+        }
+        section { class: "card",
+            h2 { "Food database" }
+            label { class: "field",
+                span { "Products and spellings from" }
+                select {
+                    onchange: move |e| {
+                        if let Some(r) = FoodRegion::from_code(&e.value()) {
+                            state.region.set(r);
+                        }
+                    },
+                    for r in FoodRegion::ALL {
+                        option { key: "{r.code()}", value: r.code(), selected: region == r, {r.label()} }
+                    }
+                }
+            }
+            p { class: "muted small", "{food_count} foods available to search." }
+            if let Some(credits) = credits {
+                p { class: "muted small", "{credits}" }
+            } else {
+                p { class: "muted small",
+                    "Using built-in sample foods. Builds with the bundled database include USDA FoodData Central, the Australian Food Composition Database (FSANZ) and Open Food Facts."
+                }
+            }
         }
         section { class: "card",
             h2 { "Data" }

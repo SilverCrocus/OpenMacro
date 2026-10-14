@@ -1,5 +1,7 @@
 //! The logging sheet: stage foods on a plate, then log them together.
 
+use std::rc::Rc;
+
 use dioxus::prelude::*;
 use openmacro_core::food::Food;
 use openmacro_core::nutrients::{
@@ -7,7 +9,8 @@ use openmacro_core::nutrients::{
 };
 
 use super::{Icon, fmt0, fmt1, hour_label, macro_line};
-use crate::foods::{FOODS, plate_item, search};
+use crate::food_search::{self, Database, FoundFood};
+use crate::foods::plate_item;
 use crate::keypad::{self, Key};
 use crate::state::{AppState, CoachSnapshot, PlateItem, day_totals};
 
@@ -22,7 +25,7 @@ pub fn Logger() -> Element {
     let mut state = use_context::<AppState>();
     let coach = use_context::<Memo<CoachSnapshot>>();
     let mut tab = use_signal(|| Tab::Search);
-    let mut detail = use_signal(|| None::<usize>);
+    let mut detail = use_signal(|| None::<Food>);
     let query = use_signal(String::new);
 
     let plate = state.plate.read().clone();
@@ -89,11 +92,11 @@ pub fn Logger() -> Element {
                 div { class: "sheet-body",
                     {
                         match (tab(), detail()) {
-                            (Tab::Search, Some(index)) => rsx! {
-                                FoodDetail { index, on_back: move |_| detail.set(None) }
+                            (Tab::Search, Some(food)) => rsx! {
+                                FoodDetail { food, on_back: move |_| detail.set(None) }
                             },
                             (Tab::Search, None) => rsx! {
-                                SearchTab { query, on_select: move |i| detail.set(Some(i)) }
+                                SearchTab { query, on_select: move |food| detail.set(Some(food)) }
                             },
                             (Tab::QuickAdd, _) => rsx! {
                                 QuickAdd {}
@@ -146,11 +149,30 @@ fn PlateView(items: Vec<PlateItem>) -> Element {
 }
 
 #[component]
-fn SearchTab(query: Signal<String>, on_select: EventHandler<usize>) -> Element {
+fn SearchTab(query: Signal<String>, on_select: EventHandler<Food>) -> Element {
     let state = use_context::<AppState>();
+    let foods = use_context::<Resource<Option<Database>>>();
     let mut query = query;
     let q = query();
-    let results = search(&FOODS, &q);
+    let region = (state.region)();
+    let guard = foods.read();
+    let db = guard.as_ref().and_then(Option::as_ref);
+    let has_db = db.is_some();
+    let results = if q.trim().is_empty() {
+        food_search::Results::default()
+    } else {
+        food_search::search(db, &q, region)
+    };
+    let hint = if has_db {
+        format!(
+            "Search {} foods from USDA, AFCD and Open Food Facts.",
+            food_search::food_count(db)
+        )
+    } else {
+        "Search the built-in sample foods.".to_string()
+    };
+    drop(guard);
+
     rsx! {
         label { class: "search-box",
             Icon { name: "search" }
@@ -162,26 +184,55 @@ fn SearchTab(query: Signal<String>, on_select: EventHandler<usize>) -> Element {
             }
         }
         if q.trim().is_empty() {
-            p { class: "muted pad", "Search the built-in sample foods. The full USDA and Open Food Facts database is next." }
+            p { class: "muted pad", "{hint}" }
         } else if results.is_empty() {
-            p { class: "muted pad", "No matches. Try Quick Add." }
+            p { class: "muted pad", "No matches. Try another spelling or Quick Add." }
         }
+        if !results.common.is_empty() {
+            ResultSection { title: "Common", foods: results.common, on_select }
+        }
+        if !results.branded.is_empty() {
+            ResultSection { title: "Branded", foods: results.branded, on_select }
+        }
+    }
+}
+
+#[component]
+fn ResultSection(
+    title: &'static str,
+    foods: Vec<FoundFood>,
+    on_select: EventHandler<Food>,
+) -> Element {
+    let state = use_context::<AppState>();
+    rsx! {
+        h3 { class: "section-title result-section", "{title}" }
         ul { class: "results",
-            for (index , food) in results {
-                li { key: "{food.id}", class: "result",
-                    button { class: "result-main", onclick: move |_| on_select.call(index),
-                        div { class: "entry-name", "{food.name}" }
-                        div { class: "entry-sub", {default_summary(food)} }
-                    }
-                    button {
-                        class: "icon-btn add",
-                        aria_label: "Add {food.name} to plate",
-                        onclick: move |_| {
-                            if let Some(item) = plate_item(food, food.default_amount()) {
-                                state.add_to_plate(item);
+            for (i , found) in foods.into_iter().enumerate() {
+                {
+                    let food = Rc::new(found.food);
+                    let origin = match &food.brand {
+                        Some(brand) => format!("{brand} · {}", found.source),
+                        None => found.source.to_string(),
+                    };
+                    let (open, add) = (food.clone(), food.clone());
+                    rsx! {
+                        li { key: "{title}{i}", class: "result",
+                            button { class: "result-main", onclick: move |_| on_select.call((*open).clone()),
+                                div { class: "entry-name", "{food.name}" }
+                                div { class: "entry-sub", {default_summary(&food)} }
+                                div { class: "entry-origin", "{origin}" }
                             }
-                        },
-                        Icon { name: "plus" }
+                            button {
+                                class: "icon-btn add",
+                                aria_label: "Add {food.name} to plate",
+                                onclick: move |_| {
+                                    if let Some(item) = plate_item(&add, add.default_amount()) {
+                                        state.add_to_plate(item);
+                                    }
+                                },
+                                Icon { name: "plus" }
+                            }
+                        }
                     }
                 }
             }
@@ -209,16 +260,16 @@ fn default_summary(food: &Food) -> String {
 }
 
 #[component]
-fn FoodDetail(index: usize, on_back: EventHandler<()>) -> Element {
+fn FoodDetail(food: Food, on_back: EventHandler<()>) -> Element {
     let state = use_context::<AppState>();
     let coach = use_context::<Memo<CoachSnapshot>>();
-    let food: &'static Food = &FOODS[index];
-    let units = keypad::units(food);
+    let food = Rc::new(food);
+    let units = keypad::units(&food);
     let mut qty = use_signal(|| "1".to_string());
     let mut fresh = use_signal(|| true);
     let mut unit = use_signal(|| units[0]);
 
-    let item = keypad::item_for(food, &qty(), unit());
+    let item = keypad::item_for(&food, &qty(), unit());
     let target = coach.read().target_for(state.plate.read().date);
 
     let per = item
@@ -314,6 +365,9 @@ fn FoodDetail(index: usize, on_back: EventHandler<()>) -> Element {
             "Results"
         }
         h2 { class: "detail-title", "{food.name}" }
+        if let Some(brand) = &food.brand {
+            p { class: "muted detail-brand", "{brand}" }
+        }
         div { class: "detail-headline",
             div { class: "big-kcal",
                 span { class: "num", {fmt0(kcal)} }
@@ -354,22 +408,28 @@ fn FoodDetail(index: usize, on_back: EventHandler<()>) -> Element {
             }
             div { class: "unit-chips", role: "radiogroup", aria_label: "Unit",
                 for u in units {
-                    button {
-                        key: "{u:?}",
-                        role: "radio",
-                        aria_checked: "{unit() == u}",
-                        class: if unit() == u { "chip active" } else { "chip" },
-                        onclick: move |_| {
-                            let from = unit();
-                            if from != u {
-                                if let Some(converted) = keypad::convert(food, &qty(), from, u) {
-                                    qty.set(converted);
-                                }
-                                unit.set(u);
-                                fresh.set(true);
+                    {
+                        let chip_food = food.clone();
+                        let label = keypad::unit_label(&food, u);
+                        rsx! {
+                            button {
+                                key: "{u:?}",
+                                role: "radio",
+                                aria_checked: "{unit() == u}",
+                                class: if unit() == u { "chip active" } else { "chip" },
+                                onclick: move |_| {
+                                    let from = unit();
+                                    if from != u {
+                                        if let Some(converted) = keypad::convert(&chip_food, &qty(), from, u) {
+                                            qty.set(converted);
+                                        }
+                                        unit.set(u);
+                                        fresh.set(true);
+                                    }
+                                },
+                                "{label}"
                             }
-                        },
-                        {keypad::unit_label(food, u)}
+                        }
                     }
                 }
             }

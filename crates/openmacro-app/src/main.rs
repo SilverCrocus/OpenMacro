@@ -1,4 +1,5 @@
 mod components;
+mod food_search;
 mod foods;
 mod keypad;
 mod persist;
@@ -35,6 +36,16 @@ fn App() -> Element {
     let state = use_context_provider(AppState::load);
     let coach = use_memo(move || state::CoachSnapshot::compute(&state.data(), today()));
     use_context_provider(|| coach);
+
+    // The full food database, installed from the app bundle on first launch.
+    let foods = use_resource(food_search::open_bundled);
+    use_context_provider(|| foods);
+
+    // Save the food region whenever it changes.
+    use_effect(move || {
+        let code = state.region.read().code();
+        state.persist.peek().save_region(code);
+    });
 
     // Save profile, goal and program whenever any of them changes.
     use_effect(move || {

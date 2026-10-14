@@ -341,6 +341,9 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .result { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
 .result-main { flex: 1; min-width: 0; text-align: left; background: none; border: none; border-radius: 0; padding: 12px 0; }
 .icon-btn.add { width: 34px; height: 34px; }
+.entry-origin { font-size: 11px; color: var(--muted); opacity: 0.8; margin-top: 2px; }
+.result-section { margin: 16px 0 0; }
+.detail-brand { margin: -8px 0 12px; }
 
 .detail-title { font-size: 20px; margin: 8px 0 12px; }
 .detail-headline { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }

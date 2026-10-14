@@ -20,3 +20,4 @@ research/private/
 # Downloaded food datasets and generated databases
 data/raw/
 data/*.db
+crates/openmacro-app/assets/foods.db
