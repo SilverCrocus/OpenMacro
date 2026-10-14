@@ -73,13 +73,8 @@ jobs:
           export ANDROID_NDK_HOME="$ANDROID_NDK_LATEST_HOME"
           mkdir -p dist
           for pair in aarch64-linux-android:arm64-v8a x86_64-linux-android:x86_64; do
-            target="${pair%%:*}"; abi="${pair##*:}"
-            # dx reuses one Gradle project, so clear the previous ABI's library
-            # and APK (repackaging over an old APK leaves unused space in it).
-            rm -rf target/dx/open-macro/release/android/app/app/src/main/jniLibs \
-              target/dx/open-macro/release/android/app/app/build/outputs/apk
-            dx build --release --package openmacro-app --platform android --target "$target" --features bundled-foods
-            cp target/dx/open-macro/release/android/app/app/build/outputs/apk/debug/app-debug.apk "dist/unsigned-$abi.apk"
+            # Builds with dx, then swaps in the OpenMacro launcher icon.
+            scripts/android-apk.sh "${pair%%:*}" "dist/unsigned-${pair##*:}.apk"
           done
 
       - name: Sign APKs

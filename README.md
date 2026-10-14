@@ -1,3 +1,5 @@
+<img src="crates/openmacro-app/android/icon.png" alt="" width="96" align="right">
+
 # OpenMacro
 
 An open-source, local-first nutrition and macro tracker written in Rust, with an adaptive expenditure (TDEE) coach. It is inspired by apps such as MacroFactor.
@@ -35,10 +37,12 @@ dx serve --package openmacro-app --platform web
 To build for Android, set `ANDROID_HOME`, `ANDROID_NDK_HOME` and `JAVA_HOME` (JDK 17+), then run:
 
 ```bash
-dx build --package openmacro-app --platform android --target aarch64-linux-android
+scripts/android-apk.sh aarch64-linux-android
 ```
 
-The APK lands in `target/dx/open-macro/debug/android/app/app/build/outputs/apk/debug/`. Install it with `adb install -r <apk>`.
+It builds with `dx` (release mode, with the bundled food database, so build `foods.db` first; see [docs/FOOD_DATA.md](docs/FOOD_DATA.md)), then swaps in the OpenMacro launcher icon, which `dx` can't set itself, and prints the APK's path. Install it with `adb install -r <apk>`.
+
+The icon's source is `crates/openmacro-app/android/icon.png`. After changing it, run `python3 scripts/make-android-icons.py` (needs Pillow) to regenerate the Android icons.
 
 ## Releasing
 
