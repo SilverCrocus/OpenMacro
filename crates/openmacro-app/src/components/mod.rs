@@ -3,6 +3,7 @@
 mod chart;
 mod checkin;
 mod dashboard;
+mod edit_entry;
 mod food_log;
 mod insight;
 mod library;
@@ -34,6 +35,7 @@ pub fn Shell() -> Element {
     let state = use_context::<AppState>();
     let plate_open = state.plate.read().open;
     let check_in_open = (state.check_in_open)();
+    let editing = (state.editing)();
 
     // Each tab starts at the top instead of inheriting the previous tab's scroll position.
     let route = use_route::<Route>();
@@ -52,6 +54,9 @@ pub fn Shell() -> Element {
             }
             if check_in_open {
                 CheckInSheet {}
+            }
+            if let Some(entry) = editing {
+                edit_entry::EditEntrySheet { key: "{entry.id}", entry }
             }
         }
     }

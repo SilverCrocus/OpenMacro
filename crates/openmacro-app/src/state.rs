@@ -282,6 +282,8 @@ pub struct AppState {
     pub check_in_day: Signal<Weekday>,
     /// Whether the check-in flow is showing.
     pub check_in_open: Signal<bool>,
+    /// The logged entry being edited, if any.
+    pub editing: Signal<Option<LogEntry>>,
     /// Ids for entries when nothing is saved (web preview).
     next_id: Signal<i64>,
 }
@@ -308,6 +310,7 @@ impl AppState {
             check_ins: Signal::new(data.check_ins.clone()),
             check_in_day: Signal::new(check_in_day),
             check_in_open: Signal::new(false),
+            editing: Signal::new(None),
             next_id: Signal::new(next_id_after(&data.log)),
             log: Signal::new(data.log),
             weigh_ins: Signal::new(data.weigh_ins),
@@ -338,6 +341,7 @@ impl AppState {
         self.favorites.set(saved.favorites);
         self.check_in_day.set(saved.check_in_day);
         self.check_in_open.set(false);
+        self.editing.set(None);
         self.plate.set(Plate::closed(today()));
         self.selected_date.set(today());
     }
@@ -496,6 +500,22 @@ impl AppState {
     pub fn delete_custom_food(mut self, id: &str) {
         self.persist.read().delete_custom_food(id);
         self.custom_foods.write().retain(|f| f.id != id);
+    }
+
+    /// Replaces a logged entry's amount, nutrients and hour.
+    pub fn update_entry(mut self, id: i64, hour: u32, item: PlateItem) {
+        let mut log = self.log.write();
+        let Some(entry) = log.iter_mut().find(|e| e.id == id) else {
+            return;
+        };
+        entry.hour = hour;
+        entry.name = item.name;
+        entry.amount = item.amount;
+        entry.nutrients = item.nutrients;
+        entry.food_id = item.food_id;
+        self.persist.read().update_entry(entry);
+        drop(log);
+        self.editing.set(None);
     }
 
     pub fn delete_entry(mut self, id: i64) {

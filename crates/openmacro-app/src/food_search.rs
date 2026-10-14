@@ -189,7 +189,7 @@ pub fn history_counts(log: &[LogEntry]) -> HashMap<String, usize> {
 }
 
 /// Finds a food by its stable id in the user's foods, the samples or the database.
-fn resolve(db: Option<&Database>, custom: &[Food], id: &str) -> Option<FoundFood> {
+pub fn resolve(db: Option<&Database>, custom: &[Food], id: &str) -> Option<FoundFood> {
     if id.starts_with("custom:") {
         return custom.iter().find(|f| f.id == id).map(yours);
     }

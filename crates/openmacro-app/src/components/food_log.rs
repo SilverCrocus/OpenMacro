@@ -153,13 +153,17 @@ fn HourRow(date: NaiveDate, hour: u32, entries: Vec<LogEntry>) -> Element {
 
 #[component]
 fn EntryRow(entry: LogEntry) -> Element {
-    let state = use_context::<AppState>();
+    let mut state = use_context::<AppState>();
     let id = entry.id;
+    let open = entry.clone();
     let kcal = fmt0(entry.nutrients.get_or_zero(Nutrient::Energy));
     let macros = macro_line(&entry.nutrients);
     rsx! {
         div { class: "entry",
-            div { class: "entry-main",
+            button {
+                class: "entry-main entry-open",
+                aria_label: "Edit {entry.name}",
+                onclick: move |_| state.editing.set(Some(open.clone())),
                 div { class: "entry-name", "{entry.name}" }
                 div { class: "entry-sub", "{entry.amount} · {macros}" }
             }

@@ -13,7 +13,7 @@ use crate::back::use_back_handler;
 use crate::food_search::{self, Database, FoundFood};
 use crate::foods::plate_item;
 use crate::keypad::{self, Key};
-use crate::state::{AppState, CoachSnapshot, PlateItem, day_totals};
+use crate::state::{AppState, CoachSnapshot, LogEntry, PlateItem, day_totals};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum Tab {
@@ -307,20 +307,38 @@ fn default_summary(food: &Food) -> String {
 }
 
 #[component]
-fn FoodDetail(food: Food, on_back: EventHandler<()>) -> Element {
+pub(super) fn FoodDetail(
+    food: Food,
+    on_back: EventHandler<()>,
+    /// A logged entry of this food to edit: the keypad starts at its amount
+    /// and `on_save` replaces Log and Add.
+    #[props(default)]
+    editing: Option<LogEntry>,
+    #[props(default)] on_save: Option<EventHandler<PlateItem>>,
+) -> Element {
     let state = use_context::<AppState>();
     use_back_handler(move |_| on_back.call(()));
     let coach = use_context::<Memo<CoachSnapshot>>();
     let food = Rc::new(food);
     let units = keypad::units(&food);
+    let start = editing
+        .as_ref()
+        .and_then(|e| keypad::amount_from_label(&food, &e.amount));
     // Foods without named servings start at 100 g rather than 1 g.
     let default_qty = if food.servings.is_empty() { "100" } else { "1" };
-    let mut qty = use_signal(|| default_qty.to_string());
+    let mut qty = use_signal(|| {
+        start
+            .as_ref()
+            .map_or_else(|| default_qty.to_string(), |(q, _)| q.clone())
+    });
     let mut fresh = use_signal(|| true);
-    let mut unit = use_signal(|| units[0]);
+    let mut unit = use_signal(|| start.as_ref().map_or(units[0], |(_, u)| *u));
 
     let item = keypad::item_for(&food, &qty(), unit());
-    let target = coach.read().target_for(state.plate.read().date);
+    let date = editing
+        .as_ref()
+        .map_or_else(|| state.plate.read().date, |e| e.date);
+    let target = coach.read().target_for(date);
 
     let per = item
         .as_ref()
@@ -414,11 +432,12 @@ fn FoodDetail(food: Food, on_back: EventHandler<()>) -> Element {
     ];
     let add = item.clone();
     let log_now = item.clone();
+    let save = item.clone();
 
     rsx! {
         button { class: "link-btn", onclick: move |_| on_back.call(()),
             Icon { name: "left" }
-            "Results"
+            if editing.is_some() { "Cancel" } else { "Results" }
         }
         div { class: "detail-title-row",
             h2 { class: "detail-title", "{food.name}" }
@@ -512,27 +531,40 @@ fn FoodDetail(food: Food, on_back: EventHandler<()>) -> Element {
                 }
                 button { aria_label: "Decimal point", onclick: move |_| press(Key::Dot), "." }
                 button { aria_label: "0", onclick: move |_| press(Key::Digit(0)), "0" }
-                button {
-                    class: "key-log",
-                    disabled: log_now.is_none(),
-                    onclick: move |_| {
-                        if let Some(item) = log_now.clone() {
-                            state.add_to_plate(item);
-                            state.log_plate();
-                        }
-                    },
-                    "Log"
-                }
-                button {
-                    class: "key-add",
-                    disabled: add.is_none(),
-                    onclick: move |_| {
-                        if let Some(item) = add.clone() {
-                            state.add_to_plate(item);
-                            on_back.call(());
-                        }
-                    },
-                    "Add"
+                if let Some(on_save) = on_save {
+                    button {
+                        class: "key-add key-save",
+                        disabled: save.is_none(),
+                        onclick: move |_| {
+                            if let Some(item) = save.clone() {
+                                on_save.call(item);
+                            }
+                        },
+                        "Save"
+                    }
+                } else {
+                    button {
+                        class: "key-log",
+                        disabled: log_now.is_none(),
+                        onclick: move |_| {
+                            if let Some(item) = log_now.clone() {
+                                state.add_to_plate(item);
+                                state.log_plate();
+                            }
+                        },
+                        "Log"
+                    }
+                    button {
+                        class: "key-add",
+                        disabled: add.is_none(),
+                        onclick: move |_| {
+                            if let Some(item) = add.clone() {
+                                state.add_to_plate(item);
+                                on_back.call(());
+                            }
+                        },
+                        "Add"
+                    }
                 }
             }
         }
@@ -604,7 +636,11 @@ fn QuickAdd() -> Element {
 }
 
 #[component]
-fn NumberField(label: &'static str, unit: &'static str, value: Signal<String>) -> Element {
+pub(super) fn NumberField(
+    label: &'static str,
+    unit: &'static str,
+    value: Signal<String>,
+) -> Element {
     let mut value = value;
     rsx! {
         label { class: "field",

@@ -68,6 +68,23 @@ pub enum Unit {
     Ounces,
 }
 
+/// The quantity and unit behind an amount label made by `amount_label` or
+/// `item_for` (e.g. "1.5 large (75 g)", "120 g", "4 oz (113.4 g)"), so a
+/// logged entry can be edited from where it was.
+pub fn amount_from_label(food: &Food, label: &str) -> Option<(String, Unit)> {
+    let (qty, rest) = label.split_once(' ')?;
+    parse_quantity(qty)?;
+    if rest == "g" {
+        return Some((qty.to_string(), Unit::Grams));
+    }
+    let name = rest.rsplit_once(" (").map_or(rest, |(name, _)| name);
+    if name == "oz" {
+        return Some((qty.to_string(), Unit::Ounces));
+    }
+    let index = food.servings.iter().position(|s| s.label == name)?;
+    Some((qty.to_string(), Unit::Serving(index)))
+}
+
 /// Every unit offered for a food: its servings, then grams and ounces.
 pub fn units(food: &Food) -> Vec<Unit> {
     (0..food.servings.len())
@@ -137,6 +154,26 @@ mod tests {
             fresh = false;
         }
         text
+    }
+
+    #[test]
+    fn labels_read_back_into_keypad_amounts() {
+        let eggs = food_by_id("eggs").unwrap();
+        for (unit, text) in [
+            (Unit::Serving(0), "1.5"),
+            (Unit::Grams, "120"),
+            (Unit::Ounces, "4"),
+        ] {
+            let item = item_for(eggs, text, unit).unwrap();
+            assert_eq!(
+                amount_from_label(eggs, &item.amount),
+                Some((text.to_string(), unit)),
+                "{}",
+                item.amount
+            );
+        }
+        assert_eq!(amount_from_label(eggs, "1 entry"), None);
+        assert_eq!(amount_from_label(eggs, "1 bucket (900 g)"), None);
     }
 
     #[test]

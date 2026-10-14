@@ -599,3 +599,8 @@ a.link-tile:active { border-color: var(--accent); }
 
 .restore-confirm { margin-top: 12px; padding: 12px; border: 1px solid var(--danger); border-radius: 12px; }
 .restore-confirm p { margin-top: 0; }
+
+/* Editing log entries */
+
+.entry-open { background: none; border: none; border-radius: 0; padding: 0; text-align: left; color: inherit; }
+.keypad .key-save { grid-column: span 2; }

@@ -108,6 +108,12 @@ mod native {
             )
         }
 
+        pub fn update_entry(&self, entry: &LogEntry) {
+            if let Some(store) = &self.store {
+                report("save a food entry", store.update_log_entry(entry));
+            }
+        }
+
         pub fn delete_entry(&self, id: i64) {
             if let Some(store) = &self.store {
                 report("delete a food entry", store.delete_log_entry(id));
@@ -319,6 +325,8 @@ mod web {
         pub fn insert_entry(&self, _entry: &LogEntry) -> Option<i64> {
             None
         }
+
+        pub fn update_entry(&self, _entry: &LogEntry) {}
 
         pub fn delete_entry(&self, _id: i64) {}
 

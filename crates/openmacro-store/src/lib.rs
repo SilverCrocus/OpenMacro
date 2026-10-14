@@ -249,6 +249,25 @@ impl Store {
         Ok(self.conn.last_insert_rowid())
     }
 
+    /// Saves changes to an existing entry, matched by its id.
+    pub fn update_log_entry(&self, entry: &LogEntry) -> Result<()> {
+        self.conn.execute(
+            "UPDATE log_entry SET date = ?1, hour = ?2, name = ?3, amount = ?4, nutrients = ?5,
+             food_id = ?6, updated_at = ?7 WHERE id = ?8",
+            params![
+                entry.date.to_string(),
+                entry.hour,
+                entry.name,
+                entry.amount,
+                serde_json::to_string(&entry.nutrients)?,
+                entry.food_id,
+                now(),
+                entry.id
+            ],
+        )?;
+        Ok(())
+    }
+
     pub fn delete_log_entry(&self, id: i64) -> Result<()> {
         let at = now();
         self.conn.execute(
@@ -951,6 +970,19 @@ mod tests {
         // New rows don't collide with restored ids.
         let next = target.insert_log_entry(&entry(14, 8, 100.0)).unwrap();
         assert!(next > restored[0].id);
+    }
+
+    #[test]
+    fn log_entries_can_be_edited() {
+        let store = Store::open_in_memory().unwrap();
+        let id = store.insert_log_entry(&entry(12, 8, 400.0)).unwrap();
+        let mut changed = store.log_entries().unwrap().remove(0);
+        changed.hour = 9;
+        changed.amount = "2 serving".into();
+        changed.nutrients = NutrientProfile::from_macros(800.0, 0.0, 0.0, 0.0);
+        store.update_log_entry(&changed).unwrap();
+        assert_eq!(store.log_entries().unwrap(), vec![changed]);
+        assert_eq!(store.log_entries().unwrap()[0].id, id);
     }
 
     #[test]
