@@ -204,8 +204,11 @@ mod tests {
     #[cfg(not(target_arch = "wasm32"))]
     #[test]
     fn real_database_sections_and_regions() {
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../data/foods-full.db");
-        let Ok(db) = Database::open(&path) else { return };
+        let path =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../data/foods-full.db");
+        let Ok(db) = Database::open(&path) else {
+            return;
+        };
         if db.count().unwrap_or(0) == 0 {
             return;
         }
@@ -215,8 +218,16 @@ mod tests {
         assert!(au.common.iter().any(|f| f.source == "AFCD"));
 
         let us = search(Some(&db), "greek yoghurt", FoodRegion::UnitedStates);
-        assert!(us.common.iter().any(|f| f.food.name.to_lowercase().contains("yogurt")));
-        assert!(attribution(Some(&db)).unwrap().contains("Food Standards Australia New Zealand"));
+        assert!(
+            us.common
+                .iter()
+                .any(|f| f.food.name.to_lowercase().contains("yogurt"))
+        );
+        assert!(
+            attribution(Some(&db))
+                .unwrap()
+                .contains("Food Standards Australia New Zealand")
+        );
     }
 
     #[test]
