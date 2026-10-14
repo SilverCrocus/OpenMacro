@@ -124,6 +124,21 @@ pub fn Dashboard() -> Element {
         )
     });
 
+    // Micronutrients over the last 7 complete days.
+    let goals = super::insight::user_goals(&state, &coach);
+    let (nutrient_rows, nutrient_days) = super::insight::nutrient_rows(
+        &log,
+        &state.day_status.read(),
+        today - Duration::days(7),
+        today,
+        &goals,
+    );
+    let nutrients_known = nutrient_rows.iter().filter(|r| r.coverage > 0.0).count();
+    let nutrients_met = nutrient_rows
+        .iter()
+        .filter(|r| r.coverage > 0.0 && r.standing == openmacro_core::micros::Standing::Met)
+        .count();
+
     // Habits this week.
     let weighed_days = (0..7)
         .filter(|i| {
@@ -248,6 +263,16 @@ pub fn Dashboard() -> Element {
                         div { class: "tile-num", "—" }
                         div { class: "muted", "Weigh in to track progress" }
                     },
+                }
+            }
+            Link { to: super::insight::route("nutrients"), class: "card tile link-tile",
+                h3 { "Nutrients" }
+                if nutrient_days > 0 {
+                    div { class: "tile-num", "{nutrients_met}" span { class: "unit", " of {nutrients_known}" } }
+                    div { class: "muted", "On target, last 7 days" }
+                } else {
+                    div { class: "tile-num", "—" }
+                    div { class: "muted", "Log a few days to see this" }
                 }
             }
             section { class: "card tile",

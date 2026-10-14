@@ -7,13 +7,14 @@ use chrono::{Duration, NaiveDate};
 use dioxus::prelude::*;
 use openmacro_core::KCAL_PER_KG_BODY_MASS;
 use openmacro_core::expenditure::{DayStatus, EstimateStatus};
-use openmacro_core::nutrients::Nutrient;
+use openmacro_core::micros::{Standing, standard_goals, standing};
+use openmacro_core::nutrients::{Nutrient, NutrientGroup};
 
 use super::chart::{Chart, ChartData};
-use super::{Icon, fmt0};
+use super::{Icon, fmt0, fmt1};
 use crate::Route;
 use crate::prefs;
-use crate::state::{AppState, CoachSnapshot, today};
+use crate::state::{AppState, CoachSnapshot, LogEntry, today};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Range {
@@ -76,6 +77,7 @@ enum Metric {
     Balance,
     Macros,
     Goal,
+    Nutrients,
 }
 
 impl Metric {
@@ -86,6 +88,7 @@ impl Metric {
             "energy-balance" => Some(Metric::Balance),
             "macros" => Some(Metric::Macros),
             "goal" => Some(Metric::Goal),
+            "nutrients" => Some(Metric::Nutrients),
             _ => None,
         }
     }
@@ -97,6 +100,7 @@ impl Metric {
             Metric::Balance => "Energy balance",
             Metric::Macros => "Calories and macros",
             Metric::Goal => "Goal progress",
+            Metric::Nutrients => "Nutrients",
         }
     }
 }
@@ -151,6 +155,9 @@ pub fn Insight(metric: String) -> Element {
             },
             Metric::Goal => rsx! {
                 GoalInsight { range }
+            },
+            Metric::Nutrients => rsx! {
+                NutrientsInsight { range }
             },
         }
     }
@@ -795,6 +802,200 @@ fn GoalHistory() -> Element {
                             span { class: "muted small", "Current" }
                         } else {
                             button { class: "chip", onclick: move |_| state.goal.set(goal), "Use" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// One nutrient's average day against its standard goal.
+#[derive(Debug, Clone, PartialEq)]
+pub struct NutrientRow {
+    pub nutrient: Nutrient,
+    pub average: f64,
+    pub goal: openmacro_core::nutrients::NutrientGoal,
+    pub standing: Standing,
+    /// Share of the foods logged in the range that have data for it.
+    pub coverage: f64,
+}
+
+/// Average intake of every nutrient with a standard goal over the complete,
+/// fully logged days in `[start, end)`, and how many such days there were.
+pub fn nutrient_rows(
+    log: &[LogEntry],
+    statuses: &BTreeMap<NaiveDate, DayStatus>,
+    start: NaiveDate,
+    end: NaiveDate,
+    goals: &BTreeMap<Nutrient, openmacro_core::nutrients::NutrientGoal>,
+) -> (Vec<NutrientRow>, usize) {
+    let days: Vec<NaiveDate> = start
+        .iter_days()
+        .take_while(|d| *d < end)
+        .filter(|d| statuses.get(d).copied().unwrap_or_default() != DayStatus::Partial)
+        .filter(|d| log.iter().any(|e| e.date == *d))
+        .collect();
+    let entries: Vec<&LogEntry> = log.iter().filter(|e| days.contains(&e.date)).collect();
+    let rows = goals
+        .iter()
+        .map(|(&nutrient, goal)| {
+            let total: f64 = entries
+                .iter()
+                .map(|e| e.nutrients.get_or_zero(nutrient))
+                .sum();
+            let average = total / days.len().max(1) as f64;
+            let known = entries
+                .iter()
+                .filter(|e| e.nutrients.get(nutrient).is_some())
+                .count();
+            NutrientRow {
+                nutrient,
+                average,
+                goal: *goal,
+                standing: standing(goal, average),
+                coverage: known as f64 / entries.len().max(1) as f64,
+            }
+        })
+        .collect();
+    (rows, days.len())
+}
+
+/// Small amounts with a decimal, larger ones whole: "1.6", "18", "2300".
+fn amount(value: f64) -> String {
+    if value < 10.0 {
+        fmt1(value)
+    } else {
+        fmt0(value)
+    }
+}
+
+/// The standard goals for the user's profile and current targets.
+pub fn user_goals(
+    state: &AppState,
+    coach: &CoachSnapshot,
+) -> BTreeMap<Nutrient, openmacro_core::nutrients::NutrientGoal> {
+    let stats = state.profile.read().stats;
+    standard_goals(stats.sex, stats.age_years, coach.average_target.kcal)
+}
+
+#[component]
+fn NutrientsInsight(range: Range) -> Element {
+    let state = use_context::<AppState>();
+    let coach = use_context::<Memo<CoachSnapshot>>();
+    let coach = coach.read();
+    let today = today();
+    let mut open = use_signal(|| None::<Nutrient>);
+    let log = state.log.read();
+    let Some(first) = log.iter().map(|e| e.date).min() else {
+        return rsx! {
+            EmptyInsight {}
+        };
+    };
+    let start = range.start(today, first);
+    let goals = user_goals(&state, &coach);
+    let (rows, days) = nutrient_rows(&log, &state.day_status.read(), start, today, &goals);
+    // Nutrients none of the logged foods report can't be judged.
+    let known = rows.iter().filter(|r| r.coverage > 0.0).count();
+    let met = rows
+        .iter()
+        .filter(|r| r.coverage > 0.0 && r.standing == Standing::Met)
+        .count();
+    let groups = [
+        (
+            "Carbs and fats",
+            vec![NutrientGroup::Carbohydrate, NutrientGroup::Fat],
+        ),
+        ("Vitamins", vec![NutrientGroup::Vitamin]),
+        ("Minerals", vec![NutrientGroup::Mineral]),
+        ("Other", vec![NutrientGroup::Other]),
+    ];
+    // Top foods for the opened nutrient, over the same days.
+    let sources = open().map(|n| {
+        let mut by_food: BTreeMap<String, f64> = BTreeMap::new();
+        for e in log.iter().filter(|e| e.date >= start && e.date < today) {
+            if let Some(v) = e.nutrients.get(n).filter(|v| *v > 0.0) {
+                *by_food.entry(e.name.clone()).or_default() += v;
+            }
+        }
+        let total: f64 = by_food.values().sum();
+        let mut list: Vec<(String, f64)> = by_food
+            .into_iter()
+            .map(|(name, v)| (name, v / total.max(1e-9)))
+            .collect();
+        list.sort_by(|a, b| b.1.total_cmp(&a.1));
+        list.truncate(5);
+        list
+    });
+
+    rsx! {
+        section { class: "card",
+            div { class: "stat-row",
+                Stat { label: "On target", value: format!("{met} of {known}") }
+                Stat { label: "Days counted", value: days.to_string() }
+            }
+            p { class: "muted small",
+                "Daily averages over complete days, against standard reference intakes for your age and sex. Tap a nutrient for its main sources."
+            }
+        }
+        for (title , members) in groups {
+            section { key: "{title}", class: "card",
+                h2 { "{title}" }
+                ul { class: "nutrient-list",
+                    for row in rows.iter().filter(|r| members.contains(&r.nutrient.group())) {
+                        {
+                            let n = row.nutrient;
+                            let unit = n.unit().symbol();
+                            let reference = row.goal.target.or(row.goal.ceiling).unwrap_or(1.0);
+                            let width = (row.average / reference * 100.0).clamp(0.0, 100.0);
+                            let (label, class) = match row.standing {
+                                _ if row.coverage == 0.0 => ("No data", "none"),
+                                Standing::Low => ("Low", "low"),
+                                Standing::Under => ("Under", "under"),
+                                Standing::Met => ("On target", "met"),
+                                Standing::Over => ("Over", "over"),
+                            };
+                            let goal_text = match (row.goal.target, row.goal.ceiling) {
+                                (Some(t), Some(c)) => format!("{} / {} (max {}) {unit}", amount(row.average), amount(t), amount(c)),
+                                (Some(t), None) => format!("{} / {} {unit}", amount(row.average), amount(t)),
+                                (None, Some(c)) => format!("{} {unit}, max {}", amount(row.average), amount(c)),
+                                (None, None) => format!("{} {unit}", amount(row.average)),
+                            };
+                            let is_open = open() == Some(n);
+                            rsx! {
+                                li { key: "{n.key()}",
+                                    button {
+                                        class: "nutrient-row",
+                                        onclick: move |_| open.set(if is_open { None } else { Some(n) }),
+                                        div { class: "nutrient-head",
+                                            span { class: "nutrient-name", "{n.name()}" }
+                                            span { class: "standing {class}", "{label}" }
+                                        }
+                                        div { class: "bar-track",
+                                            div { class: "bar-fill standing-{class}", style: "width: {width:.0}%" }
+                                        }
+                                        div { class: "muted small", "{goal_text}" }
+                                        if row.coverage > 0.0 && row.coverage < 0.8 {
+                                            div { class: "muted small", "Only {row.coverage * 100.0:.0}% of foods logged have data for this." }
+                                        }
+                                    }
+                                    if is_open {
+                                        if let Some(list) = &sources {
+                                            ul { class: "nutrient-sources",
+                                                if list.is_empty() {
+                                                    li { class: "muted small", "None of the foods logged in this range have it." }
+                                                }
+                                                for (name , share) in list.iter() {
+                                                    li { key: "{name}",
+                                                        span { "{name}" }
+                                                        span { class: "muted", "{share * 100.0:.0}%" }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

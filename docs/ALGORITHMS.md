@@ -232,3 +232,21 @@ Planned:
 - switching individual modules off.
 
 For a **Maintain** goal (rate 0), the rate stays 0 while the trend weight is within ±1.5 % of the goal weight. Outside that band, a gentle ±0.25 %/week correction applies until the trend is back inside (`Goal::effective_rate`). Each check-in records the goal in force, which gives the goal history.
+
+---
+
+## 6. Micronutrient targets (`openmacro-core::micros`)
+
+Standard daily targets come from the US Dietary Reference Intakes (National Academies) for healthy adults, by sex and age:
+- **Target:** the RDA, or the AI where there is no RDA.
+- **Ceiling:** the tolerable upper intake level, where it applies to food. ULs that only cover supplements (magnesium, niacin, folate, vitamin E) are left out.
+- **Energy-scaled:** fibre is 14 g per 1000 kcal of the energy target. Saturated fat and added sugars are capped at 10 % of energy each.
+- **Sodium:** the target is the AI (1500 mg), and the ceiling is the 2300 mg chronic-disease risk level.
+
+The nutrient explorer averages each nutrient over complete days (excluding partial days and today), then rates it:
+- **Low:** under two thirds of the target, or under a floor.
+- **Under:** below the target.
+- **On target:** at or above the target.
+- **Over:** above the ceiling.
+
+Nutrients that none of the logged foods report show as *No data*, because food databases are often incomplete. The explorer also shows what share of logged foods report each nutrient.

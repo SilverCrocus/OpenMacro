@@ -19,6 +19,7 @@ pub mod checkin;
 pub mod expenditure;
 pub mod food;
 pub mod log;
+pub mod micros;
 pub mod nutrients;
 pub mod recipe;
 pub mod targets;

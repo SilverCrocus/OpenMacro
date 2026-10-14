@@ -702,3 +702,23 @@ a.link-tile:active { border-color: var(--accent); }
 .weigh-in-list li { display: flex; align-items: center; gap: 12px; padding: 6px 0; border-top: 1px solid var(--border); font-variant-numeric: tabular-nums; }
 .weigh-in-list li:first-child { border-top: none; }
 .weigh-in-list li span { flex: 1; color: var(--muted); }
+
+/* Nutrients */
+
+.nutrient-list { list-style: none; padding: 0; margin: 0; }
+.nutrient-list > li { border-top: 1px solid var(--border); }
+.nutrient-list > li:first-child { border-top: none; }
+.nutrient-row { width: 100%; text-align: left; background: none; border: none; border-radius: 0; padding: 10px 0; display: flex; flex-direction: column; gap: 6px; color: inherit; }
+.nutrient-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.nutrient-name { font-weight: 500; }
+.standing { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); }
+.standing.low { color: var(--danger); }
+.standing.under { color: var(--fat); }
+.standing.met { color: var(--accent); }
+.standing.over { color: var(--danger); }
+.bar-fill.standing-low, .bar-fill.standing-over { background: var(--danger); }
+.bar-fill.standing-under { background: var(--fat); }
+.bar-fill.standing-met { background: var(--accent); }
+.nutrient-sources { list-style: none; margin: 0 0 10px; padding: 8px 12px; background: var(--surface-2); border-radius: 10px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.nutrient-sources li { display: flex; justify-content: space-between; gap: 8px; }
+.standing.none { color: var(--muted); }
