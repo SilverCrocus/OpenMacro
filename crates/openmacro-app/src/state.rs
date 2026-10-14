@@ -216,6 +216,8 @@ pub struct AppState {
     pub region: Signal<FoodRegion>,
     /// Foods the user created, newest first.
     pub custom_foods: Signal<Vec<Food>>,
+    /// Starred foods, most recent first.
+    pub favorites: Signal<Vec<Food>>,
     /// Ids for entries when nothing is saved (web preview).
     next_id: Signal<i64>,
 }
@@ -236,9 +238,11 @@ impl AppState {
             .and_then(|code| FoodRegion::from_code(&code))
             .unwrap_or_default();
         let custom_foods = persist.custom_foods();
+        let favorites = persist.favorites();
         Self {
             region: Signal::new(region),
             custom_foods: Signal::new(custom_foods),
+            favorites: Signal::new(favorites),
             next_id: Signal::new(next_id_after(&data.log)),
             log: Signal::new(data.log),
             weigh_ins: Signal::new(data.weigh_ins),
@@ -355,6 +359,22 @@ impl AppState {
             });
         self.custom_foods.write().insert(0, food.clone());
         food
+    }
+
+    pub fn is_favorite(&self, id: &str) -> bool {
+        self.favorites.read().iter().any(|f| f.id == id)
+    }
+
+    /// Stars or unstars a food.
+    pub fn toggle_favorite(mut self, food: &Food) {
+        let starred = !self.is_favorite(&food.id);
+        self.persist.read().set_favorite(food, starred);
+        let mut favorites = self.favorites.write();
+        if starred {
+            favorites.insert(0, food.clone());
+        } else {
+            favorites.retain(|f| f.id != food.id);
+        }
     }
 
     pub fn delete_custom_food(mut self, id: &str) {

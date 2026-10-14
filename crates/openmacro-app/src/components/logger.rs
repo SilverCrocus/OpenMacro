@@ -187,7 +187,11 @@ fn SearchTab(query: Signal<String>, on_select: EventHandler<Food>) -> Element {
     let results = if q.trim().is_empty() {
         food_search::Results::default()
     } else {
-        let history = food_search::history_counts(&state.log.read());
+        let mut history = food_search::history_counts(&state.log.read());
+        // Favorites rank above everything you've merely logged before.
+        for favorite in state.favorites.read().iter() {
+            *history.entry(favorite.id.clone()).or_insert(0) += 1_000;
+        }
         food_search::search(db, &state.custom_foods.read(), &history, &q, region)
     };
     let hint = if has_db {
@@ -405,7 +409,24 @@ fn FoodDetail(food: Food, on_back: EventHandler<()>) -> Element {
             Icon { name: "left" }
             "Results"
         }
-        h2 { class: "detail-title", "{food.name}" }
+        div { class: "detail-title-row",
+            h2 { class: "detail-title", "{food.name}" }
+            if !food.id.is_empty() {
+                {
+                    let starred = state.is_favorite(&food.id);
+                    let star_food = food.clone();
+                    rsx! {
+                        button {
+                            class: if starred { "icon-btn star active" } else { "icon-btn star" },
+                            aria_label: if starred { "Remove from favorites" } else { "Add to favorites" },
+                            aria_pressed: "{starred}",
+                            onclick: move |_| state.toggle_favorite(&star_food),
+                            if starred { "★" } else { "☆" }
+                        }
+                    }
+                }
+            }
+        }
         if let Some(brand) = &food.brand {
             p { class: "muted detail-brand", "{brand}" }
         }

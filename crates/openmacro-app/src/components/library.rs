@@ -16,6 +16,7 @@ pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<Stri
     let mut creating = use_signal(|| false);
     let mut new_barcode = new_barcode;
     let foods = state.custom_foods.read().clone();
+    let favorites = state.favorites.read().clone();
 
     if creating() || new_barcode().is_some() {
         return rsx! {
@@ -30,6 +31,27 @@ pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<Stri
     }
 
     rsx! {
+        if !favorites.is_empty() {
+            h3 { class: "section-title", "Favorites" }
+            ul { class: "results",
+                for food in favorites {
+                    {
+                        let open = food.clone();
+                        let origin = food.brand.clone().unwrap_or_default();
+                        rsx! {
+                            li { key: "fav-{food.id}", class: "result",
+                                button { class: "result-main", onclick: move |_| on_select.call(open.clone()),
+                                    div { class: "entry-name", "★ {food.name}" }
+                                    if !origin.is_empty() {
+                                        div { class: "entry-origin", "{origin}" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         div { class: "library-head",
             h3 { class: "section-title", "Your foods" }
             button { class: "chip", onclick: move |_| creating.set(true),

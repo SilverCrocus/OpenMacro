@@ -106,6 +106,14 @@ const MIGRATIONS: &[&str] = &[
     "
     ALTER TABLE log_entry ADD COLUMN food_id TEXT;
 ",
+    "
+    CREATE TABLE favorite (
+        food_id TEXT PRIMARY KEY,
+        food TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        deleted_at TEXT
+    );
+",
 ];
 
 pub struct Store {
@@ -372,6 +380,35 @@ impl Store {
         .collect()
     }
 
+    /// Stars or unstars a food. A copy of the food is kept so the favorite
+    /// still works offline or after the food database changes.
+    pub fn set_favorite(&self, food: &Food, favorite: bool) -> Result<()> {
+        let at = now();
+        if favorite {
+            self.conn.execute(
+                "INSERT INTO favorite (food_id, food, updated_at) VALUES (?1, ?2, ?3)
+                 ON CONFLICT (food_id) DO UPDATE SET food = excluded.food, updated_at = excluded.updated_at, deleted_at = NULL",
+                params![food.id, serde_json::to_string(food)?, at],
+            )?;
+        } else {
+            self.conn.execute(
+                "UPDATE favorite SET deleted_at = ?1, updated_at = ?1 WHERE food_id = ?2",
+                params![at, food.id],
+            )?;
+        }
+        Ok(())
+    }
+
+    /// Favorite foods, most recently starred first.
+    pub fn favorites(&self) -> Result<Vec<Food>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT food FROM favorite WHERE deleted_at IS NULL ORDER BY updated_at DESC",
+        )?;
+        let rows = stmt.query_map([], |r| r.get::<_, String>(0))?;
+        rows.map(|json| Ok(serde_json::from_str::<Food>(&json?)?))
+            .collect()
+    }
+
     /// Replaces the whole food log, weigh-ins and day statuses in one
     /// transaction (used for loading demo data or clearing everything).
     /// Returns the log with its new ids.
@@ -580,6 +617,27 @@ mod tests {
         );
         store.delete_custom_food(id).unwrap();
         assert!(store.custom_foods().unwrap().is_empty());
+    }
+
+    #[test]
+    fn favorites_star_unstar_and_restar() {
+        let store = Store::open_in_memory().unwrap();
+        let food = Food {
+            id: "afcd:F002893".into(),
+            name: "Banana, cavendish, peeled, raw".into(),
+            brand: None,
+            source: FoodSource::Common,
+            barcode: None,
+            per_100g: NutrientProfile::from_macros(93.0, 1.3, 0.3, 23.0),
+            servings: vec![Serving::new("medium", 118.0)],
+        };
+        store.set_favorite(&food, true).unwrap();
+        store.set_favorite(&food, true).unwrap();
+        assert_eq!(store.favorites().unwrap(), vec![food.clone()]);
+        store.set_favorite(&food, false).unwrap();
+        assert!(store.favorites().unwrap().is_empty());
+        store.set_favorite(&food, true).unwrap();
+        assert_eq!(store.favorites().unwrap().len(), 1);
     }
 
     #[test]

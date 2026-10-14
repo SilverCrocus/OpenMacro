@@ -3,6 +3,7 @@
 use crate::nutrients::NutrientProfile;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum FoodSource {
     /// Generic foods (e.g. USDA FoodData Central).
     Common,
@@ -32,6 +33,7 @@ impl Serving {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Food {
     pub id: String,
     pub name: String,

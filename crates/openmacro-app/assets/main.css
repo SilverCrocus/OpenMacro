@@ -512,3 +512,10 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .small-units { margin-bottom: 10px; flex: none; }
 .form-actions { margin-top: 12px; justify-content: flex-end; }
 .form-actions button { flex: 1; padding: 12px; }
+
+/* Favorites */
+
+.detail-title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.detail-title-row .detail-title { margin: 8px 0 12px; }
+.icon-btn.star { font-size: 20px; flex: none; color: var(--muted); }
+.icon-btn.star.active { color: var(--fat); border-color: var(--fat); }

@@ -156,6 +156,19 @@ mod native {
                 .unwrap_or_default()
         }
 
+        pub fn set_favorite(&self, food: &Food, favorite: bool) {
+            if let Some(store) = &self.store {
+                report("save a favorite", store.set_favorite(food, favorite));
+            }
+        }
+
+        pub fn favorites(&self) -> Vec<Food> {
+            self.store
+                .as_ref()
+                .and_then(|s| report("load favorites", s.favorites()))
+                .unwrap_or_default()
+        }
+
         pub fn save_region(&self, code: &str) {
             if let Some(store) = &self.store {
                 report("save the food region", store.set_setting(REGION, &code));
@@ -261,6 +274,12 @@ mod web {
         pub fn delete_custom_food(&self, _id: &str) {}
 
         pub fn custom_foods(&self) -> Vec<Food> {
+            Vec::new()
+        }
+
+        pub fn set_favorite(&self, _food: &Food, _favorite: bool) {}
+
+        pub fn favorites(&self) -> Vec<Food> {
             Vec::new()
         }
 
