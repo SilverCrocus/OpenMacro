@@ -154,5 +154,6 @@ pub fn demo(today: NaiveDate) -> Data {
             floor: Default::default(),
             distribution: WeeklyDistribution::Even,
         },
+        check_ins: Vec::new(),
     }
 }

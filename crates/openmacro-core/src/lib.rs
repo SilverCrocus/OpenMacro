@@ -12,8 +12,10 @@
 //! - [`trend`]: smoothed trend weight from noisy scale weigh-ins.
 //! - [`expenditure`]: adaptive daily energy expenditure from intake and weight change.
 //! - [`targets`]: goal-driven calorie targets, weekly distribution and macro splits.
+//! - [`checkin`]: weekly check-in timing and the days to review before one.
 
 pub mod bmr;
+pub mod checkin;
 pub mod expenditure;
 pub mod food;
 pub mod log;

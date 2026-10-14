@@ -203,15 +203,32 @@ Example: 1752 kcal at 68.4 kg, Moderate, Balanced gives **116 P / 58 F / 190 C**
 
 ---
 
-## 5. Weekly check-in (planned, `openmacro-coach`)
+## 5. Weekly check-in (`openmacro-core::checkin`)
 
-At each check-in, in order:
-1. Snapshot the current expenditure estimate and trend weight.
-2. Run the relevant modules: weigh-in prompt, partial-day review, fasted-day review, and an explanation if expenditure is holding after a logging break.
-3. Recompute the average target and the weekly plan from §4, using the program style:
-   - **Coached:** recompute everything.
-   - **Collaborative:** keep the user's protein and carb/fat preference, recompute calories.
-   - **Manual:** change nothing.
-4. Show a diff of old targets against new ones, then save the new plan, effective from the check-in day.
+Targets are recomputed once a week rather than every day, so the plan stays stable.
+
+**Schedule.** The user picks a check-in weekday (Monday by default).
+- Before the first check-in, the next one is due on the next check-in weekday (today if it's that day).
+- Afterwards, it's due on the first check-in weekday at least **4 days** after the last check-in.
+- So checking in early or late moves the next check-in back onto the chosen weekday. Gaps stay between 4 and 10 days, centred on a week.
+- An early check-in is always allowed.
+
+**Review.** Before the update, the user reviews the days since the last check-in (at most 14, up to yesterday, never before the first logged day). Two kinds of day are flagged:
+- **Nothing logged:** the estimator ignores these unless the user marks them fasted. A fasted day counts as 0 kcal.
+- **Logged below 50 % of that day's target:** probably only partly logged. If the user marks them partial, the estimator ignores them.
+
+Days already marked partial or fasted aren't shown again.
+
+**Update.** A check-in stores the current expenditure estimate and trend weight. Until the next check-in:
+- Targets are derived (§4) from those stored values, not the live estimate.
+- Changing the goal or program still applies straight away, using the stored values.
+- Before the first check-in, targets follow the live estimate.
+
+The update step shows the old and new expenditure and average target. Once confirmed, the new targets become active immediately.
+
+Planned:
+- program styles: **Collaborative** keeps the user's protein and carb/fat preference and recomputes calories; **Manual** changes nothing;
+- a logging-break explanation when the estimate is holding;
+- switching individual modules off.
 
 For a **Maintain** goal, the rate is 0 while the trend weight stays within ±1.5 % of the goal weight. Outside that band, a gentle ±0.25 %/week correction applies until the trend is back inside.

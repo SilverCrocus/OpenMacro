@@ -5,6 +5,7 @@
 //! SQLite, so it keeps everything in memory and every method is a no-op.
 
 use chrono::NaiveDate;
+use openmacro_core::checkin::CheckIn;
 use openmacro_core::expenditure::DayStatus;
 use openmacro_core::food::Food;
 use openmacro_core::log::{Goal, LogEntry, Profile};
@@ -33,6 +34,7 @@ mod native {
     const GOAL: &str = "goal";
     const PROGRAM: &str = "program";
     const REGION: &str = "food_region";
+    const CHECK_IN_DAY: &str = "check_in_day";
 
     pub struct Persistence {
         store: Option<Store>,
@@ -91,6 +93,7 @@ mod native {
                     program: store
                         .setting::<CoachedProgram>(PROGRAM)?
                         .unwrap_or(defaults.program),
+                    check_ins: store.check_ins()?,
                 })
             };
             report("load saved data", load())
@@ -154,6 +157,28 @@ mod native {
                 .as_ref()
                 .and_then(|s| report("load custom foods", s.custom_foods()))
                 .unwrap_or_default()
+        }
+
+        pub fn insert_check_in(&self, check_in: &CheckIn) {
+            if let Some(store) = &self.store {
+                report("save a check-in", store.insert_check_in(check_in));
+            }
+        }
+
+        pub fn save_check_in_day(&self, day: &str) {
+            if let Some(store) = &self.store {
+                report(
+                    "save the check-in day",
+                    store.set_setting(CHECK_IN_DAY, &day),
+                );
+            }
+        }
+
+        pub fn load_check_in_day(&self) -> Option<String> {
+            report(
+                "load the check-in day",
+                self.store.as_ref()?.setting::<String>(CHECK_IN_DAY),
+            )?
         }
 
         pub fn set_favorite(&self, food: &Food, favorite: bool) {
@@ -275,6 +300,14 @@ mod web {
 
         pub fn custom_foods(&self) -> Vec<Food> {
             Vec::new()
+        }
+
+        pub fn insert_check_in(&self, _check_in: &CheckIn) {}
+
+        pub fn save_check_in_day(&self, _day: &str) {}
+
+        pub fn load_check_in_day(&self) -> Option<String> {
+            None
         }
 
         pub fn set_favorite(&self, _food: &Food, _favorite: bool) {}

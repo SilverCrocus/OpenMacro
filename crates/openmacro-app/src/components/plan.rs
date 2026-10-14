@@ -57,6 +57,15 @@ pub fn Plan() -> Element {
         EstimateStatus::Holding => "holding: log food and weigh in to resume updates",
         EstimateStatus::Updated => "from your logged intake and weight trend",
     };
+    let check_in_day = (state.check_in_day)();
+    // Targets come from the last check-in's expenditure; say so, and show
+    // what a check-in today would change.
+    let locked = coach
+        .last_check_in
+        .as_ref()
+        .map(|c| (c.expenditure_kcal, c.date.format("%-d %B").to_string()));
+    let basis_kcal = locked.as_ref().map_or(expenditure, |(kcal, _)| *kcal);
+    let live_change = coach.live_target.kcal - coach.average_target.kcal;
     let floor_note = if coach.average_target.limited_by_floor {
         " Your goal rate would go below your calorie floor, so the target is held at the floor; consider a slower rate."
     } else {
@@ -67,6 +76,7 @@ pub fn Plan() -> Element {
         header { class: "page-header",
             h1 { "Plan" }
         }
+        super::checkin::CheckInCard { only_when_due: false }
         section { class: "card",
             h2 { "Goal" }
             div { class: "stat-row",
@@ -179,6 +189,17 @@ pub fn Plan() -> Element {
                     "Higher on some days"
                 }
             }
+            Choice { label: "Check-in day", even: true,
+                for (day , letter) in WEEKDAYS {
+                    button {
+                        key: "{day}",
+                        class: if check_in_day == day { "active" },
+                        aria_label: "Check in on {day}",
+                        onclick: move |_| state.check_in_day.set(day),
+                        "{letter}"
+                    }
+                }
+            }
             if shifting {
                 div { class: "weekday-picker",
                     for (day , letter) in WEEKDAYS {
@@ -232,8 +253,12 @@ pub fn Plan() -> Element {
             h2 { "How these targets were set" }
             ol { class: "explain",
                 li {
-                    strong { "Expenditure: {fmt0(expenditure)} kcal/day. " }
-                    "Estimated {status}."
+                    strong { "Expenditure: {fmt0(basis_kcal)} kcal/day. " }
+                    if let Some((_, date)) = &locked {
+                        "Set at your check-in on {date}. The current estimate is {fmt0(expenditure)} kcal/day, {status}."
+                    } else {
+                        "Estimated {status}."
+                    }
                 }
                 li {
                     strong { "Average target: {fmt0(coach.average_target.kcal)} kcal/day. " }
@@ -254,19 +279,26 @@ pub fn Plan() -> Element {
                     "The remaining calories are split according to your diet type."
                 }
             }
-            p { class: "muted small",
-                "Preview: targets update live as you log. Weekly check-ins that lock in targets are coming next."
+            if locked.is_none() {
+                p { class: "muted small",
+                    "Until your first check-in, targets follow the live estimate. A check-in fixes them for the week."
+                }
+            } else if live_change.abs() >= 1.0 {
+                p { class: "muted small",
+                    "Checking in today would change your average target by {live_change:+.0} kcal."
+                }
             }
         }
     }
 }
 
+/// A labelled segmented control; `even` gives every option the same width.
 #[component]
-fn Choice(label: &'static str, children: Element) -> Element {
+fn Choice(label: &'static str, #[props(default)] even: bool, children: Element) -> Element {
     rsx! {
         div { class: "choice",
             span { class: "choice-label", "{label}" }
-            div { class: "segmented", {children} }
+            div { class: if even { "segmented even" } else { "segmented" }, {children} }
         }
     }
 }

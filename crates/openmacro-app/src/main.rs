@@ -48,6 +48,12 @@ fn App() -> Element {
     let foods = use_resource(food_search::open_bundled);
     use_context_provider(|| foods);
 
+    // Save the check-in day whenever it changes.
+    use_effect(move || {
+        let day = state.check_in_day.read().to_string();
+        state.persist.peek().save_check_in_day(&day);
+    });
+
     // Save the food region whenever it changes.
     use_effect(move || {
         let code = state.region.read().code();

@@ -148,6 +148,7 @@ pub enum DietType {
 pub const KETO_CARBS_G: f64 = 30.0;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MacroTargets {
     pub kcal: f64,
     pub protein_g: f64,

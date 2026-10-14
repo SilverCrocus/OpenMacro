@@ -19,13 +19,13 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | ✅ Recent foods | Log entries remember their food; search shows recent foods when empty and ranks foods you log often higher |
 | ✅ Favorites | Star foods on their detail page; favorites appear in the Library and rank first in search |
 | ✅ Barcode scanning | Live camera scanning (EAN/UPC, decoded in Rust with rxing), torch, manual entry; local database first, then Open Food Facts online |
+| ✅ Weekly check-in | Check-in day setting, due card on Plan and Dashboard. Three steps: weigh-in, review of unlogged and partly logged days, then new targets. Targets stay fixed until the next check-in |
 
 ## Next
 
 | # | Feature | Plan |
 |---|---|---|
-| 1 | ⏭ **Weekly check-in** | Targets lock in at a weekly check-in on a chosen day. The check-in steps through weigh-in, partial days, fasted days and program update. |
-| 2 | ⏭ **Data export** | CSV export of the food log, weigh-ins, expenditure and trend. |
+| 1 | ⏭ **Data export** | CSV export of the food log, weigh-ins, expenditure and trend. |
 
 ## Later
 

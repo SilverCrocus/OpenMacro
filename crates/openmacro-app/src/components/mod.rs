@@ -1,5 +1,6 @@
 //! Screens and shared UI pieces.
 
+mod checkin;
 mod dashboard;
 mod food_log;
 mod library;
@@ -21,12 +22,14 @@ use openmacro_core::targets::MacroTargets;
 
 use crate::Route;
 use crate::state::{AppState, current_hour};
+use checkin::CheckInSheet;
 use logger::Logger;
 
 #[component]
 pub fn Shell() -> Element {
     let state = use_context::<AppState>();
     let plate_open = state.plate.read().open;
+    let check_in_open = (state.check_in_open)();
 
     // Each tab starts at the top instead of inheriting the previous tab's scroll position.
     let route = use_route::<Route>();
@@ -40,6 +43,9 @@ pub fn Shell() -> Element {
             NavBar {}
             if plate_open {
                 Logger {}
+            }
+            if check_in_open {
+                CheckInSheet {}
             }
         }
     }

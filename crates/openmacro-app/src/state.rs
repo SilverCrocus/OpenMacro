@@ -3,9 +3,10 @@
 
 use std::collections::BTreeMap;
 
-use chrono::{Datelike, Duration, Local, NaiveDate, Timelike};
+use chrono::{Datelike, Duration, Local, NaiveDate, Timelike, Weekday};
 use dioxus::prelude::*;
 use openmacro_core::bmr::{self, ActivityLevel, BmrEquation, BodyStats, Sex};
+use openmacro_core::checkin::CheckIn;
 use openmacro_core::expenditure::{
     self, DayRecord, DayStatus, EstimateStatus, ExpenditureConfig, ExpenditurePoint,
 };
@@ -93,6 +94,8 @@ pub struct Data {
     pub profile: Profile,
     pub goal: Goal,
     pub program: CoachedProgram,
+    /// Completed check-ins, oldest first.
+    pub check_ins: Vec<CheckIn>,
 }
 
 impl Data {
@@ -113,19 +116,29 @@ impl Data {
                 floor: Default::default(),
                 distribution: Default::default(),
             },
+            check_ins: Vec::new(),
         }
     }
 }
 
 /// Expenditure, trend and targets derived from [`Data`].
+///
+/// A check-in locks the expenditure estimate and trend weight that targets
+/// are based on, so targets don't drift day to day. Goal and program changes
+/// still apply straight away, using those locked values.
 #[derive(Debug, Clone, PartialEq)]
 pub struct CoachSnapshot {
     pub prior_kcal: f64,
     pub expenditure: Vec<ExpenditurePoint>,
     pub trend: Vec<TrendPoint>,
+    /// Active targets: from the last check-in's basis, or live before the first.
     pub average_target: CalorieTarget,
     /// Monday through Sunday.
     pub week: [MacroTargets; 7],
+    /// What a check-in today would set.
+    pub live_target: CalorieTarget,
+    pub live_week: [MacroTargets; 7],
+    pub last_check_in: Option<CheckIn>,
 }
 
 impl CoachSnapshot {
@@ -140,13 +153,27 @@ impl CoachSnapshot {
         );
         let trend = trend::ema_trend(&data.weigh_ins, TrendSmoothing::Standard.alpha(), today);
 
-        let kcal = expenditure.last().map_or(prior_kcal, |e| e.kcal);
-        let weight = trend.last().map_or(profile.stats.weight_kg, |t| t.trend_kg);
+        let live_kcal = expenditure.last().map_or(prior_kcal, |e| e.kcal);
+        let live_weight = trend.last().map_or(profile.stats.weight_kg, |t| t.trend_kg);
+        let last_check_in = data
+            .check_ins
+            .iter()
+            .filter(|c| c.date <= today)
+            .max_by_key(|c| c.date)
+            .cloned();
+        let (kcal, weight) = match &last_check_in {
+            Some(c) => (c.expenditure_kcal, c.trend_kg.unwrap_or(live_weight)),
+            None => (live_kcal, live_weight),
+        };
         let rate = data.goal.rate_pct_per_week;
+        let floor = data.program.floor;
         Self {
             prior_kcal,
-            average_target: targets::average_daily_target(kcal, weight, rate, data.program.floor),
+            average_target: targets::average_daily_target(kcal, weight, rate, floor),
             week: targets::weekly_plan(&data.program, kcal, weight, rate),
+            live_target: targets::average_daily_target(live_kcal, live_weight, rate, floor),
+            live_week: targets::weekly_plan(&data.program, live_kcal, live_weight, rate),
+            last_check_in,
             expenditure,
             trend,
         }
@@ -218,6 +245,11 @@ pub struct AppState {
     pub custom_foods: Signal<Vec<Food>>,
     /// Starred foods, most recent first.
     pub favorites: Signal<Vec<Food>>,
+    pub check_ins: Signal<Vec<CheckIn>>,
+    /// Weekday the weekly check-in falls on.
+    pub check_in_day: Signal<Weekday>,
+    /// Whether the check-in flow is showing.
+    pub check_in_open: Signal<bool>,
     /// Ids for entries when nothing is saved (web preview).
     next_id: Signal<i64>,
 }
@@ -239,10 +271,17 @@ impl AppState {
             .unwrap_or_default();
         let custom_foods = persist.custom_foods();
         let favorites = persist.favorites();
+        let check_in_day = persist
+            .load_check_in_day()
+            .and_then(|day| day.parse().ok())
+            .unwrap_or(Weekday::Mon);
         Self {
             region: Signal::new(region),
             custom_foods: Signal::new(custom_foods),
             favorites: Signal::new(favorites),
+            check_ins: Signal::new(data.check_ins.clone()),
+            check_in_day: Signal::new(check_in_day),
+            check_in_open: Signal::new(false),
             next_id: Signal::new(next_id_after(&data.log)),
             log: Signal::new(data.log),
             weigh_ins: Signal::new(data.weigh_ins),
@@ -264,6 +303,7 @@ impl AppState {
             profile: *self.profile.read(),
             goal: *self.goal.read(),
             program: self.program.read().clone(),
+            check_ins: self.check_ins.read().clone(),
         }
     }
 
@@ -284,6 +324,7 @@ impl AppState {
         self.profile.set(data.profile);
         self.goal.set(data.goal);
         self.program.set(data.program);
+        self.check_ins.set(data.check_ins);
         self.plate.set(Plate::closed(today()));
         self.selected_date.set(today());
     }
@@ -361,6 +402,13 @@ impl AppState {
         food
     }
 
+    /// Records a completed check-in; its targets become the active ones.
+    pub fn add_check_in(mut self, check_in: CheckIn) {
+        self.persist.read().insert_check_in(&check_in);
+        self.check_ins.write().push(check_in);
+        self.check_in_open.set(false);
+    }
+
     pub fn is_favorite(&self, id: &str) -> bool {
         self.favorites.read().iter().any(|f| f.id == id)
     }
@@ -431,6 +479,31 @@ mod tests {
         assert_eq!(snapshot.expenditure_kcal(), snapshot.prior_kcal);
         assert_eq!(snapshot.expenditure_status(), EstimateStatus::Initial);
         assert_eq!(snapshot.average_target.kcal, snapshot.prior_kcal);
+    }
+
+    #[test]
+    fn check_in_locks_the_basis() {
+        let mut data = crate::seed::demo(date());
+        let live = CoachSnapshot::compute(&data, date());
+        // Before any check-in, targets follow the live estimate.
+        assert_eq!(live.week, live.live_week);
+
+        data.check_ins.push(CheckIn {
+            date: date() - chrono::Duration::days(3),
+            expenditure_kcal: 2000.0,
+            trend_kg: Some(72.0),
+            week: Vec::new(),
+        });
+        let locked = CoachSnapshot::compute(&data, date());
+        let expected =
+            targets::weekly_plan(&data.program, 2000.0, 72.0, data.goal.rate_pct_per_week);
+        assert_eq!(locked.week, expected);
+        assert_eq!(locked.live_week, live.live_week);
+
+        // A goal change applies straight away, still from the locked basis.
+        data.goal.rate_pct_per_week = 0.0;
+        let maintain = CoachSnapshot::compute(&data, date());
+        assert_eq!(maintain.average_target.kcal, 2000.0);
     }
 
     #[test]

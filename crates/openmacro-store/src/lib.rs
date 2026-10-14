@@ -10,6 +10,7 @@ use std::collections::BTreeMap;
 use std::path::Path;
 
 use chrono::{NaiveDate, Utc};
+use openmacro_core::checkin::CheckIn;
 use openmacro_core::expenditure::DayStatus;
 use openmacro_core::food::{Food, FoodSource, Serving};
 use openmacro_core::log::LogEntry;
@@ -110,6 +111,15 @@ const MIGRATIONS: &[&str] = &[
     CREATE TABLE favorite (
         food_id TEXT PRIMARY KEY,
         food TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        deleted_at TEXT
+    );
+",
+    "
+    CREATE TABLE check_in (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT NOT NULL,
+        data TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         deleted_at TEXT
     );
@@ -409,6 +419,28 @@ impl Store {
             .collect()
     }
 
+    pub fn insert_check_in(&self, check_in: &CheckIn) -> Result<()> {
+        self.conn.execute(
+            "INSERT INTO check_in (date, data, updated_at) VALUES (?1, ?2, ?3)",
+            params![
+                check_in.date.to_string(),
+                serde_json::to_string(check_in)?,
+                now()
+            ],
+        )?;
+        Ok(())
+    }
+
+    /// Every check-in, oldest first.
+    pub fn check_ins(&self) -> Result<Vec<CheckIn>> {
+        let mut stmt = self
+            .conn
+            .prepare("SELECT data FROM check_in WHERE deleted_at IS NULL ORDER BY date, id")?;
+        let rows = stmt.query_map([], |r| r.get::<_, String>(0))?;
+        rows.map(|json| Ok(serde_json::from_str::<CheckIn>(&json?)?))
+            .collect()
+    }
+
     /// Replaces the whole food log, weigh-ins and day statuses in one
     /// transaction (used for loading demo data or clearing everything).
     /// Returns the log with its new ids.
@@ -419,7 +451,9 @@ impl Store {
         statuses: &BTreeMap<NaiveDate, DayStatus>,
     ) -> Result<Vec<LogEntry>> {
         let tx = self.conn.transaction()?;
-        tx.execute_batch("DELETE FROM log_entry; DELETE FROM weigh_in; DELETE FROM day_status;")?;
+        tx.execute_batch(
+            "DELETE FROM log_entry; DELETE FROM weigh_in; DELETE FROM day_status; DELETE FROM check_in;",
+        )?;
         let at = now();
         let mut stored = Vec::with_capacity(log.len());
         {
@@ -638,6 +672,33 @@ mod tests {
         assert!(store.favorites().unwrap().is_empty());
         store.set_favorite(&food, true).unwrap();
         assert_eq!(store.favorites().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn check_ins_round_trip_in_date_order() {
+        use openmacro_core::targets::MacroTargets;
+        let store = Store::open_in_memory().unwrap();
+        let targets = MacroTargets {
+            kcal: 1800.0,
+            protein_g: 120.0,
+            fat_g: 60.0,
+            carbs_g: 190.0,
+        };
+        let later = CheckIn {
+            date: date(19),
+            expenditure_kcal: 2250.0,
+            trend_kg: Some(70.1),
+            week: vec![targets; 7],
+        };
+        let earlier = CheckIn {
+            date: date(12),
+            expenditure_kcal: 2300.0,
+            trend_kg: None,
+            week: vec![targets; 7],
+        };
+        store.insert_check_in(&later).unwrap();
+        store.insert_check_in(&earlier).unwrap();
+        assert_eq!(store.check_ins().unwrap(), vec![earlier, later]);
     }
 
     #[test]

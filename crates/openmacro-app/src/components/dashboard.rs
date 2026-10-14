@@ -105,6 +105,9 @@ pub fn Dashboard() -> Element {
             h1 { "Dashboard" }
         }
         super::update::UpdateCard {}
+        if !empty {
+            super::checkin::CheckInCard { only_when_due: true }
+        }
         if empty {
             section { class: "card welcome",
                 h2 { "Welcome to OpenMacro" }
