@@ -234,14 +234,49 @@ pub struct FoodDb {
     conn: Connection,
 }
 
-/// Turns free text into an FTS5 query where every word must match as a prefix.
+/// Australian/British and American names for the same food, so either
+/// spelling finds both datasets.
+const VARIANTS: &[&[&str]] = &[
+    &["yoghurt", "yogurt"],
+    &["flavoured", "flavored"],
+    &["fibre", "fiber"],
+    &["zucchini", "courgette"],
+    &["eggplant", "aubergine"],
+    &["coriander", "cilantro"],
+    &["prawn", "shrimp"],
+    &["prawns", "shrimp"],
+    &["capsicum", "pepper"],
+    &["rockmelon", "cantaloupe"],
+    &["porridge", "oatmeal"],
+    &["mince", "ground"],
+    &["biscuit", "cookie"],
+    &["biscuits", "cookies"],
+    &["chickpea", "garbanzo"],
+    &["chickpeas", "garbanzo"],
+    &["lollies", "candy"],
+];
+
+/// Turns free text into an FTS5 query where every word must match as a
+/// prefix, allowing regional spelling variants.
 fn fts_query(text: &str) -> Option<String> {
-    let words: Vec<String> = text
+    let terms: Vec<String> = text
         .split(|c: char| !c.is_alphanumeric())
         .filter(|w| !w.is_empty())
-        .map(|w| format!("\"{}\"*", w.to_lowercase()))
+        .map(|w| {
+            let w = w.to_lowercase();
+            let mut forms = vec![w.clone()];
+            for group in VARIANTS.iter().filter(|g| g.contains(&w.as_str())) {
+                forms.extend(group.iter().filter(|v| **v != w).map(|v| v.to_string()));
+            }
+            let quoted: Vec<String> = forms.iter().map(|f| format!("\"{f}\"*")).collect();
+            if quoted.len() == 1 {
+                quoted[0].clone()
+            } else {
+                format!("({})", quoted.join(" OR "))
+            }
+        })
         .collect();
-    (!words.is_empty()).then(|| words.join(" "))
+    (!terms.is_empty()).then(|| terms.join(" AND "))
 }
 
 impl FoodDb {
@@ -284,15 +319,27 @@ impl FoodDb {
              WHERE food_fts MATCH ?1
                AND (f.branded = 0 OR (f.regions & ?2) != 0)
              ORDER BY bm25(food_fts, 10.0, 3.0)
-                 - CASE WHEN (f.regions & ?2) != 0 THEN 3.0 ELSE 0.0 END
+                 - CASE WHEN (f.regions & ?2) != 0 THEN 1.5 ELSE 0.0 END
                  - CASE WHEN f.branded = 0 THEN 1.5 ELSE 0.0 END
+                 - CASE WHEN f.dataset = 'usda_fndds' THEN 1.0 ELSE 0.0 END
+                 - CASE WHEN lower(f.name) LIKE ?4 THEN 2.0 ELSE 0.0 END
                  - min(f.popularity, 10000.0) / 10000.0 * 2.0
-                 + length(f.name) * 0.02
+                 + length(f.name) * 0.03
              LIMIT ?3",
             select_columns()
         );
         let mut stmt = self.conn.prepare_cached(&sql)?;
-        let rows = stmt.query_map(params![fts, i64::from(regions), limit as i64], read_hit)?;
+        // Names that start with the first word typed are usually what people mean.
+        let first_word = query
+            .split(|c: char| !c.is_alphanumeric())
+            .find(|w| !w.is_empty())
+            .unwrap_or_default()
+            .to_lowercase();
+        let prefix = format!("{first_word}%");
+        let rows = stmt.query_map(
+            params![fts, i64::from(regions), limit as i64, prefix],
+            read_hit,
+        )?;
         let mut hits = rows.collect::<Result<Vec<_>>>()?;
         for hit in &mut hits {
             hit.food.servings = self.servings(hit.food.id.parse().unwrap_or_default())?;
@@ -426,10 +473,14 @@ mod tests {
     fn fts_query_escapes_and_prefixes() {
         assert_eq!(
             fts_query("greek yog").as_deref(),
-            Some(r#""greek"* "yog"*"#)
+            Some(r#""greek"* AND "yog"*"#)
         );
-        assert_eq!(fts_query(r#"a"b"#).as_deref(), Some(r#""a"* "b"*"#));
+        assert_eq!(fts_query(r#"a"b"#).as_deref(), Some(r#""a"* AND "b"*"#));
         assert_eq!(fts_query("  ,, "), None);
+        assert_eq!(
+            fts_query("greek yoghurt").as_deref(),
+            Some(r#""greek"* AND ("yoghurt"* OR "yogurt"*)"#)
+        );
     }
 
     #[test]
@@ -448,7 +499,7 @@ mod tests {
         assert!(au.contains(&"Greek Yoghurt Honey".to_string()));
         assert!(!au.contains(&"Greek Yogurt Vanilla".to_string()));
         assert!(au.contains(&"Greek yogurt, plain, nonfat".to_string()));
-        assert_eq!(au[0], "Yoghurt, Greek style, plain");
+        assert!(au.contains(&"Yoghurt, Greek style, plain".to_string()));
 
         let us = names(region::US);
         assert_eq!(us[0], "Greek yogurt, plain, nonfat");

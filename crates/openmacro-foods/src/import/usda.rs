@@ -158,6 +158,20 @@ pub fn import(
         }
     }
 
+    // Some releases (FNDDS 2024) key food_nutrient by the legacy 3-digit
+    // nutrient number instead of the nutrient id; translate those.
+    let mut by_number: HashMap<u32, u32> = HashMap::new();
+    if let Ok(mut rdr) = csv_reader(&dir.join("nutrient.csv")) {
+        let h = rdr.headers()?.clone();
+        let (c_id, c_nbr) = (column(&h, "id")?, column(&h, "nutrient_nbr")?);
+        for row in rdr.records().flatten() {
+            let nbr = row[c_nbr].parse::<f64>().ok().map(|n| n as u32);
+            if let (Ok(id), Some(nbr)) = (row[c_id].parse::<u32>(), nbr) {
+                by_number.insert(nbr, id);
+            }
+        }
+    }
+
     // Nutrient amounts per 100 g.
     let wanted = wanted_ids();
     let mut amounts: HashMap<u32, HashMap<u32, f64>> = HashMap::new();
@@ -176,6 +190,12 @@ pub fn import(
             row[c_amt].parse::<f64>(),
         ) else {
             continue;
+        };
+        // Ids start at 1000; anything lower is a legacy nutrient number.
+        let nutrient = if nutrient < 1000 {
+            by_number.get(&nutrient).copied().unwrap_or(nutrient)
+        } else {
+            nutrient
         };
         if foods.contains_key(&food) && wanted.contains(&nutrient) {
             amounts.entry(food).or_default().insert(nutrient, amount);
