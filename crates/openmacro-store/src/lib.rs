@@ -632,7 +632,8 @@ impl Store {
     }
 
     /// Replaces the whole food log, weigh-ins and day statuses in one
-    /// transaction (used for loading demo data or clearing everything).
+    /// transaction, and removes check-ins and measurements (used for loading
+    /// demo data or clearing history). Foods, favorites and settings stay.
     /// Returns the log with its new ids.
     pub fn replace_history(
         &mut self,
@@ -642,7 +643,8 @@ impl Store {
     ) -> Result<Vec<LogEntry>> {
         let tx = self.conn.transaction()?;
         tx.execute_batch(
-            "DELETE FROM log_entry; DELETE FROM weigh_in; DELETE FROM day_status; DELETE FROM check_in;",
+            "DELETE FROM log_entry; DELETE FROM weigh_in; DELETE FROM day_status;
+             DELETE FROM check_in; DELETE FROM measurement;",
         )?;
         let at = now();
         let mut stored = Vec::with_capacity(log.len());

@@ -494,6 +494,8 @@ impl AppState {
         self.goal.set(data.goal);
         self.program.set(data.program);
         self.check_ins.set(data.check_ins);
+        // Measurements are history too.
+        self.measurements.set(Vec::new());
         self.plate.set(Plate::closed(today()));
         self.selected_date.set(today());
     }

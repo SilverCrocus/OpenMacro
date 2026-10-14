@@ -177,6 +177,11 @@ pub fn More() -> Element {
                     button { onclick: move |_| confirm_clear.set(true), "Clear all data" }
                 }
             }
+            if confirm_clear() {
+                p { class: "muted small",
+                    "This deletes your food log, weigh-ins, measurements and check-ins. Your own foods, recipes, favorites and settings stay. Save a backup first if you might want them back."
+                }
+            }
             BackupData {}
             ExportData {}
         }
