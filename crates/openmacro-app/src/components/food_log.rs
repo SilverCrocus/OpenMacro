@@ -6,7 +6,7 @@ use openmacro_core::expenditure::DayStatus;
 use openmacro_core::nutrients::Nutrient;
 
 use super::{Icon, MacroStrip, Ring, fmt0, hour_label, macro_line};
-use crate::state::{AppState, CoachSnapshot, LogEntry, day_totals, today, week_start};
+use crate::state::{AppState, CoachSnapshot, Copying, LogEntry, day_totals, today, week_start};
 
 const FIRST_HOUR: u32 = 6;
 const LAST_HOUR: u32 = 23;
@@ -93,6 +93,28 @@ pub fn FoodLog() -> Element {
                     "{label}"
                 }
             }
+            if !entries.is_empty() {
+                {
+                    let day = entries.clone();
+                    rsx! {
+                        button {
+                            class: "chip copy-day",
+                            onclick: move |_| {
+                                state
+                                    .copying
+                                    .set(
+                                        Some(Copying {
+                                            entries: day.clone(),
+                                            whole_day: true,
+                                        }),
+                                    )
+                            },
+                            Icon { name: "copy" }
+                            "Copy day"
+                        }
+                    }
+                }
+            }
         }
         div { class: "timeline",
             for hour in first_hour..=LAST_HOUR {
@@ -122,7 +144,8 @@ fn day_title(date: NaiveDate) -> String {
 
 #[component]
 fn HourRow(date: NaiveDate, hour: u32, entries: Vec<LogEntry>) -> Element {
-    let state = use_context::<AppState>();
+    let mut state = use_context::<AppState>();
+    let meal = entries.clone();
     let label = hour_label(hour);
     let class = if entries.is_empty() {
         "hour-row"
@@ -138,6 +161,23 @@ fn HourRow(date: NaiveDate, hour: u32, entries: Vec<LogEntry>) -> Element {
                     aria_label: "Add food at {label}",
                     onclick: move |_| state.open_plate(date, hour),
                     Icon { name: "plus" }
+                }
+                if !meal.is_empty() {
+                    button {
+                        class: "hour-add hour-copy",
+                        aria_label: "Copy food at {label}",
+                        onclick: move |_| {
+                            state
+                                .copying
+                                .set(
+                                    Some(Copying {
+                                        entries: meal.clone(),
+                                        whole_day: false,
+                                    }),
+                                )
+                        },
+                        Icon { name: "copy" }
+                    }
                 }
             }
             if class != "hour-row" {

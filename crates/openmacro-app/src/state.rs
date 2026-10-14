@@ -228,6 +228,14 @@ fn day_records(data: &Data, today: NaiveDate) -> Vec<DayRecord> {
         .collect()
 }
 
+/// Entries picked for copying to another day.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Copying {
+    pub entries: Vec<LogEntry>,
+    /// True when copying a whole day, which keeps each entry's time.
+    pub whole_day: bool,
+}
+
 /// Everything saved on the device, read in one go.
 struct Saved {
     data: Data,
@@ -286,6 +294,8 @@ pub struct AppState {
     pub check_in_open: Signal<bool>,
     /// The logged entry being edited, if any.
     pub editing: Signal<Option<LogEntry>>,
+    /// Entries chosen to copy to another day, if the copy sheet is open.
+    pub copying: Signal<Option<Copying>>,
     /// Recipes' ingredients, by food id.
     pub recipes: Signal<BTreeMap<String, Recipe>>,
     /// The recipe whose ingredients are on the plate for editing, if any.
@@ -318,6 +328,7 @@ impl AppState {
             check_in_day: Signal::new(check_in_day),
             check_in_open: Signal::new(false),
             editing: Signal::new(None),
+            copying: Signal::new(None),
             recipes: Signal::new(recipes),
             recipe_edit: Signal::new(None),
             next_id: Signal::new(next_id_after(&data.log)),
@@ -353,6 +364,7 @@ impl AppState {
         self.recipe_edit.set(None);
         self.check_in_open.set(false);
         self.editing.set(None);
+        self.copying.set(None);
         self.plate.set(Plate::closed(today()));
         self.selected_date.set(today());
     }
@@ -423,31 +435,52 @@ impl AppState {
             plate.open = false;
             (plate.date, plate.hour, std::mem::take(&mut plate.items))
         };
-        let entries: Vec<LogEntry> = items
+        let entries = items
             .into_iter()
-            .map(|item| {
-                let mut entry = LogEntry {
-                    id: 0,
-                    date,
-                    hour,
-                    name: item.name,
-                    amount: item.amount,
-                    nutrients: item.nutrients,
-                    food_id: item.food_id,
-                };
-                entry.id = match self.persist.read().insert_entry(&entry) {
-                    Some(id) => id,
-                    None => {
-                        let id = *self.next_id.peek();
-                        self.next_id.set(id + 1);
-                        id
-                    }
-                };
-                entry
+            .map(|item| LogEntry {
+                id: 0,
+                date,
+                hour,
+                name: item.name,
+                amount: item.amount,
+                nutrients: item.nutrients,
+                food_id: item.food_id,
             })
             .collect();
-        self.log.write().extend(entries);
+        self.insert_entries(entries);
         self.selected_date.set(date);
+    }
+
+    /// Logs copies of `entries` on `date`, at `hour` or at their own times,
+    /// and shows that day.
+    pub fn copy_entries(mut self, entries: &[LogEntry], date: NaiveDate, hour: Option<u32>) {
+        let copies = entries
+            .iter()
+            .map(|e| LogEntry {
+                id: 0,
+                date,
+                hour: hour.unwrap_or(e.hour),
+                ..e.clone()
+            })
+            .collect();
+        self.insert_entries(copies);
+        self.copying.set(None);
+        self.selected_date.set(date);
+    }
+
+    /// Saves new entries, giving each its id, and adds them to the log.
+    fn insert_entries(mut self, mut entries: Vec<LogEntry>) {
+        for entry in &mut entries {
+            entry.id = match self.persist.read().insert_entry(entry) {
+                Some(id) => id,
+                None => {
+                    let id = *self.next_id.peek();
+                    self.next_id.set(id + 1);
+                    id
+                }
+            };
+        }
+        self.log.write().extend(entries);
     }
 
     /// Saves a food the user created and returns it with its id.

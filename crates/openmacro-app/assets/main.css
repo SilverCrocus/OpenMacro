@@ -604,3 +604,14 @@ a.link-tile:active { border-color: var(--accent); }
 
 .entry-open { background: none; border: none; border-radius: 0; padding: 0; text-align: left; color: inherit; }
 .keypad .key-save { grid-column: span 2; }
+
+/* Copying meals */
+
+.sheet.sheet-short { height: auto; max-height: calc(100% - 24px - env(safe-area-inset-top)); }
+.sheet-short .sheet-body { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+.copy-names { margin-top: 0; }
+.chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.copy-day { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; }
+.copy-day .icon { width: 14px; height: 14px; }
+.hour-copy { margin-left: 0; color: var(--muted); }
+input[type="date"] { color-scheme: dark; }

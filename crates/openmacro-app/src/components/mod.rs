@@ -2,6 +2,7 @@
 
 mod chart;
 mod checkin;
+mod copy;
 mod dashboard;
 mod edit_entry;
 mod food_log;
@@ -36,6 +37,7 @@ pub fn Shell() -> Element {
     let plate_open = state.plate.read().open;
     let check_in_open = (state.check_in_open)();
     let editing = (state.editing)();
+    let copying = (state.copying)();
 
     // Each tab starts at the top instead of inheriting the previous tab's scroll position.
     let route = use_route::<Route>();
@@ -57,6 +59,9 @@ pub fn Shell() -> Element {
             }
             if let Some(entry) = editing {
                 edit_entry::EditEntrySheet { key: "{entry.id}", entry }
+            }
+            if let Some(copying) = copying {
+                copy::CopySheet { copying }
             }
         }
     }
@@ -134,6 +139,10 @@ pub fn Icon(name: &'static str) -> Element {
         },
         "right" => rsx! {
             polyline { points: "9 18 15 12 9 6" }
+        },
+        "copy" => rsx! {
+            rect { x: "8", y: "8", width: "12", height: "12", rx: "2" }
+            path { d: "M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" }
         },
         "edit" => rsx! {
             path { d: "M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z" }
