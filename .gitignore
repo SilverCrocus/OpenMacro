@@ -1,0 +1,12 @@
+# Local reverse-engineering artifacts (APKs, decompiled output, screenshots). Never commit.
+research/private/
+*.apk
+*.apks
+*.xapk
+*.dex
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
