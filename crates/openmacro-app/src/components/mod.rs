@@ -146,7 +146,8 @@ pub fn Ring(fraction: f64, size: u32) -> Element {
     rsx! {
         svg { class: "ring", width: "{size}", height: "{size}", "viewBox": "0 0 36 36",
             circle { class: "ring-track", cx: "18", cy: "18", r: "15.9155", fill: "none", "stroke-width": "3.5" }
-            circle {
+            if pct >= 0.5 {
+                circle {
                 class,
                 cx: "18",
                 cy: "18",
@@ -156,6 +157,7 @@ pub fn Ring(fraction: f64, size: u32) -> Element {
                 "stroke-dasharray": "{pct} 100",
                 "stroke-linecap": "round",
                 transform: "rotate(-90 18 18)",
+            }
             }
         }
     }

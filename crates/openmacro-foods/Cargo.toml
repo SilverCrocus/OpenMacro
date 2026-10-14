@@ -1,0 +1,24 @@
+[package]
+name = "openmacro-foods"
+version = "0.1.0"
+description = "OpenMacro food database: search over USDA, AFCD and Open Food Facts data in SQLite"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+openmacro-core = { path = "../openmacro-core" }
+rusqlite.workspace = true
+chrono = { workspace = true, features = ["clock"], optional = true }
+calamine = { version = "0.36", optional = true }
+csv = { version = "1.4", optional = true }
+flate2 = { version = "1.1", optional = true }
+
+[features]
+# Building foods.db from the raw datasets; the app only needs the read side.
+import = ["dep:chrono", "dep:calamine", "dep:csv", "dep:flate2"]
+
+[[bin]]
+name = "build-food-db"
+required-features = ["import"]

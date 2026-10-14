@@ -36,7 +36,7 @@ pub enum NutrientGroup {
 }
 
 macro_rules! nutrients {
-    ($($variant:ident => ($name:literal, $unit:ident, $group:ident)),+ $(,)?) => {
+    ($($variant:ident => ($key:literal, $name:literal, $unit:ident, $group:ident)),+ $(,)?) => {
         /// A nutrient tracked by OpenMacro.
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
         #[cfg_attr(
@@ -51,6 +51,20 @@ macro_rules! nutrients {
         impl Nutrient {
             /// Every tracked nutrient, in display order.
             pub const ALL: &'static [Nutrient] = &[$(Nutrient::$variant),+];
+
+            /// Stable snake_case identifier, used for storage and serialisation.
+            pub fn key(self) -> &'static str {
+                match self {
+                    $(Nutrient::$variant => $key),+
+                }
+            }
+
+            pub fn from_key(key: &str) -> Option<Nutrient> {
+                match key {
+                    $($key => Some(Nutrient::$variant),)+
+                    _ => None,
+                }
+            }
 
             pub fn name(self) -> &'static str {
                 match self {
@@ -74,68 +88,68 @@ macro_rules! nutrients {
 }
 
 nutrients! {
-    Energy => ("Calories", Kcal, Energy),
+    Energy => ("energy", "Calories", Kcal, Energy),
 
-    Protein => ("Protein", Gram, Macro),
-    Fat => ("Fat", Gram, Macro),
-    Carbs => ("Carbs", Gram, Macro),
-    Alcohol => ("Alcohol", Gram, Macro),
+    Protein => ("protein", "Protein", Gram, Macro),
+    Fat => ("fat", "Fat", Gram, Macro),
+    Carbs => ("carbs", "Carbs", Gram, Macro),
+    Alcohol => ("alcohol", "Alcohol", Gram, Macro),
 
-    Fiber => ("Fiber", Gram, Carbohydrate),
-    Starch => ("Starch", Gram, Carbohydrate),
-    Sugars => ("Sugars", Gram, Carbohydrate),
-    AddedSugars => ("Added sugars", Gram, Carbohydrate),
+    Fiber => ("fiber", "Fiber", Gram, Carbohydrate),
+    Starch => ("starch", "Starch", Gram, Carbohydrate),
+    Sugars => ("sugars", "Sugars", Gram, Carbohydrate),
+    AddedSugars => ("added_sugars", "Added sugars", Gram, Carbohydrate),
 
-    Monounsaturated => ("Monounsaturated", Gram, Fat),
-    Polyunsaturated => ("Polyunsaturated", Gram, Fat),
-    Omega3 => ("Omega-3", Gram, Fat),
-    Omega3Ala => ("Omega-3 ALA", Gram, Fat),
-    Omega3Dha => ("Omega-3 DHA", Gram, Fat),
-    Omega3Epa => ("Omega-3 EPA", Gram, Fat),
-    Omega6 => ("Omega-6", Gram, Fat),
-    Saturated => ("Saturated", Gram, Fat),
-    TransFat => ("Trans fat", Gram, Fat),
+    Monounsaturated => ("monounsaturated", "Monounsaturated", Gram, Fat),
+    Polyunsaturated => ("polyunsaturated", "Polyunsaturated", Gram, Fat),
+    Omega3 => ("omega3", "Omega-3", Gram, Fat),
+    Omega3Ala => ("omega3_ala", "Omega-3 ALA", Gram, Fat),
+    Omega3Dha => ("omega3_dha", "Omega-3 DHA", Gram, Fat),
+    Omega3Epa => ("omega3_epa", "Omega-3 EPA", Gram, Fat),
+    Omega6 => ("omega6", "Omega-6", Gram, Fat),
+    Saturated => ("saturated", "Saturated", Gram, Fat),
+    TransFat => ("trans_fat", "Trans fat", Gram, Fat),
 
-    Cysteine => ("Cysteine", Gram, AminoAcid),
-    Histidine => ("Histidine", Gram, AminoAcid),
-    Isoleucine => ("Isoleucine", Gram, AminoAcid),
-    Leucine => ("Leucine", Gram, AminoAcid),
-    Lysine => ("Lysine", Gram, AminoAcid),
-    Methionine => ("Methionine", Gram, AminoAcid),
-    Phenylalanine => ("Phenylalanine", Gram, AminoAcid),
-    Threonine => ("Threonine", Gram, AminoAcid),
-    Tryptophan => ("Tryptophan", Gram, AminoAcid),
-    Tyrosine => ("Tyrosine", Gram, AminoAcid),
-    Valine => ("Valine", Gram, AminoAcid),
+    Cysteine => ("cysteine", "Cysteine", Gram, AminoAcid),
+    Histidine => ("histidine", "Histidine", Gram, AminoAcid),
+    Isoleucine => ("isoleucine", "Isoleucine", Gram, AminoAcid),
+    Leucine => ("leucine", "Leucine", Gram, AminoAcid),
+    Lysine => ("lysine", "Lysine", Gram, AminoAcid),
+    Methionine => ("methionine", "Methionine", Gram, AminoAcid),
+    Phenylalanine => ("phenylalanine", "Phenylalanine", Gram, AminoAcid),
+    Threonine => ("threonine", "Threonine", Gram, AminoAcid),
+    Tryptophan => ("tryptophan", "Tryptophan", Gram, AminoAcid),
+    Tyrosine => ("tyrosine", "Tyrosine", Gram, AminoAcid),
+    Valine => ("valine", "Valine", Gram, AminoAcid),
 
-    VitaminB1 => ("B1, Thiamine", Milligram, Vitamin),
-    VitaminB2 => ("B2, Riboflavin", Milligram, Vitamin),
-    VitaminB3 => ("B3, Niacin", Milligram, Vitamin),
-    VitaminB5 => ("B5, Pantothenic acid", Milligram, Vitamin),
-    VitaminB6 => ("B6, Pyridoxine", Milligram, Vitamin),
-    VitaminB12 => ("B12, Cobalamin", Microgram, Vitamin),
-    Folate => ("Folate", Microgram, Vitamin),
-    VitaminA => ("Vitamin A", Microgram, Vitamin),
-    VitaminC => ("Vitamin C", Milligram, Vitamin),
-    VitaminD => ("Vitamin D", Microgram, Vitamin),
-    VitaminE => ("Vitamin E", Milligram, Vitamin),
-    VitaminK => ("Vitamin K", Microgram, Vitamin),
+    VitaminB1 => ("vitamin_b1", "B1, Thiamine", Milligram, Vitamin),
+    VitaminB2 => ("vitamin_b2", "B2, Riboflavin", Milligram, Vitamin),
+    VitaminB3 => ("vitamin_b3", "B3, Niacin", Milligram, Vitamin),
+    VitaminB5 => ("vitamin_b5", "B5, Pantothenic acid", Milligram, Vitamin),
+    VitaminB6 => ("vitamin_b6", "B6, Pyridoxine", Milligram, Vitamin),
+    VitaminB12 => ("vitamin_b12", "B12, Cobalamin", Microgram, Vitamin),
+    Folate => ("folate", "Folate", Microgram, Vitamin),
+    VitaminA => ("vitamin_a", "Vitamin A", Microgram, Vitamin),
+    VitaminC => ("vitamin_c", "Vitamin C", Milligram, Vitamin),
+    VitaminD => ("vitamin_d", "Vitamin D", Microgram, Vitamin),
+    VitaminE => ("vitamin_e", "Vitamin E", Milligram, Vitamin),
+    VitaminK => ("vitamin_k", "Vitamin K", Microgram, Vitamin),
 
-    Calcium => ("Calcium", Milligram, Mineral),
-    Copper => ("Copper", Milligram, Mineral),
-    Iron => ("Iron", Milligram, Mineral),
-    Magnesium => ("Magnesium", Milligram, Mineral),
-    Manganese => ("Manganese", Milligram, Mineral),
-    Phosphorus => ("Phosphorus", Milligram, Mineral),
-    Potassium => ("Potassium", Milligram, Mineral),
-    Selenium => ("Selenium", Microgram, Mineral),
-    Sodium => ("Sodium", Milligram, Mineral),
-    Zinc => ("Zinc", Milligram, Mineral),
+    Calcium => ("calcium", "Calcium", Milligram, Mineral),
+    Copper => ("copper", "Copper", Milligram, Mineral),
+    Iron => ("iron", "Iron", Milligram, Mineral),
+    Magnesium => ("magnesium", "Magnesium", Milligram, Mineral),
+    Manganese => ("manganese", "Manganese", Milligram, Mineral),
+    Phosphorus => ("phosphorus", "Phosphorus", Milligram, Mineral),
+    Potassium => ("potassium", "Potassium", Milligram, Mineral),
+    Selenium => ("selenium", "Selenium", Microgram, Mineral),
+    Sodium => ("sodium", "Sodium", Milligram, Mineral),
+    Zinc => ("zinc", "Zinc", Milligram, Mineral),
 
-    Caffeine => ("Caffeine", Milligram, Other),
-    Cholesterol => ("Cholesterol", Milligram, Other),
-    Choline => ("Choline", Milligram, Other),
-    Water => ("Water", Gram, Other),
+    Caffeine => ("caffeine", "Caffeine", Milligram, Other),
+    Cholesterol => ("cholesterol", "Cholesterol", Milligram, Other),
+    Choline => ("choline", "Choline", Milligram, Other),
+    Water => ("water", "Water", Gram, Other),
 }
 
 /// Atwater factors in kcal per gram.
@@ -276,6 +290,23 @@ mod tests {
         assert_eq!(Nutrient::ALL.len(), 55);
         assert_eq!(Nutrient::VitaminB12.unit(), NutrientUnit::Microgram);
         assert_eq!(Nutrient::Leucine.group(), NutrientGroup::AminoAcid);
+    }
+
+    #[test]
+    fn keys_round_trip() {
+        for &n in Nutrient::ALL {
+            assert_eq!(Nutrient::from_key(n.key()), Some(n));
+        }
+        assert_eq!(Nutrient::VitaminB12.key(), "vitamin_b12");
+        assert_eq!(Nutrient::Omega3Ala.key(), "omega3_ala");
+    }
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn keys_match_serde_names() {
+        for &n in Nutrient::ALL {
+            assert_eq!(serde_json::to_string(&n).unwrap(), format!("\"{}\"", n.key()));
+        }
     }
 
     #[test]
