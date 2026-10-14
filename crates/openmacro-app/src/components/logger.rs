@@ -46,6 +46,8 @@ pub fn Logger() -> Element {
     );
     let date_text = plate.date.format("%a %-d %b").to_string();
     let count = plate.items.len();
+    // Set while a recipe's ingredients are on the plate for editing.
+    let recipe_edit = (state.recipe_edit)();
     let log_text = if count == 1 {
         "Log 1 item".to_string()
     } else {
@@ -105,7 +107,11 @@ pub fn Logger() -> Element {
                 }
                 div { class: "sheet-body",
                     if saving_recipe() {
-                        super::recipe::RecipeForm { items: plate.items.clone(), on_done: move |_| saving_recipe.set(false) }
+                        super::recipe::RecipeForm {
+                            items: plate.items.clone(),
+                            existing: recipe_edit.clone(),
+                            on_done: move |_| saving_recipe.set(false),
+                        }
                     } else {
                         match (detail(), tab()) {
                             (Some(food), _) => rsx! {
@@ -132,7 +138,17 @@ pub fn Logger() -> Element {
                         }
                     }
                 }
-                if count > 0 && detail().is_none() && !saving_recipe() {
+                if recipe_edit.is_some() && detail().is_none() && !saving_recipe() {
+                    footer { class: "sheet-footer plate-actions",
+                        button { onclick: move |_| state.close_plate(), "Cancel" }
+                        button {
+                            class: "primary",
+                            disabled: count == 0,
+                            onclick: move |_| saving_recipe.set(true),
+                            "Update recipe"
+                        }
+                    }
+                } else if count > 0 && detail().is_none() && !saving_recipe() {
                     footer { class: "sheet-footer plate-actions",
                         if count > 1 {
                             button { onclick: move |_| saving_recipe.set(true), "Save as recipe" }
@@ -157,7 +173,9 @@ fn PlateView(items: Vec<PlateItem>) -> Element {
     rsx! {
         section { class: "plate",
             div { class: "plate-head",
-                h3 { "Plate" }
+                h3 {
+                    if (state.recipe_edit)().is_some() { "Ingredients" } else { "Plate" }
+                }
                 span { class: "muted", "{summary}" }
             }
             for (index , item) in items.into_iter().enumerate() {
@@ -433,6 +451,8 @@ pub(super) fn FoodDetail(
     let add = item.clone();
     let log_now = item.clone();
     let save = item.clone();
+    // Logging straight away would log a recipe's ingredients being edited.
+    let can_log = (state.recipe_edit)().is_none();
 
     rsx! {
         button { class: "link-btn", onclick: move |_| on_back.call(()),
@@ -543,19 +563,21 @@ pub(super) fn FoodDetail(
                         "Save"
                     }
                 } else {
-                    button {
-                        class: "key-log",
-                        disabled: log_now.is_none(),
-                        onclick: move |_| {
-                            if let Some(item) = log_now.clone() {
-                                state.add_to_plate(item);
-                                state.log_plate();
-                            }
-                        },
-                        "Log"
+                    if can_log {
+                        button {
+                            class: "key-log",
+                            disabled: log_now.is_none(),
+                            onclick: move |_| {
+                                if let Some(item) = log_now.clone() {
+                                    state.add_to_plate(item);
+                                    state.log_plate();
+                                }
+                            },
+                            "Log"
+                        }
                     }
                     button {
-                        class: "key-add",
+                        class: if can_log { "key-add" } else { "key-add key-save" },
                         disabled: add.is_none(),
                         onclick: move |_| {
                             if let Some(item) = add.clone() {

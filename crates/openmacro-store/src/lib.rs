@@ -407,6 +407,48 @@ impl Store {
         Ok(self.conn.last_insert_rowid())
     }
 
+    /// Replaces a custom food's details, keeping its id (and its recipe, if any).
+    pub fn update_custom_food(&self, id: i64, food: &Food) -> Result<()> {
+        self.conn.execute(
+            "UPDATE custom_food SET name = ?1, brand = ?2, barcode = ?3, nutrients = ?4,
+             servings = ?5, updated_at = ?6 WHERE id = ?7",
+            params![
+                food.name,
+                food.brand,
+                food.barcode,
+                serde_json::to_string(&food.per_100g)?,
+                serde_json::to_string(&food.servings)?,
+                now(),
+                id
+            ],
+        )?;
+        Ok(())
+    }
+
+    /// Replaces a recipe and the food made from it, keeping its id.
+    pub fn update_recipe(&self, id: i64, recipe: &Recipe) -> Result<()> {
+        self.update_custom_food(id, &recipe.to_food(""))?;
+        self.conn.execute(
+            "UPDATE custom_food SET recipe = ?1 WHERE id = ?2",
+            params![serde_json::to_string(recipe)?, id],
+        )?;
+        Ok(())
+    }
+
+    /// Every live recipe with its id, newest first.
+    pub fn recipes(&self) -> Result<Vec<(i64, Recipe)>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT id, recipe FROM custom_food
+             WHERE recipe IS NOT NULL AND deleted_at IS NULL ORDER BY id DESC",
+        )?;
+        let rows = stmt.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?)))?;
+        rows.map(|row| {
+            let (id, json) = row?;
+            Ok((id, serde_json::from_str(&json)?))
+        })
+        .collect()
+    }
+
     /// The ingredients behind a recipe food, if `id` is a live recipe.
     pub fn recipe(&self, id: i64) -> Result<Option<Recipe>> {
         let json: Option<Option<String>> = self
@@ -886,11 +928,29 @@ mod tests {
         let foods = store.custom_foods().unwrap();
         assert_eq!(foods, vec![recipe.to_food(format!("custom:{id}"))]);
         assert_eq!(foods[0].source, FoodSource::Recipe);
-        assert_eq!(store.recipe(id).unwrap(), Some(recipe));
+        assert_eq!(store.recipe(id).unwrap(), Some(recipe.clone()));
 
-        // Plain custom foods have no recipe.
+        // Editing keeps the id; the food follows the new recipe.
+        let mut bigger = recipe.clone();
+        bigger.servings = 4.0;
+        bigger.ingredients.truncate(1);
+        store.update_recipe(id, &bigger).unwrap();
+        assert_eq!(store.recipe(id).unwrap(), Some(bigger.clone()));
+        assert_eq!(store.recipes().unwrap(), vec![(id, bigger.clone())]);
+        assert_eq!(
+            store.custom_foods().unwrap(),
+            vec![bigger.to_food(format!("custom:{id}"))]
+        );
+
+        // Plain custom foods have no recipe, and edit in place.
         let plain = store.insert_custom_food(&foods[0]).unwrap();
         assert_eq!(store.recipe(plain).unwrap(), None);
+        let mut renamed = foods[0].clone();
+        renamed.name = "Oats overnight".into();
+        renamed.source = FoodSource::Custom;
+        store.update_custom_food(plain, &renamed).unwrap();
+        assert_eq!(store.custom_foods().unwrap()[0].name, "Oats overnight");
+        assert_eq!(store.recipes().unwrap().len(), 1);
         store.delete_custom_food(id).unwrap();
         assert_eq!(store.recipe(id).unwrap(), None);
     }

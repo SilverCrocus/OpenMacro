@@ -45,6 +45,42 @@ pub struct Input {
     pub salt: bool,
 }
 
+impl Input {
+    /// The form filled in from a saved food, for editing. Values are per
+    /// 100 g in kcal, and carbs are the stored total (US style), so building
+    /// it again without changes gives the same food.
+    pub fn from_food(food: &Food) -> Self {
+        let value = |n: Nutrient| {
+            food.per_100g
+                .get(n)
+                .map(crate::foods::fmt_qty)
+                .unwrap_or_default()
+        };
+        let serving = food.servings.first();
+        Self {
+            name: food.name.clone(),
+            brand: food.brand.clone().unwrap_or_default(),
+            barcode: food.barcode.clone().unwrap_or_default(),
+            basis: Basis::Per100g,
+            serving_label: serving.map_or_else(|| "serving".into(), |s| s.label.clone()),
+            serving_grams: serving
+                .map(|s| crate::foods::fmt_qty(s.grams))
+                .unwrap_or_default(),
+            label: LabelStyle::UnitedStates,
+            energy: value(Nutrient::Energy),
+            energy_in_kj: false,
+            fat: value(Nutrient::Fat),
+            saturated: value(Nutrient::Saturated),
+            carbs: value(Nutrient::Carbs),
+            sugars: value(Nutrient::Sugars),
+            fiber: value(Nutrient::Fiber),
+            protein: value(Nutrient::Protein),
+            sodium: value(Nutrient::Sodium),
+            salt: false,
+        }
+    }
+}
+
 fn number(text: &str) -> Result<Option<f64>, String> {
     let text = text.trim().replace(',', ".");
     if text.is_empty() {
@@ -215,5 +251,20 @@ mod tests {
             .unwrap_err()
             .contains("lots")
         );
+    }
+
+    #[test]
+    fn editing_without_changes_keeps_the_food() {
+        let food = build(&input()).unwrap();
+        let again = build(&Input::from_food(&food)).unwrap();
+        assert_eq!(again.name, food.name);
+        assert_eq!(again.servings, food.servings);
+        for (nutrient, value) in food.per_100g.iter() {
+            let after = again.per_100g.get(nutrient).unwrap();
+            assert!(
+                (after - value).abs() < 0.01,
+                "{nutrient:?}: {value} -> {after}"
+            );
+        }
     }
 }

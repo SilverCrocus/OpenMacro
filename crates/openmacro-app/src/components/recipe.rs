@@ -8,7 +8,7 @@ use openmacro_core::recipe::{Ingredient, Recipe};
 use super::library::Field;
 use super::{fmt0, macro_line};
 use crate::back::use_back_handler;
-use crate::foods::plate_item;
+use crate::foods::{fmt_qty, plate_item};
 use crate::state::{AppState, PlateItem};
 
 /// The recipe the form describes, if it's complete enough to save.
@@ -52,12 +52,34 @@ fn build(
 }
 
 #[component]
-pub fn RecipeForm(items: Vec<PlateItem>, on_done: EventHandler<()>) -> Element {
+pub fn RecipeForm(
+    items: Vec<PlateItem>,
+    on_done: EventHandler<()>,
+    /// The id of a recipe being edited, to update instead of creating one.
+    #[props(default)]
+    existing: Option<String>,
+) -> Element {
     let state = use_context::<AppState>();
     use_back_handler(move |_| on_done.call(()));
-    let mut name = use_signal(String::new);
-    let mut servings = use_signal(|| "1".to_string());
-    let mut cooked = use_signal(String::new);
+    let old = existing
+        .as_ref()
+        .and_then(|id| state.recipes.peek().get(id).cloned());
+    let initial = use_hook(|| {
+        old.as_ref().map_or_else(
+            || (String::new(), "1".to_string(), String::new()),
+            |r| {
+                (
+                    r.name.clone(),
+                    fmt_qty(r.servings),
+                    r.cooked_grams.map(fmt_qty).unwrap_or_default(),
+                )
+            },
+        )
+    });
+    let mut name = use_signal(|| initial.0.clone());
+    let mut servings = use_signal(|| initial.1.clone());
+    let mut cooked = use_signal(|| initial.2.clone());
+    let editing = use_signal(|| existing.clone());
     let mut tried = use_signal(|| false);
 
     let result = build(&name(), &servings(), &cooked(), &items);
@@ -89,26 +111,32 @@ pub fn RecipeForm(items: Vec<PlateItem>, on_done: EventHandler<()>) -> Element {
     };
 
     rsx! {
-        h3 { class: "section-title", "Save as recipe" }
+        h3 { class: "section-title",
+            if existing.is_some() { "Update recipe" } else { "Save as recipe" }
+        }
         p { class: "muted small",
-            "The {items.len()} foods on your plate become one recipe you can log again from search or the Library."
+            if existing.is_some() {
+                "The recipe will use the {items.len()} ingredients on the plate. Entries you've already logged keep their old values."
+            } else {
+                "The {items.len()} foods on your plate become one recipe you can log again from search or the Library."
+            }
         }
         Field {
             label: "Name",
-            initial: String::new(),
+            initial: initial.0.clone(),
             numeric: false,
             on_input: move |v| name.set(v),
         }
         div { class: "field-grid",
             Field {
                 label: "Servings it makes",
-                initial: "1",
+                initial: initial.1.clone(),
                 numeric: true,
                 on_input: move |v| servings.set(v),
             }
             Field {
                 label: "Cooked weight (g, optional)",
-                initial: String::new(),
+                initial: initial.2.clone(),
                 numeric: true,
                 on_input: move |v| cooked.set(v),
             }
@@ -131,6 +159,11 @@ pub fn RecipeForm(items: Vec<PlateItem>, on_done: EventHandler<()>) -> Element {
                     let Ok(recipe) = build(&name(), &servings(), &cooked(), &items) else {
                         return;
                     };
+                    if let Some(id) = editing() {
+                        state.update_recipe(&id, &recipe);
+                        state.close_plate();
+                        return;
+                    }
                     let food = state.add_recipe(&recipe);
                     // Swap the ingredients for one serving of the recipe, ready to log.
                     let serving = plate_item(&food, Amount::Servings { index: 0, count: 1.0 });

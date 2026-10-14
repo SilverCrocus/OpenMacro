@@ -235,6 +235,7 @@ struct Saved {
     custom_foods: Vec<Food>,
     favorites: Vec<Food>,
     check_in_day: Weekday,
+    recipes: BTreeMap<String, Recipe>,
 }
 
 impl Saved {
@@ -253,6 +254,7 @@ impl Saved {
                 .load_check_in_day()
                 .and_then(|day| day.parse().ok())
                 .unwrap_or(Weekday::Mon),
+            recipes: persist.recipes().into_iter().collect(),
         }
     }
 }
@@ -284,6 +286,10 @@ pub struct AppState {
     pub check_in_open: Signal<bool>,
     /// The logged entry being edited, if any.
     pub editing: Signal<Option<LogEntry>>,
+    /// Recipes' ingredients, by food id.
+    pub recipes: Signal<BTreeMap<String, Recipe>>,
+    /// The recipe whose ingredients are on the plate for editing, if any.
+    pub recipe_edit: Signal<Option<String>>,
     /// Ids for entries when nothing is saved (web preview).
     next_id: Signal<i64>,
 }
@@ -302,6 +308,7 @@ impl AppState {
             custom_foods,
             favorites,
             check_in_day,
+            recipes,
         } = Saved::read(&persist);
         Self {
             region: Signal::new(region),
@@ -311,6 +318,8 @@ impl AppState {
             check_in_day: Signal::new(check_in_day),
             check_in_open: Signal::new(false),
             editing: Signal::new(None),
+            recipes: Signal::new(recipes),
+            recipe_edit: Signal::new(None),
             next_id: Signal::new(next_id_after(&data.log)),
             log: Signal::new(data.log),
             weigh_ins: Signal::new(data.weigh_ins),
@@ -340,6 +349,8 @@ impl AppState {
         self.custom_foods.set(saved.custom_foods);
         self.favorites.set(saved.favorites);
         self.check_in_day.set(saved.check_in_day);
+        self.recipes.set(saved.recipes);
+        self.recipe_edit.set(None);
         self.check_in_open.set(false);
         self.editing.set(None);
         self.plate.set(Plate::closed(today()));
@@ -391,6 +402,7 @@ impl AppState {
         let mut plate = self.plate.write();
         plate.open = false;
         plate.items.clear();
+        self.recipe_edit.set(None);
     }
 
     pub fn add_to_plate(mut self, item: PlateItem) {
@@ -464,9 +476,63 @@ impl AppState {
                 self.next_id.set(n + 1);
                 format!("custom:{n}")
             });
-        let food = recipe.to_food(id);
+        let food = recipe.to_food(id.clone());
+        self.recipes.write().insert(id, recipe.clone());
         self.custom_foods.write().insert(0, food.clone());
         food
+    }
+
+    /// Saves changes to a custom food (its id says which).
+    pub fn update_custom_food(self, food: Food) {
+        self.persist.read().update_custom_food(&food);
+        self.replace_food(food);
+    }
+
+    /// Saves changes to a recipe and returns the food made from it.
+    pub fn update_recipe(mut self, id: &str, recipe: &Recipe) -> Food {
+        self.persist.read().update_recipe(id, recipe);
+        self.recipes.write().insert(id.to_string(), recipe.clone());
+        let food = recipe.to_food(id);
+        self.replace_food(food.clone());
+        food
+    }
+
+    /// Swaps an edited food into the Library and favorites.
+    fn replace_food(mut self, food: Food) {
+        if let Some(slot) = self
+            .custom_foods
+            .write()
+            .iter_mut()
+            .find(|f| f.id == food.id)
+        {
+            *slot = food.clone();
+        }
+        if self.is_favorite(&food.id) {
+            self.persist.read().set_favorite(&food, true);
+            if let Some(slot) = self.favorites.write().iter_mut().find(|f| f.id == food.id) {
+                *slot = food;
+            }
+        }
+    }
+
+    /// Puts a recipe's ingredients on the plate to change them.
+    pub fn edit_recipe(mut self, id: &str) {
+        let Some(recipe) = self.recipes.read().get(id).cloned() else {
+            return;
+        };
+        let items = recipe
+            .ingredients
+            .into_iter()
+            .map(|i| PlateItem {
+                name: i.name,
+                amount: i.amount,
+                nutrients: i.nutrients,
+                food_id: i.food_id,
+                grams: i.grams,
+            })
+            .collect();
+        self.set_plate_items(items);
+        self.recipe_edit.set(Some(id.to_string()));
     }
 
     /// Replaces everything on the plate with one item.
@@ -499,6 +565,7 @@ impl AppState {
 
     pub fn delete_custom_food(mut self, id: &str) {
         self.persist.read().delete_custom_food(id);
+        self.recipes.write().remove(id);
         self.custom_foods.write().retain(|f| f.id != id);
     }
 

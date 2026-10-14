@@ -135,6 +135,10 @@ pub fn Icon(name: &'static str) -> Element {
         "right" => rsx! {
             polyline { points: "9 18 15 12 9 6" }
         },
+        "edit" => rsx! {
+            path { d: "M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z" }
+            line { x1: "13.5", y1: "6.5", x2: "17.5", y2: "10.5" }
+        },
         "search" => rsx! {
             circle { cx: "11", cy: "11", r: "7" }
             line { x1: "20", y1: "20", x2: "16", y2: "16" }

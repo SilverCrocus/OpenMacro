@@ -15,10 +15,16 @@ use crate::state::AppState;
 pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<String>>) -> Element {
     let state = use_context::<AppState>();
     let mut creating = use_signal(|| false);
+    let mut editing = use_signal(|| None::<Food>);
     let mut new_barcode = new_barcode;
     let foods = state.custom_foods.read().clone();
     let favorites = state.favorites.read().clone();
 
+    if let Some(food) = editing() {
+        return rsx! {
+            CustomFoodForm { barcode: String::new(), existing: Some(food), on_done: move |_| editing.set(None) }
+        };
+    }
     if creating() || new_barcode().is_some() {
         return rsx! {
             CustomFoodForm {
@@ -83,6 +89,7 @@ pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<Stri
                     };
                     let id = food.id.clone();
                     let open = food.clone();
+                    let change = food.clone();
                     rsx! {
                         li { key: "{food.id}", class: "result",
                             button { class: "result-main", onclick: move |_| on_select.call(open.clone()),
@@ -91,6 +98,18 @@ pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<Stri
                                 if let Some(brand) = &food.brand {
                                     div { class: "entry-origin", "{brand}" }
                                 }
+                            }
+                            button {
+                                class: "icon-btn small",
+                                aria_label: "Edit {food.name}",
+                                onclick: move |_| {
+                                    if change.source == FoodSource::Recipe {
+                                        state.edit_recipe(&change.id);
+                                    } else {
+                                        editing.set(Some(change.clone()));
+                                    }
+                                },
+                                Icon { name: "edit" }
                             }
                             button {
                                 class: "icon-btn small",
@@ -129,30 +148,48 @@ pub(super) fn Field(
 }
 
 #[component]
-fn CustomFoodForm(barcode: String, on_done: EventHandler<()>) -> Element {
+fn CustomFoodForm(
+    barcode: String,
+    on_done: EventHandler<()>,
+    /// A saved food to edit instead of creating a new one.
+    #[props(default)]
+    existing: Option<Food>,
+) -> Element {
     let state = use_context::<AppState>();
     use_back_handler(move |_| on_done.call(()));
     let region = (state.region)();
-    let mut form = use_signal(|| Input {
-        barcode: barcode.clone(),
-        serving_label: "serving".into(),
-        label: if region == FoodRegion::Australia {
-            LabelStyle::Australian
-        } else {
-            LabelStyle::UnitedStates
+    // The id being edited; a signal so `save` stays `Copy`.
+    let editing = use_signal(|| existing.as_ref().map(|f| f.id.clone()));
+    let mut form = use_signal(|| match &existing {
+        Some(food) => Input::from_food(food),
+        None => Input {
+            barcode: barcode.clone(),
+            serving_label: "serving".into(),
+            label: if region == FoodRegion::Australia {
+                LabelStyle::Australian
+            } else {
+                LabelStyle::UnitedStates
+            },
+            energy_in_kj: region == FoodRegion::Australia,
+            ..Input::default()
         },
-        energy_in_kj: region == FoodRegion::Australia,
-        ..Input::default()
     });
+    // What the fields start with; they aren't bound to `form` afterwards.
+    let initial = use_hook(|| form.peek().clone());
     let mut error = use_signal(|| None::<String>);
     let current = form();
 
     let mut save = move |add: bool| match custom_food::build(&form()) {
-        Ok(food) => {
-            let saved = state.add_custom_food(food);
-            if add {
-                if let Some(item) = plate_item(&saved, saved.default_amount()) {
-                    state.add_to_plate(item);
+        Ok(mut food) => {
+            if let Some(id) = editing() {
+                food.id = id;
+                state.update_custom_food(food);
+            } else {
+                let saved = state.add_custom_food(food);
+                if add {
+                    if let Some(item) = plate_item(&saved, saved.default_amount()) {
+                        state.add_to_plate(item);
+                    }
                 }
             }
             on_done.call(());
@@ -175,13 +212,15 @@ fn CustomFoodForm(barcode: String, on_done: EventHandler<()>) -> Element {
             Icon { name: "left" }
             "Library"
         }
-        h2 { class: "detail-title", "New food" }
+        h2 { class: "detail-title",
+            if existing.is_some() { "Edit food" } else { "New food" }
+        }
 
-        Field { label: "Name", initial: "", numeric: false, on_input: move |v| form.write().name = v }
-        Field { label: "Brand (optional)", initial: "", numeric: false, on_input: move |v| form.write().brand = v }
+        Field { label: "Name", initial: initial.name.clone(), numeric: false, on_input: move |v| form.write().name = v }
+        Field { label: "Brand (optional)", initial: initial.brand.clone(), numeric: false, on_input: move |v| form.write().brand = v }
         Field {
             label: "Barcode (optional)",
-            initial: barcode.clone(),
+            initial: initial.barcode.clone(),
             numeric: true,
             on_input: move |v| form.write().barcode = v,
         }
@@ -202,13 +241,13 @@ fn CustomFoodForm(barcode: String, on_done: EventHandler<()>) -> Element {
         div { class: "field-grid",
             Field {
                 label: "Serving name",
-                initial: "serving",
+                initial: initial.serving_label.clone(),
                 numeric: false,
                 on_input: move |v| form.write().serving_label = v,
             }
             Field {
                 label: if current.basis == Basis::Serving { "Serving weight (g)" } else { "Serving weight (g, optional)" },
-                initial: "",
+                initial: initial.serving_grams.clone(),
                 numeric: true,
                 on_input: move |v| form.write().serving_grams = v,
             }
@@ -231,7 +270,7 @@ fn CustomFoodForm(barcode: String, on_done: EventHandler<()>) -> Element {
         div { class: "energy-row",
             Field {
                 label: format!("Energy ({per})"),
-                initial: "",
+                initial: initial.energy.clone(),
                 numeric: true,
                 on_input: move |v| form.write().energy = v,
             }
@@ -241,17 +280,17 @@ fn CustomFoodForm(barcode: String, on_done: EventHandler<()>) -> Element {
             }
         }
         div { class: "field-grid",
-            Field { label: format!("Protein (g, {per})"), initial: "", numeric: true, on_input: move |v| form.write().protein = v }
-            Field { label: format!("Fat (g, {per})"), initial: "", numeric: true, on_input: move |v| form.write().fat = v }
-            Field { label: "– saturated (g)", initial: "", numeric: true, on_input: move |v| form.write().saturated = v }
-            Field { label: carbs_label, initial: "", numeric: true, on_input: move |v| form.write().carbs = v }
-            Field { label: "– sugars (g)", initial: "", numeric: true, on_input: move |v| form.write().sugars = v }
-            Field { label: "Fibre (g)", initial: "", numeric: true, on_input: move |v| form.write().fiber = v }
+            Field { label: format!("Protein (g, {per})"), initial: initial.protein.clone(), numeric: true, on_input: move |v| form.write().protein = v }
+            Field { label: format!("Fat (g, {per})"), initial: initial.fat.clone(), numeric: true, on_input: move |v| form.write().fat = v }
+            Field { label: "– saturated (g)", initial: initial.saturated.clone(), numeric: true, on_input: move |v| form.write().saturated = v }
+            Field { label: carbs_label, initial: initial.carbs.clone(), numeric: true, on_input: move |v| form.write().carbs = v }
+            Field { label: "– sugars (g)", initial: initial.sugars.clone(), numeric: true, on_input: move |v| form.write().sugars = v }
+            Field { label: "Fibre (g)", initial: initial.fiber.clone(), numeric: true, on_input: move |v| form.write().fiber = v }
         }
         div { class: "energy-row",
             Field {
                 label: if current.salt { "Salt (g)" } else { "Sodium (mg)" },
-                initial: "",
+                initial: initial.sodium.clone(),
                 numeric: true,
                 on_input: move |v| form.write().sodium = v,
             }
@@ -265,8 +304,13 @@ fn CustomFoodForm(barcode: String, on_done: EventHandler<()>) -> Element {
             p { class: "error", "{message}" }
         }
         div { class: "button-row form-actions",
-            button { onclick: move |_| save(false), "Create" }
-            button { class: "primary", onclick: move |_| save(true), "Create & add" }
+            if existing.is_some() {
+                button { onclick: move |_| on_done.call(()), "Cancel" }
+                button { class: "primary", onclick: move |_| save(false), "Save" }
+            } else {
+                button { onclick: move |_| save(false), "Create" }
+                button { class: "primary", onclick: move |_| save(true), "Create & add" }
+            }
         }
     }
 }

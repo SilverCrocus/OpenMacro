@@ -155,6 +155,29 @@ mod native {
             Some(format!("custom:{id}"))
         }
 
+        pub fn update_custom_food(&self, food: &Food) {
+            if let (Some(store), Some(n)) = (&self.store, custom_id(&food.id)) {
+                report("save a custom food", store.update_custom_food(n, food));
+            }
+        }
+
+        pub fn update_recipe(&self, id: &str, recipe: &Recipe) {
+            if let (Some(store), Some(n)) = (&self.store, custom_id(id)) {
+                report("save a recipe", store.update_recipe(n, recipe));
+            }
+        }
+
+        /// Every recipe, keyed by its food id (`custom:<n>`).
+        pub fn recipes(&self) -> Vec<(String, Recipe)> {
+            self.store
+                .as_ref()
+                .and_then(|s| report("load recipes", s.recipes()))
+                .unwrap_or_default()
+                .into_iter()
+                .map(|(n, recipe)| (format!("custom:{n}"), recipe))
+                .collect()
+        }
+
         pub fn delete_custom_food(&self, id: &str) {
             let (Some(store), Some(n)) = (
                 &self.store,
@@ -245,6 +268,11 @@ mod native {
                     .replace_history(&data.log, &data.weigh_ins, &data.day_status),
             )
         }
+    }
+
+    /// The row id in a `custom:<n>` food id.
+    fn custom_id(id: &str) -> Option<i64> {
+        id.strip_prefix("custom:")?.parse().ok()
     }
 
     /// The app's private data folder.
@@ -346,6 +374,14 @@ mod web {
 
         pub fn insert_recipe(&self, _recipe: &Recipe) -> Option<String> {
             None
+        }
+
+        pub fn update_custom_food(&self, _food: &Food) {}
+
+        pub fn update_recipe(&self, _id: &str, _recipe: &Recipe) {}
+
+        pub fn recipes(&self) -> Vec<(String, Recipe)> {
+            Vec::new()
         }
 
         pub fn delete_custom_food(&self, _id: &str) {}
