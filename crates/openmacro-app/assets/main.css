@@ -729,3 +729,4 @@ a.link-tile:active { border-color: var(--accent); }
 .water-fill { background: var(--kcal); }
 .water-buttons { display: flex; gap: 6px; }
 .water-buttons .chip { flex: 1; }
+.notice { background: var(--surface-2); border-left: 3px solid var(--fat); padding: 10px 12px; border-radius: 8px; font-size: 14px; }

@@ -737,11 +737,16 @@ fn QuickAdd() -> Element {
     let protein = use_signal(String::new);
     let fat = use_signal(String::new);
     let carbs = use_signal(String::new);
+    let alcohol = use_signal(String::new);
 
     let p = parse_number(&protein()).unwrap_or(0.0);
     let f = parse_number(&fat()).unwrap_or(0.0);
     let c = parse_number(&carbs()).unwrap_or(0.0);
-    let macro_kcal = p * KCAL_PER_G_PROTEIN + f * KCAL_PER_G_FAT + c * KCAL_PER_G_CARBS;
+    let a = parse_number(&alcohol()).unwrap_or(0.0);
+    let macro_kcal = p * KCAL_PER_G_PROTEIN
+        + f * KCAL_PER_G_FAT
+        + c * KCAL_PER_G_CARBS
+        + a * openmacro_core::nutrients::KCAL_PER_G_ALCOHOL;
     let energy = parse_number(&kcal())
         .map(prefs::kcal_from_input)
         .or((macro_kcal > 0.0).then_some(macro_kcal));
@@ -762,6 +767,7 @@ fn QuickAdd() -> Element {
             NumberField { label: "Protein", unit: "g", value: protein }
             NumberField { label: "Fat", unit: "g", value: fat }
             NumberField { label: "Carbs", unit: "g", value: carbs }
+            NumberField { label: "Alcohol", unit: "g", value: alcohol }
         }
         p { class: "muted pad", "{hint}" }
         button {
@@ -775,10 +781,13 @@ fn QuickAdd() -> Element {
                         food_id: None,
                         name: if label.trim().is_empty() { "Quick add".into() } else { label.trim().to_string() },
                         amount: "1 entry".into(),
-                        nutrients: NutrientProfile::from_macros(energy, p, f, c),
+                        nutrients: {
+                            let n = NutrientProfile::from_macros(energy, p, f, c);
+                            if a > 0.0 { n.with(Nutrient::Alcohol, a) } else { n }
+                        },
                         grams: None,
                     });
-                for mut field in [name, kcal, protein, fat, carbs] {
+                for mut field in [name, kcal, protein, fat, carbs, alcohol] {
                     field.set(String::new());
                 }
             },

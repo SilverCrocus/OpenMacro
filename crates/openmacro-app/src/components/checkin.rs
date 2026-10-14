@@ -321,8 +321,15 @@ fn UpdateStep() -> Element {
         ("Fat", average(|d| d.fat_g)),
         ("Carbs", average(|d| d.carbs_g)),
     ];
+    let holding =
+        coach.expenditure_status() == openmacro_core::expenditure::EstimateStatus::Holding;
 
     rsx! {
+        if holding {
+            p { class: "notice",
+                "Your expenditure estimate is holding at its last value: there hasn't been enough food logged, or a weigh-in, recently. It picks up again once you log a few days and weigh in."
+            }
+        }
             div { class: "update-summary",
                 div { class: "update-row",
                     span { class: "muted", "Expenditure" }
