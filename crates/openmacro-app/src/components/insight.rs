@@ -11,7 +11,7 @@ use openmacro_core::expenditure::{DayStatus, EstimateStatus};
 use openmacro_core::micros::{Standing, standard_goals, standing};
 use openmacro_core::nutrients::{Nutrient, NutrientGroup};
 
-use super::chart::{Chart, ChartData};
+use super::chart::{Chart, ChartData, Grouping};
 use super::{Icon, fmt0, fmt1};
 use crate::Route;
 use crate::prefs;
@@ -70,6 +70,9 @@ impl Range {
 
 /// The range last picked on any insight page, kept while the app is open.
 static RANGE: GlobalSignal<Range> = Signal::global(|| Range::Month);
+
+/// Daily, weekly or monthly points on the charts.
+static GROUPING: GlobalSignal<Grouping> = Signal::global(Grouping::default);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Metric {
@@ -141,6 +144,23 @@ pub fn Insight(metric: String) -> Element {
                     aria_selected: "{r == range}",
                     onclick: move |_| *RANGE.write() = r,
                     "{r.label()}"
+                }
+            }
+        }
+        div { class: "grouping-row",
+            div { class: "segmented", role: "group", aria_label: "Grouping",
+                for g in Grouping::ALL {
+                    button {
+                        key: "{g.label()}",
+                        class: if GROUPING() == g { "active" },
+                        aria_label: match g {
+                            Grouping::Day => "Daily",
+                            Grouping::Week => "Weekly averages",
+                            Grouping::Month => "Monthly averages",
+                        },
+                        onclick: move |_| *GROUPING.write() = g,
+                        "{g.label()}"
+                    }
                 }
             }
         }
@@ -238,6 +258,7 @@ fn ExpenditureInsight(range: Range) -> Element {
             })
             .collect(),
         decimals: 0,
+        grouping: GROUPING(),
         ..Default::default()
     };
     let current = coach.expenditure_kcal();
@@ -311,6 +332,7 @@ fn WeightInsight(range: Range) -> Element {
             .filter_map(|t| t.scale_kg.map(|kg| (t.date, prefs::weight_value(kg))))
             .collect(),
         decimals: 1,
+        grouping: GROUPING(),
         ..Default::default()
     };
     let by_date: BTreeMap<NaiveDate, f64> =
@@ -467,6 +489,7 @@ fn BalanceInsight(range: Range) -> Element {
             .map(|(d, v)| (*d, prefs::energy_value(*v)))
             .collect(),
         decimals: 0,
+        grouping: GROUPING(),
         ..Default::default()
     };
     let kind = if average < 0.0 { "deficit" } else { "surplus" };
@@ -612,6 +635,7 @@ fn MacrosInsight(range: Range) -> Element {
         plain_bars: true,
         dashed: days.iter().map(|d| (d.0, d.2)).collect(),
         decimals: 0,
+        grouping: GROUPING(),
         ..Default::default()
     };
     let unit = picked.unit();
@@ -702,6 +726,7 @@ fn GoalInsight(range: Range) -> Element {
         }),
         level: Some(prefs::weight_value(goal.goal_weight_kg)),
         decimals: 1,
+        grouping: GROUPING(),
         ..Default::default()
     };
     let total = goal.goal_weight_kg - start_kg;

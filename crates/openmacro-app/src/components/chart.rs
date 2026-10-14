@@ -1,8 +1,57 @@
 //! A small SVG time-series chart: a line with an optional band, dots and
 //! bars around zero, with value gridlines and date labels.
 
-use chrono::NaiveDate;
+use std::collections::BTreeMap;
+
+use chrono::{Datelike, Duration, NaiveDate};
 use dioxus::prelude::*;
+
+/// How points are grouped before drawing.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum Grouping {
+    #[default]
+    Day,
+    /// Averaged per week, dated by its Monday.
+    Week,
+    /// Averaged per calendar month, dated by its first day.
+    Month,
+}
+
+impl Grouping {
+    pub const ALL: [Grouping; 3] = [Grouping::Day, Grouping::Week, Grouping::Month];
+
+    pub fn label(self) -> &'static str {
+        match self {
+            Grouping::Day => "D",
+            Grouping::Week => "W",
+            Grouping::Month => "M",
+        }
+    }
+
+    fn period_start(self, date: NaiveDate) -> NaiveDate {
+        match self {
+            Grouping::Day => date,
+            Grouping::Week => date - Duration::days(date.weekday().num_days_from_monday() as i64),
+            Grouping::Month => date.with_day(1).unwrap_or(date),
+        }
+    }
+}
+
+/// Averages points per period, oldest first.
+pub fn group(points: &[(NaiveDate, f64)], grouping: Grouping) -> Vec<(NaiveDate, f64)> {
+    if grouping == Grouping::Day {
+        return points.to_vec();
+    }
+    let mut sums: BTreeMap<NaiveDate, (f64, u32)> = BTreeMap::new();
+    for (date, value) in points {
+        let e = sums.entry(grouping.period_start(*date)).or_insert((0.0, 0));
+        e.0 += value;
+        e.1 += 1;
+    }
+    sums.into_iter()
+        .map(|(d, (sum, n))| (d, sum / n as f64))
+        .collect()
+}
 
 /// What to draw. Every series is keyed by date; `start..=end` is the x axis.
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -22,6 +71,7 @@ pub struct ChartData {
     /// A dashed horizontal line across the chart, e.g. a goal.
     pub level: Option<f64>,
     pub decimals: usize,
+    pub grouping: Grouping,
 }
 
 const WIDTH: f64 = 360.0;
@@ -53,6 +103,27 @@ pub fn nice_ticks(min: f64, max: f64, count: usize) -> Vec<f64> {
         .collect()
 }
 
+/// Applies the data's grouping to every series.
+fn grouped(mut data: ChartData) -> ChartData {
+    let g = data.grouping;
+    if g == Grouping::Day {
+        return data;
+    }
+    data.line = group(&data.line, g);
+    data.dots = group(&data.dots, g);
+    data.bars = group(&data.bars, g);
+    data.dashed = group(&data.dashed, g);
+    let lower: Vec<_> = data.band.iter().map(|b| (b.0, b.1)).collect();
+    let upper: Vec<_> = data.band.iter().map(|b| (b.0, b.2)).collect();
+    data.band = group(&lower, g)
+        .into_iter()
+        .zip(group(&upper, g))
+        .map(|((d, lo), (_, hi))| (d, lo, hi))
+        .collect();
+    data.start = data.start.map(|d| g.period_start(d));
+    data
+}
+
 fn label(value: f64, decimals: usize) -> String {
     let text = format!("{value:.decimals$}");
     if text.starts_with("-0") && text.trim_start_matches(['-', '0', '.']).is_empty() {
@@ -64,6 +135,7 @@ fn label(value: f64, decimals: usize) -> String {
 
 #[component]
 pub fn Chart(data: ChartData, class: &'static str) -> Element {
+    let data = grouped(data);
     let (Some(start), Some(end)) = (data.start, data.end) else {
         return rsx! {
             div { class: "chart-empty muted", "Not enough data yet." }
@@ -135,15 +207,26 @@ pub fn Chart(data: ChartData, class: &'static str) -> Element {
         )
         .collect::<Vec<_>>()
         .join(" ");
-    let bar_w = (plot_w / (span_days + 1.0) * 0.7).clamp(1.0, 18.0);
+    // Bars fill most of the gap to their neighbour (a day, a week or a month).
+    let gap_days = data
+        .bars
+        .windows(2)
+        .map(|w| (w[1].0 - w[0].0).num_days())
+        .filter(|d| *d > 0)
+        .min()
+        .unwrap_or(1) as f64;
+    let bar_w = (plot_w / (span_days + 1.0) * gap_days * 0.7).clamp(1.0, 24.0);
     let zero = y(0.0);
-    let bars: Vec<(f64, f64, f64, bool)> = data
+    let bars: Vec<(f64, f64, f64, bool, f64)> = data
         .bars
         .iter()
         .map(|(d, v)| {
             let top = y(v.max(0.0));
             let height = (y(v.min(0.0)) - top).max(0.5);
-            (x(*d) - bar_w / 2.0, top, height, *v < 0.0)
+            // Keep bars inside the plot, clear of the value labels.
+            let left = (x(*d) - bar_w / 2.0).max(LEFT + 1.0);
+            let right = (x(*d) + bar_w / 2.0).min(WIDTH - RIGHT);
+            (left, top, height, *v < 0.0, (right - left).max(1.0))
         })
         .collect();
     let mid = start + chrono::Duration::days((span_days / 2.0) as i64);
@@ -190,7 +273,7 @@ pub fn Chart(data: ChartData, class: &'static str) -> Element {
             if !band.is_empty() {
                 polygon { class: "chart-band", points: "{band}" }
             }
-            for (i , (left , top , height , negative)) in bars.into_iter().enumerate() {
+            for (i , (left , top , height , negative , width)) in bars.into_iter().enumerate() {
                 rect {
                     key: "{i}",
                     class: match (plain_bars, negative) {
@@ -200,7 +283,7 @@ pub fn Chart(data: ChartData, class: &'static str) -> Element {
                     },
                     x: "{left:.1}",
                     y: "{top:.1}",
-                    width: "{bar_w:.1}",
+                    width: "{width:.1}",
                     height: "{height:.1}",
                     rx: "1",
                 }
@@ -267,6 +350,27 @@ mod tests {
         );
         // A flat series still gets a range.
         assert!(nice_ticks(70.0, 70.0, 4).len() >= 2);
+    }
+
+    #[test]
+    fn grouping_averages_per_week_and_month() {
+        let d = |m: u32, day: u32| NaiveDate::from_ymd_opt(2026, m, day).unwrap();
+        // 12 October 2026 is a Monday.
+        let points = [
+            (d(10, 12), 1.0),
+            (d(10, 14), 3.0),
+            (d(10, 19), 10.0),
+            (d(11, 2), 20.0),
+        ];
+        assert_eq!(
+            group(&points, Grouping::Week),
+            vec![(d(10, 12), 2.0), (d(10, 19), 10.0), (d(11, 2), 20.0)]
+        );
+        assert_eq!(
+            group(&points, Grouping::Month),
+            vec![(d(10, 1), 14.0 / 3.0), (d(11, 1), 20.0)]
+        );
+        assert_eq!(group(&points, Grouping::Day), points.to_vec());
     }
 
     #[test]
