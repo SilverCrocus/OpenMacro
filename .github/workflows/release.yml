@@ -74,6 +74,8 @@ jobs:
           mkdir -p dist
           for pair in aarch64-linux-android:arm64-v8a x86_64-linux-android:x86_64; do
             target="${pair%%:*}"; abi="${pair##*:}"
+            # dx reuses one Gradle project, so clear the previous ABI's library.
+            rm -rf target/dx/open-macro/release/android/app/app/src/main/jniLibs
             dx build --release --package openmacro-app --platform android --target "$target" --features bundled-foods
             cp target/dx/open-macro/release/android/app/app/build/outputs/apk/debug/app-debug.apk "dist/unsigned-$abi.apk"
           done

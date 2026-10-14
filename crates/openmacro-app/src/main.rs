@@ -1,6 +1,9 @@
+#[cfg(target_os = "android")]
+mod android;
 mod barcode;
 mod components;
 mod custom_food;
+mod export;
 mod food_search;
 mod foods;
 mod keypad;

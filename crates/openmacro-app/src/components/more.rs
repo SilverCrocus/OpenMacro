@@ -4,8 +4,9 @@ use dioxus::prelude::*;
 use openmacro_core::bmr::{self, ActivityLevel, BmrEquation, Sex};
 
 use super::fmt0;
+use crate::export;
 use crate::food_search::{self, Database, FoodRegion};
-use crate::state::{AppState, Data, today};
+use crate::state::{AppState, CoachSnapshot, Data, today};
 
 #[component]
 pub fn More() -> Element {
@@ -169,6 +170,7 @@ pub fn More() -> Element {
                     button { onclick: move |_| confirm_clear.set(true), "Clear all data" }
                 }
             }
+            ExportData {}
         }
         section { class: "card",
             h2 { "About" }
@@ -177,6 +179,45 @@ pub fn More() -> Element {
                 "An independent, open-source nutrition tracker. Not affiliated with any commercial app."
             }
             a { href: "https://github.com/SilverCrocus/OpenMacro", target: "_blank", "github.com/SilverCrocus/OpenMacro" }
+        }
+    }
+}
+
+/// Exports the user's history as CSV files.
+#[component]
+fn ExportData() -> Element {
+    let state = use_context::<AppState>();
+    let coach = use_context::<Memo<CoachSnapshot>>();
+    let mut busy = use_signal(|| false);
+    let mut outcome = use_signal(|| None::<Result<String, String>>);
+    let empty = state.is_empty();
+
+    rsx! {
+        h3 { class: "section-title", "Export" }
+        p { class: "muted small",
+            "Your food log, weigh-ins and a daily summary (intake, weight trend, expenditure and targets) as CSV files, for spreadsheets or other apps."
+        }
+        button {
+            disabled: busy() || empty,
+            onclick: move |_| {
+                busy.set(true);
+                outcome.set(None);
+                let files = export::files(&state.data(), &coach.read(), today());
+                spawn(async move {
+                    outcome.set(Some(export::save(files).await));
+                    busy.set(false);
+                });
+            },
+            if busy() { "Exporting…" } else { "Export CSV files" }
+        }
+        match outcome() {
+            Some(Ok(message)) => rsx! {
+                p { class: "muted small", "{message}" }
+            },
+            Some(Err(message)) => rsx! {
+                p { class: "error", "{message}" }
+            },
+            None => rsx! {},
         }
     }
 }

@@ -120,8 +120,10 @@ pub async fn check() -> Result<Option<Release>, String> {
 /// Android-only download and install, through the platform APIs over JNI.
 #[cfg(target_os = "android")]
 pub mod android {
+    use jni::JNIEnv;
     use jni::objects::{JObject, JString, JValue};
-    use jni::{JNIEnv, JavaVM};
+
+    use crate::android::with_activity;
 
     /// Where a download stands.
     #[derive(Debug, Clone, Copy, PartialEq)]
@@ -134,26 +136,6 @@ pub mod android {
 
     const APK_MIME: &str = "application/vnd.android.package-archive";
     const FILE_NAME: &str = "openmacro-update.apk";
-
-    /// Runs `f` with the JNI environment and the activity, freeing local
-    /// references afterwards. Java exceptions become `None`.
-    fn with_activity<T>(
-        f: impl FnOnce(&mut JNIEnv, &JObject) -> jni::errors::Result<T>,
-    ) -> Option<T> {
-        let ctx = ndk_context::android_context();
-        // SAFETY: ndk-context holds a valid JavaVM and a global reference to
-        // the activity for the life of the process.
-        let vm = unsafe { JavaVM::from_raw(ctx.vm().cast()) }.ok()?;
-        let mut env = vm.attach_current_thread().ok()?;
-        let activity = unsafe { JObject::from_raw(ctx.context().cast()) };
-        let result = env.with_local_frame(32, |env| f(env, &activity));
-        if env.exception_check().unwrap_or(false) {
-            let _ = env.exception_describe();
-            let _ = env.exception_clear();
-            return None;
-        }
-        result.ok()
-    }
 
     fn uri<'a>(env: &mut JNIEnv<'a>, text: &str) -> jni::errors::Result<JObject<'a>> {
         let s = env.new_string(text)?;

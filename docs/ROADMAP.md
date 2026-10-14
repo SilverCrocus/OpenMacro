@@ -20,12 +20,15 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | ✅ Favorites | Star foods on their detail page; favorites appear in the Library and rank first in search |
 | ✅ Barcode scanning | Live camera scanning (EAN/UPC, decoded in Rust with rxing), torch, manual entry; local database first, then Open Food Facts online |
 | ✅ Weekly check-in | Check-in day setting, due card on Plan and Dashboard. Three steps: weigh-in, review of unlogged and partly logged days, then new targets. Targets stay fixed until the next check-in |
+| ✅ Data export | CSV files for the food log (every nutrient), weigh-ins and a daily summary (intake, weight, trend, expenditure, targets). Saved to Downloads/OpenMacro on Android |
 
 ## Next
 
 | # | Feature | Plan |
 |---|---|---|
-| 1 | ⏭ **Data export** | CSV export of the food log, weigh-ins, expenditure and trend. |
+| 1 | ⏭ **Insight pages** | Tap a dashboard card for its chart: expenditure, weight trend and energy balance, with 1W–All ranges and short insights (e.g. weight change over 7/14/30/90 days). |
+| 2 | ⏭ **Recipes** | Build from ingredients with a cooked weight; log by serving or grams. |
+| 3 | ⏭ **Backup and restore** | One file with all data that can be restored on a new phone. |
 
 ## Later
 
@@ -33,9 +36,8 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 |---|---|
 | 🕓 Nutrition label scan | Photograph a label to fill in a custom food. Needs an AI vision model (see below). |
 | 🕓 AI photo logging | *Snap* a meal or *Describe* it. The model names foods and portions, and the app matches them to real foods in the database. **Bring your own API key** in settings; the first provider is still to be chosen (Claude, Gemini or OpenAI). Nothing is sent unless the user turns it on. |
-| 🕓 Recipes | Build from ingredients, import from a link (schema.org Recipe), split a logged recipe into ingredients |
+| 🕓 More recipe features | Import from a link (schema.org Recipe), split a logged recipe into ingredients |
 | 🕓 Weight trend V2 | Kalman smoother with a noise band; calibrated expenditure uncertainty band |
 | 🕓 Body metrics and progress photos | Measurements, front/side/back photos with comparison |
 | 🕓 Health Connect | Read weight, body fat and steps; write nutrition |
-| 🕓 Insight detail pages | Expenditure, weight trend and energy balance charts with 1W–All ranges and insights (e.g. weight change over 3/7/14/30/90 days) |
 | 🕓 Google Play / F-Droid | Silent store updates for non-technical users |
