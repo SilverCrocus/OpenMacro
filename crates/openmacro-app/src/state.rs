@@ -102,6 +102,21 @@ pub struct Data {
     /// Targets the user set themselves (the manual program), used every
     /// day instead of the coached ones.
     pub manual_targets: Option<MacroTargets>,
+    pub coach_settings: CoachSettings,
+}
+
+/// How the estimates behave.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[cfg_attr(
+    not(target_arch = "wasm32"),
+    derive(serde::Serialize, serde::Deserialize),
+    serde(default)
+)]
+pub struct CoachSettings {
+    /// How quickly the weight trend follows the scale.
+    pub smoothing: TrendSmoothing,
+    /// Plan with this expenditure instead of the adaptive estimate.
+    pub fixed_expenditure_kcal: Option<f64>,
 }
 
 impl Data {
@@ -124,6 +139,7 @@ impl Data {
             },
             check_ins: Vec::new(),
             manual_targets: None,
+            coach_settings: CoachSettings::default(),
         }
     }
 }
@@ -158,9 +174,12 @@ impl CoachSnapshot {
             prior_kcal,
             &ExpenditureConfig::default(),
         );
-        let trend = trend::ema_trend(&data.weigh_ins, TrendSmoothing::Standard.alpha(), today);
+        let settings = data.coach_settings;
+        let trend = trend::ema_trend(&data.weigh_ins, settings.smoothing.alpha(), today);
 
-        let live_kcal = expenditure.last().map_or(prior_kcal, |e| e.kcal);
+        // A fixed expenditure replaces the estimate (and any check-in's) for targets.
+        let fixed = settings.fixed_expenditure_kcal;
+        let live_kcal = fixed.unwrap_or_else(|| expenditure.last().map_or(prior_kcal, |e| e.kcal));
         let live_weight = trend.last().map_or(profile.stats.weight_kg, |t| t.trend_kg);
         let last_check_in = data
             .check_ins
@@ -169,7 +188,10 @@ impl CoachSnapshot {
             .max_by_key(|c| c.date)
             .cloned();
         let (kcal, weight) = match &last_check_in {
-            Some(c) => (c.expenditure_kcal, c.trend_kg.unwrap_or(live_weight)),
+            Some(c) => (
+                fixed.unwrap_or(c.expenditure_kcal),
+                c.trend_kg.unwrap_or(live_weight),
+            ),
             None => (live_kcal, live_weight),
         };
         // Maintaining corrects towards the goal weight from outside its band.
@@ -331,6 +353,7 @@ pub struct AppState {
     pub check_ins: Signal<Vec<CheckIn>>,
     /// Set when the user runs a manual program.
     pub manual_targets: Signal<Option<MacroTargets>>,
+    pub coach_settings: Signal<CoachSettings>,
     /// Weekday the weekly check-in falls on.
     pub check_in_day: Signal<Weekday>,
     /// Whether the check-in flow is showing.
@@ -369,6 +392,7 @@ impl AppState {
             favorites: Signal::new(favorites),
             check_ins: Signal::new(data.check_ins.clone()),
             manual_targets: Signal::new(data.manual_targets),
+            coach_settings: Signal::new(data.coach_settings),
             check_in_day: Signal::new(check_in_day),
             check_in_open: Signal::new(false),
             editing: Signal::new(None),
@@ -401,6 +425,7 @@ impl AppState {
         self.program.set(saved.data.program);
         self.check_ins.set(saved.data.check_ins);
         self.manual_targets.set(saved.data.manual_targets);
+        self.coach_settings.set(saved.data.coach_settings);
         self.region.set(saved.region);
         self.custom_foods.set(saved.custom_foods);
         self.favorites.set(saved.favorites);
@@ -427,6 +452,7 @@ impl AppState {
             program: self.program.read().clone(),
             check_ins: self.check_ins.read().clone(),
             manual_targets: *self.manual_targets.read(),
+            coach_settings: *self.coach_settings.read(),
         }
     }
 
@@ -779,6 +805,26 @@ mod tests {
         assert_eq!(snapshot.average_target.kcal, 2000.0);
         // Expenditure is still estimated from the data.
         assert_eq!(snapshot.expenditure_status(), EstimateStatus::Updated);
+    }
+
+    #[test]
+    fn fixed_expenditure_and_smoothing() {
+        let mut data = crate::seed::demo(date());
+        let adaptive = CoachSnapshot::compute(&data, date());
+
+        data.coach_settings.fixed_expenditure_kcal = Some(2500.0);
+        let fixed = CoachSnapshot::compute(&data, date());
+        // Targets follow the fixed value; the estimate itself is unchanged.
+        assert!(fixed.average_target.kcal > adaptive.average_target.kcal);
+        assert_eq!(fixed.expenditure_kcal(), adaptive.expenditure_kcal());
+
+        data.coach_settings = CoachSettings {
+            smoothing: TrendSmoothing::Faster,
+            fixed_expenditure_kcal: None,
+        };
+        let faster = CoachSnapshot::compute(&data, date());
+        // The demo person is losing, so a faster trend sits lower.
+        assert!(faster.trend_kg().unwrap() < adaptive.trend_kg().unwrap());
     }
 
     #[test]

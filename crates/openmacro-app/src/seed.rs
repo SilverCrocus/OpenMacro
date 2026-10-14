@@ -156,5 +156,6 @@ pub fn demo(today: NaiveDate) -> Data {
         },
         check_ins: Vec::new(),
         manual_targets: None,
+        coach_settings: Default::default(),
     }
 }

@@ -69,6 +69,12 @@ fn App() -> Element {
         state.persist.peek().save_prefs(&current);
     });
 
+    // Save the estimate settings whenever they change.
+    use_effect(move || {
+        let settings = *state.coach_settings.read();
+        state.persist.peek().save_coach_settings(&settings);
+    });
+
     // Save the manual program's targets whenever they change.
     use_effect(move || {
         let targets = *state.manual_targets.read();

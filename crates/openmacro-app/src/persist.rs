@@ -38,6 +38,7 @@ mod native {
     const CHECK_IN_DAY: &str = "check_in_day";
     const MANUAL_TARGETS: &str = "manual_targets";
     const PREFS: &str = "display";
+    const COACH_SETTINGS: &str = "coach_settings";
 
     pub struct Persistence {
         store: Option<Store>,
@@ -98,6 +99,7 @@ mod native {
                         .unwrap_or(defaults.program),
                     check_ins: store.check_ins()?,
                     manual_targets: store.setting(MANUAL_TARGETS)?.flatten(),
+                    coach_settings: store.setting(COACH_SETTINGS)?.unwrap_or_default(),
                 })
             };
             report("load saved data", load())
@@ -212,6 +214,15 @@ mod native {
 
         pub fn load_prefs(&self) -> Option<crate::prefs::Prefs> {
             report("load display settings", self.store.as_ref()?.setting(PREFS))?
+        }
+
+        pub fn save_coach_settings(&self, settings: &crate::state::CoachSettings) {
+            if let Some(store) = &self.store {
+                report(
+                    "save the estimate settings",
+                    store.set_setting(COACH_SETTINGS, settings),
+                );
+            }
         }
 
         pub fn save_manual_targets(&self, targets: Option<MacroTargets>) {
@@ -419,6 +430,8 @@ mod web {
         pub fn load_prefs(&self) -> Option<crate::prefs::Prefs> {
             None
         }
+
+        pub fn save_coach_settings(&self, _settings: &crate::state::CoachSettings) {}
 
         pub fn save_manual_targets(&self, _targets: Option<MacroTargets>) {}
 

@@ -14,6 +14,7 @@ use openmacro_core::targets::{
 use super::{fmt0, fmt1};
 use crate::prefs;
 use crate::state::{AppState, CoachSnapshot};
+use openmacro_core::trend::TrendSmoothing;
 
 const WEEKDAYS: [(Weekday, &str); 7] = [
     (Weekday::Mon, "M"),
@@ -84,7 +85,9 @@ pub fn Plan() -> Element {
         .last_check_in
         .as_ref()
         .map(|c| (c.expenditure_kcal, c.date.format("%-d %B").to_string()));
-    let basis_kcal = locked.as_ref().map_or(expenditure, |(kcal, _)| *kcal);
+    let fixed = state.coach_settings.read().fixed_expenditure_kcal;
+    let basis_kcal =
+        fixed.unwrap_or_else(|| locked.as_ref().map_or(expenditure, |(kcal, _)| *kcal));
     let live_change = coach.live_target.kcal - coach.average_target.kcal;
     let floor_note = if coach.average_target.limited_by_floor {
         " Your goal rate would go below your calorie floor, so the target is held at the floor; consider a slower rate."
@@ -303,6 +306,7 @@ pub fn Plan() -> Element {
                 }
             }
         }
+        EstimateSettings {}
         section { class: "card",
             h2 { "This week's targets" }
             div { class: "plan-bars",
@@ -333,7 +337,9 @@ pub fn Plan() -> Element {
                 ol { class: "explain",
                     li {
                         strong { "Expenditure: {prefs::energy(basis_kcal)} {energy_unit}/day. " }
-                        if let Some((_, date)) = &locked {
+                        if fixed.is_some() {
+                            "Fixed in Estimates below. The adaptive estimate is {prefs::energy(expenditure)} {energy_unit}/day, {status}."
+                        } else if let Some((_, date)) = &locked {
                             "Set at your check-in on {date}. The current estimate is {prefs::energy(expenditure)} {energy_unit}/day, {status}."
                         } else {
                             "Estimated {status}."
@@ -367,6 +373,75 @@ pub fn Plan() -> Element {
                         "Checking in today would change your average target by {prefs::energy_value(live_change):+.0} {energy_unit}."
                     }
                 }
+            }
+        }
+    }
+}
+
+/// Fixed or adaptive expenditure, and how fast the weight trend reacts.
+#[component]
+fn EstimateSettings() -> Element {
+    let mut state = use_context::<AppState>();
+    let coach = use_context::<Memo<CoachSnapshot>>();
+    let settings = (state.coach_settings)();
+    let estimate = coach.read().expenditure_kcal();
+    let fixed = settings.fixed_expenditure_kcal;
+
+    rsx! {
+        section { class: "card",
+            h2 { "Estimates" }
+            Choice { label: "Expenditure", even: true,
+                button {
+                    class: if fixed.is_none() { "active" },
+                    onclick: move |_| state.coach_settings.write().fixed_expenditure_kcal = None,
+                    "Adaptive"
+                }
+                button {
+                    class: if fixed.is_some() { "active" },
+                    onclick: move |_| {
+                        if fixed.is_none() {
+                            state.coach_settings.write().fixed_expenditure_kcal = Some(estimate.round());
+                        }
+                    },
+                    "Fixed"
+                }
+            }
+            if let Some(kcal) = fixed {
+                label { class: "field",
+                    span { "Fixed expenditure ({prefs::energy_symbol()}/day)" }
+                    input {
+                        r#type: "text",
+                        "inputmode": "decimal",
+                        value: "{prefs::energy(kcal)}",
+                        onchange: move |e| {
+                            if let Ok(v) = e.value().trim().replace(',', ".").parse::<f64>() {
+                                if v > 0.0 {
+                                    state.coach_settings.write().fixed_expenditure_kcal = Some(prefs::kcal_from_input(v));
+                                }
+                            }
+                        },
+                    }
+                }
+                p { class: "muted small",
+                    "Targets use this instead of the estimate, which keeps updating ({prefs::energy_text(estimate)}/day now) for comparison."
+                }
+            } else {
+                p { class: "muted small",
+                    "Your expenditure adapts to what you eat and how your weight changes."
+                }
+            }
+            Choice { label: "Weight trend", even: true,
+                for smoothing in TrendSmoothing::ALL {
+                    button {
+                        key: "{smoothing.label()}",
+                        class: if settings.smoothing == smoothing { "active" },
+                        onclick: move |_| state.coach_settings.write().smoothing = smoothing,
+                        "{smoothing.label()}"
+                    }
+                }
+            }
+            p { class: "muted small",
+                "Faster follows the scale more closely; slower smooths out more day-to-day noise."
             }
         }
     }

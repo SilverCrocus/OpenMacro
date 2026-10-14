@@ -18,6 +18,7 @@ pub struct WeighIn {
 
 /// User-facing smoothing presets.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum TrendSmoothing {
     Faster,
     #[default]
@@ -26,6 +27,20 @@ pub enum TrendSmoothing {
 }
 
 impl TrendSmoothing {
+    pub const ALL: [TrendSmoothing; 3] = [
+        TrendSmoothing::Faster,
+        TrendSmoothing::Standard,
+        TrendSmoothing::Slower,
+    ];
+
+    pub fn label(self) -> &'static str {
+        match self {
+            TrendSmoothing::Faster => "Faster",
+            TrendSmoothing::Standard => "Standard",
+            TrendSmoothing::Slower => "Slower",
+        }
+    }
+
     /// EMA weight given to each new daily value.
     pub fn alpha(self) -> f64 {
         match self {
