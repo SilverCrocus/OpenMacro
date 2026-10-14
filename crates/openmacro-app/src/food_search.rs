@@ -4,9 +4,7 @@
 use std::cmp::Reverse;
 use std::collections::{HashMap, HashSet};
 
-#[cfg(not(target_arch = "wasm32"))]
-use openmacro_core::food::FoodSource;
-use openmacro_core::food::{Food, Serving};
+use openmacro_core::food::{Food, FoodSource, Serving};
 use openmacro_core::log::LogEntry;
 
 use crate::foods::{FOODS, search as search_samples};
