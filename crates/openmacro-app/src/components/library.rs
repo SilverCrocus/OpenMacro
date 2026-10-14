@@ -148,19 +148,22 @@ pub(super) fn Field(
 }
 
 #[component]
-fn CustomFoodForm(
+pub(super) fn CustomFoodForm(
     barcode: String,
     on_done: EventHandler<()>,
     /// A saved food to edit instead of creating a new one.
     #[props(default)]
     existing: Option<Food>,
+    /// A food to start a new one from, e.g. to adjust a database food.
+    #[props(default)]
+    template: Option<Food>,
 ) -> Element {
     let state = use_context::<AppState>();
     use_back_handler(move |_| on_done.call(()));
     let region = (state.region)();
     // The id being edited; a signal so `save` stays `Copy`.
     let editing = use_signal(|| existing.as_ref().map(|f| f.id.clone()));
-    let mut form = use_signal(|| match &existing {
+    let mut form = use_signal(|| match existing.as_ref().or(template.as_ref()) {
         Some(food) => Input::from_food(food),
         None => Input {
             barcode: barcode.clone(),

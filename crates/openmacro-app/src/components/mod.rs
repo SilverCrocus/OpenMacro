@@ -70,6 +70,7 @@ pub fn Shell() -> Element {
 #[component]
 fn NavBar() -> Element {
     let state = use_context::<AppState>();
+    let waiting = state.plate.read().items.len();
     rsx! {
         nav { class: "tabbar",
             Link { to: Route::Dashboard {}, class: "tab", active_class: "active",
@@ -82,9 +83,12 @@ fn NavBar() -> Element {
             }
             button {
                 class: "tab-add",
-                aria_label: "Log food",
+                aria_label: if waiting > 0 { "Log food ({waiting} on the plate)" } else { "Log food" },
                 onclick: move |_| state.open_plate((state.selected_date)(), current_hour()),
                 Icon { name: "plus" }
+                if waiting > 0 {
+                    span { class: "tab-add-badge", "{waiting}" }
+                }
             }
             Link { to: Route::Plan {}, class: "tab", active_class: "active",
                 Icon { name: "plan" }

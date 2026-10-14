@@ -627,3 +627,27 @@ input[type="date"] { color-scheme: dark; }
 .goal-progress { margin-top: 14px; }
 .goal-fill { background: #b28cff; }
 .tile-progress { margin: 8px 0 6px; }
+
+/* Plate */
+
+.tab-add { position: relative; }
+.tab-add-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: var(--protein);
+  color: #1a0d05;
+  font-size: 12px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+.discard-confirm { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--surface); }
+.discard-confirm span { flex: 1; font-size: 14px; }
+.entry-open:disabled { opacity: 1; cursor: default; }
+.copy-food { margin: -4px 0 8px; font-size: 14px; }
+.copy-food .icon { width: 16px; height: 16px; }

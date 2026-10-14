@@ -27,7 +27,20 @@ enum Tab {
 pub fn Logger() -> Element {
     let mut state = use_context::<AppState>();
     let coach = use_context::<Memo<CoachSnapshot>>();
-    use_back_handler(move |_| state.close_plate());
+    // Back keeps the plate for later; editing a recipe is simply cancelled.
+    use_back_handler(move |_| {
+        if (state.recipe_edit)().is_some() {
+            state.close_plate();
+        } else {
+            state.hide_plate();
+        }
+    });
+    let mut confirm_discard = use_signal(|| false);
+    // A plate item being re-measured: its index, food and current amount.
+    let mut item_edit = use_signal(|| None::<(usize, Food, LogEntry)>);
+    let foods_db = use_context::<Resource<Option<Database>>>();
+    // A food being copied into a new custom food.
+    let mut copying_food = use_signal(|| None::<Food>);
     let mut tab = use_signal(|| Tab::Search);
     let mut detail = use_signal(|| None::<Food>);
     // Set when a scanned barcode isn't found, to prefill a new custom food.
@@ -61,7 +74,13 @@ pub fn Logger() -> Element {
                     button {
                         class: "icon-btn",
                         aria_label: "Close and discard plate",
-                        onclick: move |_| state.close_plate(),
+                        onclick: move |_| {
+                            if count > 0 && recipe_edit.is_none() {
+                                confirm_discard.set(true);
+                            } else {
+                                state.close_plate();
+                            }
+                        },
                         Icon { name: "close" }
                     }
                     div { class: "sheet-when",
@@ -81,8 +100,47 @@ pub fn Logger() -> Element {
                     }
                     div { class: "sheet-total", "{total_text}" }
                 }
+                if confirm_discard() {
+                    div { class: "discard-confirm", role: "alert",
+                        span {
+                            if count == 1 { "Discard the item on your plate?" } else { "Discard the {count} items on your plate?" }
+                        }
+                        button { onclick: move |_| confirm_discard.set(false), "Keep" }
+                        button {
+                            class: "danger",
+                            onclick: move |_| {
+                                confirm_discard.set(false);
+                                state.close_plate();
+                            },
+                            "Discard"
+                        }
+                    }
+                }
                 if count > 0 {
-                    PlateView { items: plate.items.clone() }
+                    PlateView {
+                        items: plate.items.clone(),
+                        on_edit: move |index: usize| {
+                            let plate = state.plate.read();
+                            let Some(item) = plate.items.get(index) else { return };
+                            let found = item.food_id.as_deref().and_then(|id| {
+                                let guard = foods_db.read();
+                                let db = guard.as_ref().and_then(Option::as_ref);
+                                food_search::resolve(db, &state.custom_foods.read(), id)
+                            });
+                            if let Some(found) = found {
+                                let entry = LogEntry {
+                                    id: 0,
+                                    date: plate.date,
+                                    hour: plate.hour,
+                                    name: item.name.clone(),
+                                    amount: item.amount.clone(),
+                                    nutrients: item.nutrients.clone(),
+                                    food_id: item.food_id.clone(),
+                                };
+                                item_edit.set(Some((index, found.food, entry)));
+                            }
+                        },
+                    }
                 }
                 if !saving_recipe() {
                     nav { class: "sheet-tabs",
@@ -113,14 +171,41 @@ pub fn Logger() -> Element {
                             on_done: move |_| saving_recipe.set(false),
                         }
                     } else {
-                        match (detail(), tab()) {
-                            (Some(food), _) => rsx! {
-                                FoodDetail { food, on_back: move |_| detail.set(None) }
+                        if let Some(food) = copying_food() {
+                            super::library::CustomFoodForm {
+                                barcode: String::new(),
+                                template: Some(food),
+                                on_done: move |_| {
+                                    copying_food.set(None);
+                                    detail.set(None);
+                                    tab.set(Tab::Library);
+                                },
+                            }
+                        } else {
+                        match (item_edit(), detail(), tab()) {
+                            (Some((index, food, entry)), _, _) => rsx! {
+                                FoodDetail {
+                                    key: "plate-{index}",
+                                    food,
+                                    editing: Some(entry),
+                                    on_back: move |_| item_edit.set(None),
+                                    on_save: move |item| {
+                                        state.replace_plate_item(index, item);
+                                        item_edit.set(None);
+                                    },
+                                }
                             },
-                            (None, Tab::Search) => rsx! {
+                            (None, Some(food), _) => rsx! {
+                                FoodDetail {
+                                    food,
+                                    on_back: move |_| detail.set(None),
+                                    on_copy: move |food| copying_food.set(Some(food)),
+                                }
+                            },
+                            (None, None, Tab::Search) => rsx! {
                                 SearchTab { query, on_select: move |food| detail.set(Some(food)) }
                             },
-                            (None, Tab::Scan) => rsx! {
+                            (None, None, Tab::Scan) => rsx! {
                                 super::scan::ScanTab {
                                     on_found: move |food| detail.set(Some(food)),
                                     on_create: move |code| {
@@ -129,12 +214,13 @@ pub fn Logger() -> Element {
                                     },
                                 }
                             },
-                            (None, Tab::Library) => rsx! {
+                            (None, None, Tab::Library) => rsx! {
                                 super::library::LibraryTab { on_select: move |food| detail.set(Some(food)), new_barcode }
                             },
-                            (None, Tab::QuickAdd) => rsx! {
+                            (None, None, Tab::QuickAdd) => rsx! {
                                 QuickAdd {}
                             },
+                        }
                         }
                     }
                 }
@@ -162,7 +248,7 @@ pub fn Logger() -> Element {
 }
 
 #[component]
-fn PlateView(items: Vec<PlateItem>) -> Element {
+fn PlateView(items: Vec<PlateItem>, on_edit: EventHandler<usize>) -> Element {
     let state = use_context::<AppState>();
     let totals: NutrientProfile = items.iter().map(|i| &i.nutrients).sum();
     let summary = format!(
@@ -180,7 +266,11 @@ fn PlateView(items: Vec<PlateItem>) -> Element {
             }
             for (index , item) in items.into_iter().enumerate() {
                 div { key: "{index}", class: "plate-item",
-                    div { class: "entry-main",
+                    button {
+                        class: "entry-main entry-open",
+                        aria_label: "Change the amount of {item.name}",
+                        disabled: item.food_id.is_none(),
+                        onclick: move |_| on_edit.call(index),
                         div { class: "entry-name", "{item.name}" }
                         div { class: "entry-sub", {format!("{} · {}", item.amount, macro_line(&item.nutrients))} }
                     }
@@ -333,6 +423,9 @@ pub(super) fn FoodDetail(
     #[props(default)]
     editing: Option<LogEntry>,
     #[props(default)] on_save: Option<EventHandler<PlateItem>>,
+    /// Offers "Copy to my foods", to make an editable copy.
+    #[props(default)]
+    on_copy: Option<EventHandler<Food>>,
 ) -> Element {
     let state = use_context::<AppState>();
     use_back_handler(move |_| on_back.call(()));
@@ -479,6 +572,19 @@ pub(super) fn FoodDetail(
         }
         if let Some(brand) = &food.brand {
             p { class: "muted detail-brand", "{brand}" }
+        }
+        if let Some(on_copy) = on_copy {
+            {
+                let copy = (*food).clone();
+                rsx! {
+                    button {
+                        class: "link-btn copy-food",
+                        onclick: move |_| on_copy.call(copy.clone()),
+                        Icon { name: "copy" }
+                        "Copy to my foods"
+                    }
+                }
+            }
         }
         div { class: "detail-headline",
             div { class: "big-kcal",

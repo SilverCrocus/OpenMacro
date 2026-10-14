@@ -428,6 +428,11 @@ impl AppState {
         plate.hour = hour;
     }
 
+    /// Hides the logging sheet but keeps what's on the plate for later.
+    pub fn hide_plate(mut self) {
+        self.plate.write().open = false;
+    }
+
     pub fn close_plate(mut self) {
         let mut plate = self.plate.write();
         plate.open = false;
@@ -437,6 +442,12 @@ impl AppState {
 
     pub fn add_to_plate(mut self, item: PlateItem) {
         self.plate.write().items.push(item);
+    }
+
+    pub fn replace_plate_item(mut self, index: usize, item: PlateItem) {
+        if let Some(slot) = self.plate.write().items.get_mut(index) {
+            *slot = item;
+        }
     }
 
     pub fn remove_from_plate(mut self, index: usize) {
