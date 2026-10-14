@@ -6,6 +6,7 @@ pub const CM_PER_INCH: f64 = 2.54;
 pub const GRAMS_PER_OUNCE: f64 = 28.349_523_125;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum WeightUnit {
     #[default]
     Kilograms,
@@ -13,6 +14,7 @@ pub enum WeightUnit {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum EnergyUnit {
     #[default]
     Kilocalories,
@@ -27,6 +29,13 @@ pub enum HeightUnit {
 }
 
 impl WeightUnit {
+    pub fn symbol(self) -> &'static str {
+        match self {
+            WeightUnit::Kilograms => "kg",
+            WeightUnit::Pounds => "lb",
+        }
+    }
+
     pub fn from_kg(self, kg: f64) -> f64 {
         match self {
             WeightUnit::Kilograms => kg,
@@ -43,6 +52,13 @@ impl WeightUnit {
 }
 
 impl EnergyUnit {
+    pub fn symbol(self) -> &'static str {
+        match self {
+            EnergyUnit::Kilocalories => "kcal",
+            EnergyUnit::Kilojoules => "kJ",
+        }
+    }
+
     pub fn from_kcal(self, kcal: f64) -> f64 {
         match self {
             EnergyUnit::Kilocalories => kcal,

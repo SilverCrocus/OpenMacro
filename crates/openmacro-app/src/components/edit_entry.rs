@@ -9,6 +9,7 @@ use super::{Icon, hour_label};
 use crate::back::use_back_handler;
 use crate::food_search::{self, Database};
 use crate::foods::fmt_qty;
+use crate::prefs;
 use crate::state::{AppState, LogEntry, PlateItem};
 
 #[component]
@@ -77,7 +78,14 @@ pub fn EditEntrySheet(entry: LogEntry) -> Element {
 fn NumbersForm(entry: LogEntry, on_save: EventHandler<PlateItem>) -> Element {
     let start = |n: Nutrient| entry.nutrients.get(n).map(fmt_qty).unwrap_or_default();
     let mut name = use_signal(|| entry.name.clone());
-    let kcal = use_signal(|| start(Nutrient::Energy));
+    // Energy is typed in the user's unit (kcal or kJ).
+    let kcal = use_signal(|| {
+        entry
+            .nutrients
+            .get(Nutrient::Energy)
+            .map(|k| fmt_qty(prefs::energy_value(k).round()))
+            .unwrap_or_default()
+    });
     let protein = use_signal(|| start(Nutrient::Protein));
     let fat = use_signal(|| start(Nutrient::Fat));
     let carbs = use_signal(|| start(Nutrient::Carbs));
@@ -105,7 +113,7 @@ fn NumbersForm(entry: LogEntry, on_save: EventHandler<PlateItem>) -> Element {
             }
         }
         div { class: "field-grid",
-            NumberField { label: "Calories", unit: "kcal", value: kcal }
+            NumberField { label: "Energy", unit: prefs::energy_symbol(), value: kcal }
             NumberField { label: "Protein", unit: "g", value: protein }
             NumberField { label: "Fat", unit: "g", value: fat }
             NumberField { label: "Carbs", unit: "g", value: carbs }
@@ -122,6 +130,11 @@ fn NumbersForm(entry: LogEntry, on_save: EventHandler<PlateItem>) -> Element {
                     (Nutrient::Carbs, carbs()),
                 ] {
                     if let Some(value) = number(text) {
+                        let value = if nutrient == Nutrient::Energy {
+                            prefs::kcal_from_input(value)
+                        } else {
+                            value
+                        };
                         nutrients.set(nutrient, value);
                     }
                 }

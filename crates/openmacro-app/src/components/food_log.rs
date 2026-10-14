@@ -5,7 +5,7 @@ use dioxus::prelude::*;
 use openmacro_core::expenditure::DayStatus;
 use openmacro_core::nutrients::Nutrient;
 
-use super::{Icon, MacroStrip, Ring, fmt0, hour_label, macro_line};
+use super::{Icon, MacroStrip, Ring, hour_label, macro_line};
 use crate::state::{AppState, CoachSnapshot, Copying, LogEntry, day_totals, today, week_start};
 
 const FIRST_HOUR: u32 = 6;
@@ -196,7 +196,7 @@ fn EntryRow(entry: LogEntry) -> Element {
     let mut state = use_context::<AppState>();
     let id = entry.id;
     let open = entry.clone();
-    let kcal = fmt0(entry.nutrients.get_or_zero(Nutrient::Energy));
+    let kcal = crate::prefs::energy(entry.nutrients.get_or_zero(Nutrient::Energy));
     let macros = macro_line(&entry.nutrients);
     rsx! {
         div { class: "entry",

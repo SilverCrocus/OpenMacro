@@ -8,11 +8,12 @@ use openmacro_core::nutrients::{
     KCAL_PER_G_CARBS, KCAL_PER_G_FAT, KCAL_PER_G_PROTEIN, Nutrient, NutrientProfile,
 };
 
-use super::{Icon, fmt0, fmt1, hour_label, macro_line};
+use super::{Icon, fmt1, hour_label, macro_line};
 use crate::back::use_back_handler;
 use crate::food_search::{self, Database, FoundFood};
 use crate::foods::plate_item;
 use crate::keypad::{self, Key};
+use crate::prefs;
 use crate::state::{AppState, CoachSnapshot, LogEntry, PlateItem, day_totals};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -53,9 +54,10 @@ pub fn Logger() -> Element {
     let day_kcal = day_totals(&state.log.read(), plate.date).get_or_zero(Nutrient::Energy);
     let target_kcal = coach.read().target_for(plate.date).kcal;
     let total_text = format!(
-        "{} / {} kcal",
-        fmt0(day_kcal + plate_kcal),
-        fmt0(target_kcal)
+        "{} / {} {}",
+        prefs::energy(day_kcal + plate_kcal),
+        prefs::energy(target_kcal),
+        prefs::energy_symbol()
     );
     let date_text = plate.date.format("%a %-d %b").to_string();
     let count = plate.items.len();
@@ -252,8 +254,8 @@ fn PlateView(items: Vec<PlateItem>, on_edit: EventHandler<usize>) -> Element {
     let state = use_context::<AppState>();
     let totals: NutrientProfile = items.iter().map(|i| &i.nutrients).sum();
     let summary = format!(
-        "{} kcal · {}",
-        fmt0(totals.get_or_zero(Nutrient::Energy)),
+        "{} · {}",
+        prefs::energy_text(totals.get_or_zero(Nutrient::Energy)),
         macro_line(&totals)
     );
     rsx! {
@@ -274,7 +276,7 @@ fn PlateView(items: Vec<PlateItem>, on_edit: EventHandler<usize>) -> Element {
                         div { class: "entry-name", "{item.name}" }
                         div { class: "entry-sub", {format!("{} · {}", item.amount, macro_line(&item.nutrients))} }
                     }
-                    div { class: "entry-kcal", {fmt0(item.nutrients.get_or_zero(Nutrient::Energy))} }
+                    div { class: "entry-kcal", {prefs::energy(item.nutrients.get_or_zero(Nutrient::Energy))} }
                     button {
                         class: "icon-btn small",
                         aria_label: "Remove {item.name}",
@@ -404,8 +406,8 @@ fn default_summary(food: &Food) -> String {
     ) {
         (Some(n), Some(label)) => {
             format!(
-                "{} kcal · {} · {}",
-                fmt0(n.get_or_zero(Nutrient::Energy)),
+                "{} · {} · {}",
+                prefs::energy_text(n.get_or_zero(Nutrient::Energy)),
                 macro_line(&n),
                 label
             )
@@ -509,7 +511,15 @@ pub(super) fn FoodDetail(
         .map(|(n, v)| {
             (
                 n.name().to_string(),
-                format!("{} {}", fmt1(v), n.unit().symbol()),
+                if n == Nutrient::Energy {
+                    format!(
+                        "{} {}",
+                        fmt1(prefs::energy_value(v)),
+                        prefs::energy_symbol()
+                    )
+                } else {
+                    format!("{} {}", fmt1(v), n.unit().symbol())
+                },
             )
         })
         .collect();
@@ -588,8 +598,8 @@ pub(super) fn FoodDetail(
         }
         div { class: "detail-headline",
             div { class: "big-kcal",
-                span { class: "num", {fmt0(kcal)} }
-                span { class: "muted", "kcal" }
+                span { class: "num", {prefs::energy(kcal)} }
+                span { class: "muted", {prefs::energy_symbol()} }
             }
             for (label , grams , pct , class) in headline {
                 div { key: "{label}", class: "headline-macro {class}",
@@ -720,8 +730,10 @@ fn QuickAdd() -> Element {
     let f = parse_number(&fat()).unwrap_or(0.0);
     let c = parse_number(&carbs()).unwrap_or(0.0);
     let macro_kcal = p * KCAL_PER_G_PROTEIN + f * KCAL_PER_G_FAT + c * KCAL_PER_G_CARBS;
-    let energy = parse_number(&kcal()).or((macro_kcal > 0.0).then_some(macro_kcal));
-    let hint = format!("Macros add up to {} kcal", fmt0(macro_kcal));
+    let energy = parse_number(&kcal())
+        .map(prefs::kcal_from_input)
+        .or((macro_kcal > 0.0).then_some(macro_kcal));
+    let hint = format!("Macros add up to {}", prefs::energy_text(macro_kcal));
 
     rsx! {
         label { class: "field",
@@ -734,7 +746,7 @@ fn QuickAdd() -> Element {
             }
         }
         div { class: "field-grid",
-            NumberField { label: "Calories", unit: "kcal", value: kcal }
+            NumberField { label: "Energy", unit: prefs::energy_symbol(), value: kcal }
             NumberField { label: "Protein", unit: "g", value: protein }
             NumberField { label: "Fat", unit: "g", value: fat }
             NumberField { label: "Carbs", unit: "g", value: carbs }

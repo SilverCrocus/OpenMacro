@@ -244,7 +244,12 @@ pub fn Sparkline(values: Vec<f64>, class: &'static str) -> Element {
 pub fn MacroStrip(totals: NutrientProfile, target: MacroTargets) -> Element {
     let mut remaining = use_signal(|| false);
     let cells = [
-        ("kcal", Nutrient::Energy, target.kcal, "kcal"),
+        (
+            crate::prefs::energy_symbol(),
+            Nutrient::Energy,
+            target.kcal,
+            "kcal",
+        ),
         ("P", Nutrient::Protein, target.protein_g, "protein"),
         ("F", Nutrient::Fat, target.fat_g, "fat"),
         ("C", Nutrient::Carbs, target.carbs_g, "carbs"),
@@ -261,15 +266,18 @@ pub fn MacroStrip(totals: NutrientProfile, target: MacroTargets) -> Element {
                     let shown = if remaining() { (goal - value).max(0.0) } else { value };
                     let width = (value / goal.max(1.0) * 100.0).clamp(0.0, 100.0);
                     let over = value > goal * 1.05;
+                    let num = move |v: f64| {
+                        if nutrient == Nutrient::Energy { crate::prefs::energy(v) } else { fmt0(v) }
+                    };
                     rsx! {
                         div { key: "{letter}", class: if over { "macro-cell {class} over" } else { "macro-cell {class}" },
                             div { class: "macro-cell-text",
                                 span { class: "macro-letter", "{letter}" }
-                                span { class: "num", {fmt0(shown)} }
+                                span { class: "num", {num(shown)} }
                                 if remaining() {
                                     span { class: "muted", "left" }
                                 } else {
-                                    span { class: "muted", "/{fmt0(goal)}" }
+                                    span { class: "muted", "/{num(goal)}" }
                                 }
                             }
                             div { class: "bar-track",

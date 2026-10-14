@@ -5,7 +5,8 @@ use dioxus::prelude::*;
 use openmacro_core::expenditure::EstimateStatus;
 use openmacro_core::nutrients::Nutrient;
 
-use super::{Ring, Sparkline, fmt0, fmt1};
+use super::{Ring, Sparkline, fmt0};
+use crate::prefs;
 use crate::state::{AppState, CoachSnapshot, day_totals, today, week_start};
 
 #[component]
@@ -118,7 +119,7 @@ pub fn Dashboard() -> Element {
             1.0
         };
         (
-            format!("{:.1}", (goal.goal_weight_kg - now).abs()),
+            prefs::weight((goal.goal_weight_kg - now).abs(), 1),
             progress,
         )
     });
@@ -137,12 +138,22 @@ pub fn Dashboard() -> Element {
         })
         .count();
 
-    let today_text = format!("{} / {}", fmt0(today_kcal), fmt0(today_target));
-    let trend_text = trend_now.map_or("—".into(), fmt1);
+    let today_text = format!(
+        "{} / {}",
+        prefs::energy(today_kcal),
+        prefs::energy(today_target)
+    );
+    let trend_text = trend_now.map_or("—".into(), |kg| prefs::weight(kg, 1));
     let trend_change_text = trend_change.map_or("Not enough data".into(), |c| {
-        format!("{c:+.2} kg this week")
+        format!(
+            "{:+.2} {} this week",
+            prefs::weight_value(c),
+            prefs::weight_symbol()
+        )
     });
-    let balance_text = balance.map_or("—".into(), |b| format!("{b:+.0}"));
+    let balance_text = balance.map_or("—".into(), |b| format!("{:+.0}", prefs::energy_value(b)));
+    let energy_unit = prefs::energy_symbol();
+    let weight_unit = prefs::weight_symbol();
 
     let empty = state.is_empty();
     drop((log, weigh_ins));
@@ -174,7 +185,7 @@ pub fn Dashboard() -> Element {
             div {
                 div { class: "muted", "Today" }
                 div { class: "hero-num", "{today_text}" }
-                div { class: "muted", "kcal eaten / target" }
+                div { class: "muted", "{energy_unit} eaten / target" }
             }
         }
         section { class: "card",
@@ -194,19 +205,19 @@ pub fn Dashboard() -> Element {
         div { class: "tiles",
             Link { to: super::insight::route("expenditure"), class: "card tile link-tile",
                 h3 { "Expenditure" }
-                div { class: "tile-num", {fmt0(expenditure)} span { class: "unit", " kcal" } }
+                div { class: "tile-num", {prefs::energy(expenditure)} span { class: "unit", " {energy_unit}" } }
                 div { class: "muted", "{status}" }
                 Sparkline { values: exp_series, class: "exp" }
             }
             Link { to: super::insight::route("weight"), class: "card tile link-tile",
                 h3 { "Weight trend" }
-                div { class: "tile-num", "{trend_text}" span { class: "unit", " kg" } }
+                div { class: "tile-num", "{trend_text}" span { class: "unit", " {weight_unit}" } }
                 div { class: "muted", "{trend_change_text}" }
                 Sparkline { values: trend_series, class: "trend" }
             }
             Link { to: super::insight::route("energy-balance"), class: "card tile link-tile",
                 h3 { "Energy balance" }
-                div { class: "tile-num", "{balance_text}" span { class: "unit", " kcal/day" } }
+                div { class: "tile-num", "{balance_text}" span { class: "unit", " {energy_unit}/day" } }
                 div { class: "muted", "Last 7 days, intake − expenditure" }
             }
             Link { to: super::insight::route("macros"), class: "card tile link-tile",
@@ -227,11 +238,11 @@ pub fn Dashboard() -> Element {
                 h3 { "Goal" }
                 match goal_text {
                     Some((left, progress)) => rsx! {
-                        div { class: "tile-num", "{left}" span { class: "unit", " kg to go" } }
+                        div { class: "tile-num", "{left}" span { class: "unit", " {weight_unit} to go" } }
                         div { class: "bar-track tile-progress",
                             div { class: "bar-fill goal-fill", style: "width: {progress * 100.0:.0}%" }
                         }
-                        div { class: "muted", {format!("Goal {:.1} kg", goal.goal_weight_kg)} }
+                        div { class: "muted", {format!("Goal {}", prefs::weight_text(goal.goal_weight_kg, 1))} }
                     },
                     None => rsx! {
                         div { class: "tile-num", "—" }
@@ -259,7 +270,9 @@ fn WeighInCard() -> Element {
         .replace(',', ".")
         .parse::<f64>()
         .ok()
-        .filter(|v| (20.0..400.0).contains(v));
+        .map(prefs::kg_from_input)
+        .filter(|kg| (20.0..400.0).contains(kg));
+    let unit = prefs::weight_symbol();
     rsx! {
         section { class: "card",
             h2 { "Weigh in" }
@@ -268,8 +281,8 @@ fn WeighInCard() -> Element {
                     class: "qty",
                     r#type: "text",
                     "inputmode": "decimal",
-                    placeholder: "kg",
-                    aria_label: "Weight in kilograms",
+                    placeholder: "{unit}",
+                    aria_label: "Weight in {unit}",
                     value: "{input}",
                     oninput: move |e| {
                         input.set(e.value());

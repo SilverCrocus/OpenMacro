@@ -10,8 +10,9 @@ use openmacro_core::expenditure::DayStatus;
 use openmacro_core::nutrients::Nutrient;
 use openmacro_core::targets::MacroTargets;
 
-use super::{Icon, fmt0, fmt1};
+use super::{Icon, fmt0};
 use crate::back::use_back_handler;
+use crate::prefs;
 use crate::state::{AppState, CoachSnapshot, day_totals, today};
 
 fn due(state: &AppState, coach: &CoachSnapshot) -> NaiveDate {
@@ -128,26 +129,28 @@ fn WeighInStep(on_next: EventHandler<()>) -> Element {
         .replace(',', ".")
         .parse::<f64>()
         .ok()
-        .filter(|v| (20.0..400.0).contains(v));
+        .map(prefs::kg_from_input)
+        .filter(|kg| (20.0..400.0).contains(kg));
     let weighed_today = last.is_some_and(|w| w.date == today());
+    let unit = prefs::weight_symbol();
 
     rsx! {
         p { class: "muted",
             "Your expenditure estimate needs at least one weigh-in a week. Weighing in most days, at the same time, gives the smoothest trend."
         }
         if let Some(last) = last {
-            p { class: "muted small", "Last weigh-in: {fmt1(last.kg)} kg on {last.date.format(\"%a %-d %b\")}" }
+            p { class: "muted small", "Last weigh-in: {prefs::weight_text(last.kg, 1)} on {last.date.format(\"%a %-d %b\")}" }
         }
         if weighed_today {
             p { "You've already weighed in today." }
             button { class: "primary wide", onclick: move |_| on_next.call(()), "Continue" }
         } else {
             label { class: "field",
-                span { "Today's weight (kg)" }
+                span { "Today's weight ({unit})" }
                 input {
                     r#type: "text",
                     "inputmode": "decimal",
-                    placeholder: "kg",
+                    placeholder: "{unit}",
                     oninput: move |e| weight.set(e.value()),
                 }
             }
@@ -215,7 +218,7 @@ fn ReviewStep(on_next: EventHandler<()>) -> Element {
                             Suggestion::MaybeFasted => ("I fasted this day", "Nothing logged".to_string()),
                             Suggestion::MaybePartial => (
                                 "I only logged part of this day",
-                                format!("{} kcal logged", fmt0(review.logged_kcal.unwrap_or(0.0))),
+                                format!("{} logged", prefs::energy_text(review.logged_kcal.unwrap_or(0.0))),
                             ),
                         };
                         rsx! {
@@ -285,27 +288,31 @@ fn UpdateStep() -> Element {
         if diff.abs() < 1.0 {
             "no change".to_string()
         } else {
-            format!("{diff:+.0} kcal")
+            format!(
+                "{:+.0} {}",
+                prefs::energy_value(diff),
+                prefs::energy_symbol()
+            )
         }
     };
     let expenditure_line = match old_kcal {
         Some(old) => format!(
-            "{} → {} kcal ({})",
-            fmt0(old),
-            fmt0(new_kcal),
+            "{} → {} ({})",
+            prefs::energy(old),
+            prefs::energy_text(new_kcal),
             change(old, new_kcal)
         ),
-        None => format!("{} kcal", fmt0(new_kcal)),
+        None => prefs::energy_text(new_kcal),
     };
     // Before the first check-in the active target already follows the live estimate.
     let target_line = match old_kcal {
         Some(_) => format!(
-            "{} → {} kcal ({})",
-            fmt0(old_target),
-            fmt0(new_target),
+            "{} → {} ({})",
+            prefs::energy(old_target),
+            prefs::energy_text(new_target),
             change(old_target, new_target)
         ),
-        None => format!("{} kcal", fmt0(new_target)),
+        None => prefs::energy_text(new_target),
     };
     let average = |f: fn(&MacroTargets) -> f64| fmt0(week.iter().map(f).sum::<f64>() / 7.0);
     let macros = [
@@ -336,7 +343,7 @@ fn UpdateStep() -> Element {
                 for (i , day) in ["M", "T", "W", "T", "F", "S", "S"].iter().enumerate() {
                     div { key: "{i}", class: "checkin-day",
                         span { class: "muted small", "{day}" }
-                        strong { {fmt0(week[i].kcal)} }
+                        strong { {prefs::energy(week[i].kcal)} }
                     }
                 }
             }

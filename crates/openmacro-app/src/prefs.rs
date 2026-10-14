@@ -2,6 +2,7 @@
 //! formatting helpers anywhere can follow them.
 
 use dioxus::prelude::*;
+pub use openmacro_core::units::{EnergyUnit, WeightUnit};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 #[cfg_attr(
@@ -46,9 +47,71 @@ impl Theme {
 pub struct Prefs {
     pub theme: Theme,
     pub clock_24h: bool,
+    pub energy: EnergyUnit,
+    pub weight: WeightUnit,
 }
 
 pub static PREFS: GlobalSignal<Prefs> = Signal::global(Prefs::default);
+
+// Everything is stored in kcal and kg; these convert for display and input.
+
+fn energy_unit() -> EnergyUnit {
+    PREFS.read().energy
+}
+
+fn weight_unit() -> WeightUnit {
+    PREFS.read().weight
+}
+
+/// "kcal" or "kJ".
+pub fn energy_symbol() -> &'static str {
+    energy_unit().symbol()
+}
+
+/// Energy in the user's unit, as a number.
+pub fn energy_value(kcal: f64) -> f64 {
+    energy_unit().from_kcal(kcal)
+}
+
+/// Energy in the user's unit, rounded, without the unit: "1894".
+pub fn energy(kcal: f64) -> String {
+    format!("{:.0}", energy_value(kcal))
+}
+
+/// Energy with its unit: "1894 kcal".
+pub fn energy_text(kcal: f64) -> String {
+    format!("{} {}", energy(kcal), energy_symbol())
+}
+
+/// A number typed in the user's energy unit, in kcal.
+pub fn kcal_from_input(value: f64) -> f64 {
+    energy_unit().to_kcal(value)
+}
+
+/// "kg" or "lb".
+pub fn weight_symbol() -> &'static str {
+    weight_unit().symbol()
+}
+
+/// Weight in the user's unit, as a number.
+pub fn weight_value(kg: f64) -> f64 {
+    weight_unit().from_kg(kg)
+}
+
+/// Weight in the user's unit with `decimals` places, without the unit.
+pub fn weight(kg: f64, decimals: usize) -> String {
+    format!("{:.decimals$}", weight_value(kg))
+}
+
+/// Weight with its unit: "70.6 kg".
+pub fn weight_text(kg: f64, decimals: usize) -> String {
+    format!("{} {}", weight(kg, decimals), weight_symbol())
+}
+
+/// A number typed in the user's weight unit, in kg.
+pub fn kg_from_input(value: f64) -> f64 {
+    weight_unit().to_kg(value)
+}
 
 /// Applies the theme to the page.
 pub fn apply_theme(theme: Theme) {

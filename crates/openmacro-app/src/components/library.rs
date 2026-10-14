@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use openmacro_core::food::{Food, FoodSource};
 use openmacro_core::nutrients::Nutrient;
 
-use super::{Icon, fmt0, macro_line};
+use super::{Icon, macro_line};
 use crate::back::use_back_handler;
 use crate::custom_food::{self, Basis, Input, LabelStyle};
 use crate::food_search::FoodRegion;
@@ -78,9 +78,9 @@ pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<Stri
                         let amount = food.default_amount();
                         match (food.nutrients_for(amount), amount_label(&food, amount)) {
                             (Some(n), Some(label)) => format!(
-                                "{}{} kcal · {} · {}",
+                                "{}{} · {} · {}",
                                 if food.source == FoodSource::Recipe { "Recipe · " } else { "" },
-                                fmt0(n.get_or_zero(Nutrient::Energy)),
+                                crate::prefs::energy_text(n.get_or_zero(Nutrient::Energy)),
                                 macro_line(&n),
                                 label
                             ),

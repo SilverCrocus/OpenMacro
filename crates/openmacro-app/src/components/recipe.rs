@@ -9,6 +9,7 @@ use super::library::Field;
 use super::{fmt0, macro_line};
 use crate::back::use_back_handler;
 use crate::foods::{fmt_qty, plate_item};
+use crate::prefs;
 use crate::state::{AppState, PlateItem};
 
 /// The recipe the form describes, if it's complete enough to save.
@@ -96,8 +97,8 @@ pub fn RecipeForm(
             None => "weight unknown".to_string(),
         };
         format!(
-            "Per serving ({weight}): {} kcal · {}",
-            fmt0(serving.get_or_zero(Nutrient::Energy)),
+            "Per serving ({weight}): {} · {}",
+            prefs::energy_text(serving.get_or_zero(Nutrient::Energy)),
             macro_line(&serving)
         )
     });

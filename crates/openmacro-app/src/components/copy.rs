@@ -4,8 +4,9 @@ use chrono::{Duration, NaiveDate};
 use dioxus::prelude::*;
 use openmacro_core::nutrients::Nutrient;
 
-use super::{Icon, fmt0, hour_label};
+use super::{Icon, hour_label};
 use crate::back::use_back_handler;
+use crate::prefs;
 use crate::state::{AppState, Copying, today};
 
 #[component]
@@ -60,7 +61,7 @@ pub fn CopySheet(copying: Copying) -> Element {
                         div { class: "checkin-title",
                             if count == 1 { "Copy 1 item" } else { "Copy {count} items" }
                         }
-                        div { class: "muted small", "{what} · {fmt0(kcal)} kcal" }
+                        div { class: "muted small", "{what} · {prefs::energy_text(kcal)}" }
                     }
                 }
                 div { class: "sheet-body",

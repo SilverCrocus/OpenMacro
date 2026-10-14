@@ -11,6 +11,7 @@ use openmacro_core::targets::{
 };
 
 use super::{fmt0, fmt1};
+use crate::prefs;
 use crate::state::{AppState, CoachSnapshot};
 
 const WEEKDAYS: [(Weekday, &str); 7] = [
@@ -43,9 +44,12 @@ pub fn Plan() -> Element {
     } else {
         format!("{:.0} weeks", (to_go / weekly_kg).abs().ceil())
     };
+    let unit = prefs::weight_symbol();
+    let energy_unit = prefs::energy_symbol();
     let rate_text = format!(
-        "{:+.2}% / week ({:+.2} kg)",
-        goal.rate_pct_per_week, weekly_kg
+        "{:+.2}% / week ({:+.2} {unit})",
+        goal.rate_pct_per_week,
+        prefs::weight_value(weekly_kg)
     );
     let high_days = match &program.distribution {
         WeeklyDistribution::Even => Vec::new(),
@@ -94,12 +98,12 @@ pub fn Plan() -> Element {
             h2 { "Goal" }
             div { class: "stat-row",
                 div { class: "stat",
-                    span { class: "num", {fmt1(weight)} }
-                    span { class: "muted", "Trend kg" }
+                    span { class: "num", {prefs::weight(weight, 1)} }
+                    span { class: "muted", "Trend {unit}" }
                 }
                 div { class: "stat",
-                    span { class: "num", {fmt1(goal.goal_weight_kg)} }
-                    span { class: "muted", "Goal kg" }
+                    span { class: "num", {prefs::weight(goal.goal_weight_kg, 1)} }
+                    span { class: "muted", "Goal {unit}" }
                 }
                 div { class: "stat",
                     span { class: "num", "{eta}" }
@@ -107,14 +111,14 @@ pub fn Plan() -> Element {
                 }
             }
             label { class: "field",
-                span { "Goal weight (kg)" }
+                span { "Goal weight ({unit})" }
                 input {
                     r#type: "number",
                     step: "0.1",
-                    value: "{goal.goal_weight_kg}",
+                    value: "{prefs::weight(goal.goal_weight_kg, 1)}",
                     onchange: move |e| {
                         if let Ok(v) = e.value().parse::<f64>() {
-                            state.goal.write().goal_weight_kg = v;
+                            state.goal.write().goal_weight_kg = prefs::kg_from_input(v);
                         }
                     },
                 }
@@ -190,9 +194,9 @@ pub fn Plan() -> Element {
                 }
                 Choice { label: "Calorie floor",
                     for (value , text) in [
-                        (CalorieFloor::Standard, "1200 kcal"),
-                        (CalorieFloor::Low, "800 kcal"),
-                        (CalorieFloor::None, "None"),
+                        (CalorieFloor::Standard, prefs::energy_text(1200.0)),
+                        (CalorieFloor::Low, prefs::energy_text(800.0)),
+                        (CalorieFloor::None, "None".to_string()),
                     ]
                     {
                         button {
@@ -270,7 +274,7 @@ pub fn Plan() -> Element {
             div { class: "plan-bars",
                 for (i , (_ , letter)) in WEEKDAYS.iter().enumerate() {
                     div { key: "{i}", class: "plan-col",
-                        span { class: "plan-kcal", {fmt0(week[i].kcal)} }
+                        span { class: "plan-kcal", {prefs::energy(week[i].kcal)} }
                         div { class: "plan-stack", style: "height: {week[i].kcal / bar_max * 100.0}%",
                             div { class: "seg protein", style: "flex: {week[i].protein_g * 4.0}" }
                             div { class: "seg fat", style: "flex: {week[i].fat_g * 9.0}" }
@@ -286,7 +290,7 @@ pub fn Plan() -> Element {
             section { class: "card",
                 h2 { "How these targets were set" }
                 p { class: "muted",
-                    "You're on a manual program, so these are the targets you entered, every day. Your expenditure estimate is {fmt0(expenditure)} kcal/day ({status}), if you want to compare."
+                    "You're on a manual program, so these are the targets you entered, every day. Your expenditure estimate is {prefs::energy(expenditure)} {energy_unit}/day ({status}), if you want to compare."
                 }
             }
         } else {
@@ -294,16 +298,16 @@ pub fn Plan() -> Element {
                 h2 { "How these targets were set" }
                 ol { class: "explain",
                     li {
-                        strong { "Expenditure: {fmt0(basis_kcal)} kcal/day. " }
+                        strong { "Expenditure: {prefs::energy(basis_kcal)} {energy_unit}/day. " }
                         if let Some((_, date)) = &locked {
-                            "Set at your check-in on {date}. The current estimate is {fmt0(expenditure)} kcal/day, {status}."
+                            "Set at your check-in on {date}. The current estimate is {prefs::energy(expenditure)} {energy_unit}/day, {status}."
                         } else {
                             "Estimated {status}."
                         }
                     }
                     li {
-                        strong { "Average target: {fmt0(coach.average_target.kcal)} kcal/day. " }
-                        "Your rate of {goal.rate_pct_per_week:+.2}% of body weight per week is about {weekly_kg:+.2} kg, or {daily_delta:+.0} kcal/day relative to expenditure.{floor_note}"
+                        strong { "Average target: {prefs::energy(coach.average_target.kcal)} {energy_unit}/day. " }
+                        "Your rate of {goal.rate_pct_per_week:+.2}% of body weight per week is about {prefs::weight_value(weekly_kg):+.2} {unit}, or {prefs::energy_value(daily_delta):+.0} {energy_unit}/day relative to expenditure.{floor_note}"
                     }
                     if shifting {
                         li {
@@ -313,7 +317,7 @@ pub fn Plan() -> Element {
                     }
                     li {
                         strong { "Protein: {fmt0(week[0].protein_g)} g. " }
-                        "{program.protein.grams_per_kg()} g per kg of trend weight."
+                        "{program.protein.grams_per_kg()} g per kg of trend weight (about {fmt1(program.protein.grams_per_kg() * openmacro_core::units::KG_PER_LB)} g per lb)."
                     }
                     li {
                         strong { "Fat and carbs. " }
@@ -326,7 +330,7 @@ pub fn Plan() -> Element {
                     }
                 } else if live_change.abs() >= 1.0 {
                     p { class: "muted small",
-                        "Checking in today would change your average target by {live_change:+.0} kcal."
+                        "Checking in today would change your average target by {prefs::energy_value(live_change):+.0} {energy_unit}."
                     }
                 }
             }
@@ -334,7 +338,6 @@ pub fn Plan() -> Element {
     }
 }
 
-/// A labelled segmented control; `even` gives every option the same width.
 /// Picks one value out of a set of targets, to edit it.
 type TargetField = fn(&mut MacroTargets) -> &mut f64;
 
@@ -348,17 +351,22 @@ fn ManualTargets() -> Element {
     let from_macros = targets.protein_g * KCAL_PER_G_PROTEIN
         + targets.fat_g * KCAL_PER_G_FAT
         + targets.carbs_g * KCAL_PER_G_CARBS;
-    let mut set = move |field: TargetField, text: String| {
+    let mut set = move |field: TargetField, energy: bool, text: String| {
         if let Ok(v) = text.trim().replace(',', ".").parse::<f64>() {
             if v >= 0.0 {
                 if let Some(t) = state.manual_targets.write().as_mut() {
-                    *field(t) = v;
+                    *field(t) = if energy { prefs::kcal_from_input(v) } else { v };
                 }
             }
         }
     };
     let fields: [(&str, &str, f64, TargetField); 4] = [
-        ("Calories", "kcal", targets.kcal, |t| &mut t.kcal),
+        (
+            "Energy",
+            prefs::energy_symbol(),
+            prefs::energy_value(targets.kcal),
+            |t| &mut t.kcal,
+        ),
         ("Protein", "g", targets.protein_g, |t| &mut t.protein_g),
         ("Fat", "g", targets.fat_g, |t| &mut t.fat_g),
         ("Carbs", "g", targets.carbs_g, |t| &mut t.carbs_g),
@@ -376,14 +384,14 @@ fn ManualTargets() -> Element {
                         r#type: "text",
                         "inputmode": "decimal",
                         value: "{fmt0(value)}",
-                        onchange: move |e| set(field, e.value()),
+                        onchange: move |e| set(field, label == "Energy", e.value()),
                     }
                 }
             }
         }
         if (from_macros - targets.kcal).abs() > 50.0 {
             p { class: "muted small",
-                "Your macros add up to {fmt0(from_macros)} kcal, {fmt0((from_macros - targets.kcal).abs())} kcal "
+                "Your macros add up to {prefs::energy_text(from_macros)}, {prefs::energy_text((from_macros - targets.kcal).abs())} "
                 if from_macros > targets.kcal { "more" } else { "less" }
                 " than your calorie target."
             }
@@ -391,6 +399,7 @@ fn ManualTargets() -> Element {
     }
 }
 
+/// A labelled segmented control; `even` gives every option the same width.
 #[component]
 fn Choice(label: &'static str, #[props(default)] even: bool, children: Element) -> Element {
     rsx! {

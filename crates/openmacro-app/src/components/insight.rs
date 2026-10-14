@@ -12,6 +12,7 @@ use openmacro_core::nutrients::Nutrient;
 use super::chart::{Chart, ChartData};
 use super::{Icon, fmt0};
 use crate::Route;
+use crate::prefs;
 use crate::state::{AppState, CoachSnapshot, today};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -180,12 +181,12 @@ fn signed(value: f64, decimals: usize, unit: &str) -> String {
     format!("{text} {unit}")
 }
 
-/// Signed kcal, in thousands once it would no longer fit a stat tile.
-fn signed_kcal(value: f64) -> String {
+/// Signed energy, in thousands once it would no longer fit a stat tile.
+fn signed_energy(value: f64, unit: &str) -> String {
     if value.abs() >= 10_000.0 {
-        signed(value / 1000.0, 1, "k kcal").replacen(" k", "k", 1)
+        signed(value / 1000.0, 1, &format!("k {unit}")).replacen(" k", "k", 1)
     } else {
-        signed(value, 0, "kcal")
+        signed(value, 0, unit)
     }
 }
 
@@ -208,14 +209,17 @@ fn ExpenditureInsight(range: Range) -> Element {
     let data = ChartData {
         start: Some(start),
         end: Some(today),
-        line: points.iter().map(|p| (p.date, p.kcal)).collect(),
+        line: points
+            .iter()
+            .map(|p| (p.date, prefs::energy_value(p.kcal)))
+            .collect(),
         band: points
             .iter()
             .map(|p| {
                 (
                     p.date,
-                    p.kcal - p.uncertainty_kcal,
-                    p.kcal + p.uncertainty_kcal,
+                    prefs::energy_value(p.kcal - p.uncertainty_kcal),
+                    prefs::energy_value(p.kcal + p.uncertainty_kcal),
                 )
             })
             .collect(),
@@ -254,16 +258,16 @@ fn ExpenditureInsight(range: Range) -> Element {
         }
         section { class: "card",
             div { class: "stat-row",
-                Stat { label: "Current", value: format!("{} kcal", fmt0(current)) }
-                Stat { label: "Average", value: format!("{} kcal", fmt0(average)) }
-                Stat { label: "Change", value: signed(change, 0, "kcal") }
+                Stat { label: "Current", value: prefs::energy_text(current) }
+                Stat { label: "Average", value: prefs::energy_text(average) }
+                Stat { label: "Change", value: signed(prefs::energy_value(change), 0, prefs::energy_symbol()) }
             }
         }
         section { class: "card",
             h2 { "How it's estimated" }
             p { class: "muted", "{status}" }
             p { class: "muted",
-                "Today's estimate is likely within ±{fmt0(uncertainty)} kcal. Logging every day and weighing in often narrows that range."
+                "Today's estimate is likely within ±{prefs::energy_text(uncertainty)}. Logging every day and weighing in often narrows that range."
             }
         }
     }
@@ -284,10 +288,13 @@ fn WeightInsight(range: Range) -> Element {
     let data = ChartData {
         start: Some(start),
         end: Some(today),
-        line: points.iter().map(|t| (t.date, t.trend_kg)).collect(),
+        line: points
+            .iter()
+            .map(|t| (t.date, prefs::weight_value(t.trend_kg)))
+            .collect(),
         dots: points
             .iter()
-            .filter_map(|t| t.scale_kg.map(|kg| (t.date, kg)))
+            .filter_map(|t| t.scale_kg.map(|kg| (t.date, prefs::weight_value(kg))))
             .collect(),
         decimals: 1,
         ..Default::default()
@@ -321,9 +328,9 @@ fn WeightInsight(range: Range) -> Element {
         }
         section { class: "card",
             div { class: "stat-row",
-                Stat { label: "Trend", value: format!("{current:.1} kg") }
-                Stat { label: "Latest weigh-in", value: latest_scale.map_or("—".into(), |kg| format!("{kg:.1} kg")) }
-                Stat { label: "Change", value: signed(change, 1, "kg") }
+                Stat { label: "Trend", value: prefs::weight_text(current, 1) }
+                Stat { label: "Latest weigh-in", value: latest_scale.map_or("—".into(), |kg| prefs::weight_text(kg, 1)) }
+                Stat { label: "Change", value: signed(prefs::weight_value(change), 1, prefs::weight_symbol()) }
             }
         }
         section { class: "card",
@@ -340,8 +347,10 @@ fn WeightInsight(range: Range) -> Element {
                     for (days , delta) in periods {
                         tr { key: "{days}",
                             td { "{days} days" }
-                            td { {delta.map_or("—".into(), |d| signed(d, 2, "kg"))} }
-                            td { {delta.map_or("—".into(), |d| signed(d / days as f64 * 7.0, 2, "kg"))} }
+                            td { {delta.map_or("—".into(), |d| signed(prefs::weight_value(d), 2, prefs::weight_symbol()))} }
+                            td {
+                                {delta.map_or("—".into(), |d| signed(prefs::weight_value(d / days as f64 * 7.0), 2, prefs::weight_symbol()))}
+                            }
                         }
                     }
                 }
@@ -393,7 +402,10 @@ fn BalanceInsight(range: Range) -> Element {
     let data = ChartData {
         start: Some(start),
         end: Some(today),
-        bars: days.clone(),
+        bars: days
+            .iter()
+            .map(|(d, v)| (*d, prefs::energy_value(*v)))
+            .collect(),
         decimals: 0,
         ..Default::default()
     };
@@ -416,8 +428,8 @@ fn BalanceInsight(range: Range) -> Element {
         }
         section { class: "card",
             div { class: "stat-row",
-                Stat { label: "Average per day", value: signed(average, 0, "kcal") }
-                Stat { label: "Total", value: signed_kcal(total) }
+                Stat { label: "Average per day", value: signed(prefs::energy_value(average), 0, prefs::energy_symbol()) }
+                Stat { label: "Total", value: signed_energy(prefs::energy_value(total), prefs::energy_symbol()) }
                 Stat { label: "Days counted", value: days.len().to_string() }
             }
         }
@@ -427,7 +439,7 @@ fn BalanceInsight(range: Range) -> Element {
                 if days.is_empty() {
                     "Log complete days to see how your intake compares with your expenditure."
                 } else {
-                    "An average {kind} of {fmt0(average.abs())} kcal a day. Over these {days.len()} days that's about {implied_kg.abs():.2} kg of body mass {direction}, using 7700 kcal per kg."
+                    "An average {kind} of {prefs::energy_text(average.abs())} a day. Over these {days.len()} days that's about {prefs::weight_text(implied_kg.abs(), 2)} of body mass {direction}, using 7700 kcal per kg."
                 }
             }
             p { class: "muted small", "Energy balance is what you logged minus your estimated expenditure for each complete day. Partial days and today are left out." }
@@ -456,16 +468,21 @@ impl Macro {
     }
 
     fn unit(self) -> &'static str {
-        if self == Macro::Calories { "kcal" } else { "g" }
+        if self == Macro::Calories {
+            prefs::energy_symbol()
+        } else {
+            "g"
+        }
     }
 
+    /// Amount eaten, energy in the user's unit.
     fn eaten(self, totals: &openmacro_core::nutrients::NutrientProfile) -> f64 {
-        totals.get_or_zero(match self {
-            Macro::Calories => Nutrient::Energy,
-            Macro::Protein => Nutrient::Protein,
-            Macro::Fat => Nutrient::Fat,
-            Macro::Carbs => Nutrient::Carbs,
-        })
+        match self {
+            Macro::Calories => prefs::energy_value(totals.get_or_zero(Nutrient::Energy)),
+            Macro::Protein => totals.get_or_zero(Nutrient::Protein),
+            Macro::Fat => totals.get_or_zero(Nutrient::Fat),
+            Macro::Carbs => totals.get_or_zero(Nutrient::Carbs),
+        }
     }
 
     /// Within 10% of target; protein is a minimum, so more is fine.
@@ -478,7 +495,7 @@ impl Macro {
 
     fn target(self, t: &openmacro_core::targets::MacroTargets) -> f64 {
         match self {
-            Macro::Calories => t.kcal,
+            Macro::Calories => prefs::energy_value(t.kcal),
             Macro::Protein => t.protein_g,
             Macro::Fat => t.fat_g,
             Macro::Carbs => t.carbs_g,
@@ -612,15 +629,18 @@ fn GoalInsight(range: Range) -> Element {
             .trend
             .iter()
             .filter(|t| t.date >= start)
-            .map(|t| (t.date, t.trend_kg))
+            .map(|t| (t.date, prefs::weight_value(t.trend_kg)))
             .collect(),
         dashed: projection_days.map_or_else(Vec::new, |d| {
             vec![
-                (today, current),
-                (end, current + weekly_kg * d as f64 / 7.0),
+                (today, prefs::weight_value(current)),
+                (
+                    end,
+                    prefs::weight_value(current + weekly_kg * d as f64 / 7.0),
+                ),
             ]
         }),
-        level: Some(goal.goal_weight_kg),
+        level: Some(prefs::weight_value(goal.goal_weight_kg)),
         decimals: 1,
         ..Default::default()
     };
@@ -633,9 +653,11 @@ fn GoalInsight(range: Range) -> Element {
     let summary = match eta_days {
         _ if to_go.abs() <= 0.05 => "You're at your goal weight.".to_string(),
         Some(days) => format!(
-            "At your goal rate of {:+.2}% a week ({weekly_kg:+.2} kg), you'd reach {:.1} kg around {}.",
+            "At your goal rate of {:+.2}% a week ({:+.2} {}), you'd reach {} around {}.",
             goal.rate_pct_per_week,
-            goal.goal_weight_kg,
+            prefs::weight_value(weekly_kg),
+            prefs::weight_symbol(),
+            prefs::weight_text(goal.goal_weight_kg, 1),
             (today + Duration::days(days)).format("%-d %B %Y")
         ),
         None => {
@@ -658,15 +680,15 @@ fn GoalInsight(range: Range) -> Element {
         }
         section { class: "card",
             div { class: "stat-row",
-                Stat { label: "Started", value: format!("{start_kg:.1} kg") }
-                Stat { label: "Now", value: format!("{current:.1} kg") }
-                Stat { label: "Goal", value: format!("{:.1} kg", goal.goal_weight_kg) }
+                Stat { label: "Started", value: prefs::weight_text(start_kg, 1) }
+                Stat { label: "Now", value: prefs::weight_text(current, 1) }
+                Stat { label: "Goal", value: prefs::weight_text(goal.goal_weight_kg, 1) }
             }
             div { class: "goal-progress",
                 div { class: "bar-track",
                     div { class: "bar-fill goal-fill", style: "width: {progress:.0}%" }
                 }
-                p { class: "muted small", "{progress:.0}% of the way · {to_go.abs():.1} kg to go" }
+                p { class: "muted small", "{progress:.0}% of the way · {prefs::weight_text(to_go.abs(), 1)} to go" }
             }
         }
         section { class: "card",
@@ -705,7 +727,8 @@ mod tests {
         assert_eq!(signed(-0.004, 2, "kg"), "0.00 kg");
         assert_eq!(signed(-0.43, 2, "kg"), "-0.43 kg");
         assert_eq!(signed(120.0, 0, "kcal"), "+120 kcal");
-        assert_eq!(signed_kcal(-14975.0), "-15.0k kcal");
-        assert_eq!(signed_kcal(-2729.0), "-2729 kcal");
+        assert_eq!(signed_energy(-14975.0, "kcal"), "-15.0k kcal");
+        assert_eq!(signed_energy(-2729.0, "kcal"), "-2729 kcal");
+        assert_eq!(signed_energy(-62655.0, "kJ"), "-62.7k kJ");
     }
 }

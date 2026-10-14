@@ -3,10 +3,9 @@
 use dioxus::prelude::*;
 use openmacro_core::bmr::{self, ActivityLevel, BmrEquation, Sex};
 
-use super::fmt0;
 use crate::export;
 use crate::food_search::{self, Database, FoodRegion};
-use crate::prefs::{PREFS, Theme};
+use crate::prefs::{EnergyUnit, PREFS, Theme, WeightUnit};
 use crate::state::{AppState, CoachSnapshot, Data, today};
 
 #[component]
@@ -19,7 +18,12 @@ pub fn More() -> Element {
         .body_fat_fraction
         .map(|f| format!("{:.0}", f * 100.0))
         .unwrap_or_default();
-    let prior_text = format!("{} kcal/day", fmt0(prior));
+    let prior_text = format!("{}/day", crate::prefs::energy_text(prior));
+    let weight_label: &'static str = if crate::prefs::weight_symbol() == "lb" {
+        "Weight (lb)"
+    } else {
+        "Weight (kg)"
+    };
     let mut confirm_clear = use_signal(|| false);
     let saved_at = state.persist.read().location();
     let foods = use_context::<Resource<Option<Database>>>();
@@ -57,9 +61,9 @@ pub fn More() -> Element {
                     on_change: move |v| state.profile.write().stats.height_cm = v,
                 }
                 ProfileNumber {
-                    label: "Weight (kg)",
-                    value: stats.weight_kg,
-                    on_change: move |v| state.profile.write().stats.weight_kg = v,
+                    label: weight_label,
+                    value: (crate::prefs::weight_value(stats.weight_kg) * 10.0).round() / 10.0,
+                    on_change: move |v| state.profile.write().stats.weight_kg = crate::prefs::kg_from_input(v),
                 }
                 label { class: "field",
                     span { "Body fat % (optional)" }
@@ -349,7 +353,7 @@ fn ExportData() -> Element {
     }
 }
 
-/// Theme and clock.
+/// Theme, units and clock.
 #[component]
 fn DisplaySettings() -> Element {
     let prefs = PREFS();
@@ -365,6 +369,32 @@ fn DisplaySettings() -> Element {
                             class: if prefs.theme == theme { "active" },
                             onclick: move |_| PREFS.write().theme = theme,
                             "{theme.label()}"
+                        }
+                    }
+                }
+            }
+            div { class: "choice",
+                span { class: "choice-label", "Energy" }
+                div { class: "segmented",
+                    for unit in [EnergyUnit::Kilocalories, EnergyUnit::Kilojoules] {
+                        button {
+                            key: "{unit.symbol()}",
+                            class: if prefs.energy == unit { "active" },
+                            onclick: move |_| PREFS.write().energy = unit,
+                            "{unit.symbol()}"
+                        }
+                    }
+                }
+            }
+            div { class: "choice",
+                span { class: "choice-label", "Weight" }
+                div { class: "segmented",
+                    for unit in [WeightUnit::Kilograms, WeightUnit::Pounds] {
+                        button {
+                            key: "{unit.symbol()}",
+                            class: if prefs.weight == unit { "active" },
+                            onclick: move |_| PREFS.write().weight = unit,
+                            "{unit.symbol()}"
                         }
                     }
                 }
