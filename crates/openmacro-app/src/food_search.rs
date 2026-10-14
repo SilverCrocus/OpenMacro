@@ -116,6 +116,23 @@ pub fn search(db: Option<&Database>, query: &str, region: FoodRegion) -> Results
     }
 }
 
+/// A product by barcode from the database, trying both UPC and EAN forms.
+pub fn by_barcode(db: Option<&Database>, code: &str) -> Option<FoundFood> {
+    #[cfg(not(target_arch = "wasm32"))]
+    if let Some(db) = db {
+        for variant in crate::barcode::lookup_variants(code) {
+            if let Ok(Some(hit)) = db.by_barcode(&variant) {
+                return Some(FoundFood {
+                    food: hit.food,
+                    source: hit.dataset.label(),
+                });
+            }
+        }
+    }
+    let _ = (db, code);
+    None
+}
+
 /// Data credits recorded in the database, if any.
 pub fn attribution(db: Option<&Database>) -> Option<String> {
     #[cfg(not(target_arch = "wasm32"))]

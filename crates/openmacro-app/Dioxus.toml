@@ -11,3 +11,7 @@ theme = "@style/Theme.AppCompat.NoActionBar"
 # Installing app updates downloaded from GitHub Releases.
 [android.permissions."android.permission.REQUEST_INSTALL_PACKAGES"]
 description = "Install OpenMacro updates"
+
+# Barcode scanning uses the camera through the web view.
+[permissions.camera]
+description = "Scan food barcodes"

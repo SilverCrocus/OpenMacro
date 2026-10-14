@@ -1,6 +1,6 @@
 [package]
 name = "openmacro-app"
-version = "0.2.0"
+version = "0.3.0"
 description = "OpenMacro cross-platform app (Dioxus)"
 edition.workspace = true
 license.workspace = true
@@ -17,6 +17,11 @@ openmacro-core = { path = "../openmacro-core" }
 dioxus = { version = "0.7.10", features = ["router"] }
 chrono = { workspace = true, features = ["clock", "wasmbind"] }
 serde_json.workspace = true
+rxing = { version = "0.9", default-features = false, features = ["oned", "decoders", "encoding_rs"] }
+base64 = "0.22"
+
+[dev-dependencies]
+rxing = { version = "0.9", default-features = false, features = ["oned", "decoders", "encoders", "encoding_rs"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 openmacro-store = { path = "../openmacro-store" }

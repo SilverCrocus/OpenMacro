@@ -17,6 +17,7 @@ use crate::state::{AppState, CoachSnapshot, PlateItem, day_totals};
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum Tab {
     Search,
+    Scan,
     QuickAdd,
 }
 
@@ -76,29 +77,32 @@ pub fn Logger() -> Element {
                     PlateView { items: plate.items.clone() }
                 }
                 nav { class: "sheet-tabs",
-                    button {
-                        class: if tab() == Tab::Search { "active" },
-                        onclick: move |_| tab.set(Tab::Search),
-                        "Search"
+                    for (value , label) in [(Tab::Search, "Search"), (Tab::Scan, "Scan"), (Tab::QuickAdd, "Quick Add")] {
+                        button {
+                            key: "{label}",
+                            class: if tab() == value && detail().is_none() { "active" },
+                            onclick: move |_| {
+                                detail.set(None);
+                                tab.set(value);
+                            },
+                            "{label}"
+                        }
                     }
-                    button {
-                        class: if tab() == Tab::QuickAdd { "active" },
-                        onclick: move |_| tab.set(Tab::QuickAdd),
-                        "Quick Add"
-                    }
-                    button { disabled: true, title: "Coming soon", "Scan" }
                     button { disabled: true, title: "Coming soon", "Library" }
                 }
                 div { class: "sheet-body",
                     {
-                        match (tab(), detail()) {
-                            (Tab::Search, Some(food)) => rsx! {
+                        match (detail(), tab()) {
+                            (Some(food), _) => rsx! {
                                 FoodDetail { food, on_back: move |_| detail.set(None) }
                             },
-                            (Tab::Search, None) => rsx! {
+                            (None, Tab::Search) => rsx! {
                                 SearchTab { query, on_select: move |food| detail.set(Some(food)) }
                             },
-                            (Tab::QuickAdd, _) => rsx! {
+                            (None, Tab::Scan) => rsx! {
+                                super::scan::ScanTab { on_found: move |food| detail.set(Some(food)) }
+                            },
+                            (None, Tab::QuickAdd) => rsx! {
                                 QuickAdd {}
                             },
                         }
@@ -265,7 +269,9 @@ fn FoodDetail(food: Food, on_back: EventHandler<()>) -> Element {
     let coach = use_context::<Memo<CoachSnapshot>>();
     let food = Rc::new(food);
     let units = keypad::units(&food);
-    let mut qty = use_signal(|| "1".to_string());
+    // Foods without named servings start at 100 g rather than 1 g.
+    let default_qty = if food.servings.is_empty() { "100" } else { "1" };
+    let mut qty = use_signal(|| default_qty.to_string());
     let mut fresh = use_signal(|| true);
     let mut unit = use_signal(|| units[0]);
 

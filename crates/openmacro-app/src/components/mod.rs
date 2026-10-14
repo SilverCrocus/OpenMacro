@@ -5,6 +5,7 @@ mod food_log;
 mod logger;
 mod more;
 mod plan;
+mod scan;
 mod update;
 
 pub use dashboard::Dashboard;

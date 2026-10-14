@@ -89,7 +89,7 @@ jobs:
           apksigner="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)/apksigner"
           for abi in arm64-v8a x86_64; do
             out="dist/openmacro-$VERSION-$abi.apk"
-            "$apksigner" sign --ks "$RUNNER_TEMP/release.jks" --ks-key-alias "$KEY_ALIAS" \
+            "$apksigner" sign --v4-signing-enabled false --ks "$RUNNER_TEMP/release.jks" --ks-key-alias "$KEY_ALIAS" \
               --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD \
               --out "$out" "dist/unsigned-$abi.apk"
             "$apksigner" verify "$out"
@@ -103,6 +103,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.version.outputs.version }}
         run: |
+          # actions/checkout turns tags into lightweight ones; fetch the annotated tag for its message.
+          git fetch --force origin "refs/tags/$GITHUB_REF_NAME:refs/tags/$GITHUB_REF_NAME"
           git tag -l --format='%(contents)' "$GITHUB_REF_NAME" > notes.md
           {
             echo

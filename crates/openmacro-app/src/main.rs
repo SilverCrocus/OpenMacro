@@ -1,3 +1,4 @@
+mod barcode;
 mod components;
 mod food_search;
 mod foods;
