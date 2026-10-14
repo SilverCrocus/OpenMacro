@@ -13,3 +13,6 @@ research/private/
 
 # Rust
 /target/
+
+# Local Claude Code config
+.claude/

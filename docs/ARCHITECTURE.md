@@ -10,7 +10,7 @@ crates/
   openmacro-coach/   goals, programs, weekly check-in orchestration                     [planned]
   openmacro-store/   SQLite persistence, migrations, repositories                       [planned]
   openmacro-foods/   food-database importers and local search                           [planned]
-  openmacro-app/     cross-platform UI (Android first)                                  [planned]
+  openmacro-app/     cross-platform UI with Dioxus (web + Android)                      [preview]
 ```
 
 Dependencies only point downward:
@@ -57,7 +57,7 @@ How it works:
 
 ## UI (`openmacro-app`)
 
-**Recommendation: [Dioxus](https://dioxuslabs.com).** It is a single Rust codebase for Android, iOS, desktop and web, with React-like components and hot reload.
+**Chosen: [Dioxus](https://dioxuslabs.com) 0.7.** It is a single Rust codebase for Android, iOS, desktop and web, with React-like components and hot reload.
 
 | Option | Pros | Cons |
 |---|---|---|

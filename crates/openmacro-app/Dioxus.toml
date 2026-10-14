@@ -1,0 +1,6 @@
+[web.app]
+title = "OpenMacro"
+
+[bundle]
+identifier = "dev.openmacro.app"
+publisher = "OpenMacro"

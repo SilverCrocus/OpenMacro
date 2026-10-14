@@ -1,0 +1,20 @@
+[package]
+name = "openmacro-app"
+version = "0.1.0"
+description = "OpenMacro cross-platform app (Dioxus)"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+openmacro-core = { path = "../openmacro-core" }
+dioxus = { version = "0.7.10", features = ["router"] }
+chrono = { workspace = true, features = ["clock", "wasmbind"] }
+
+[features]
+default = ["web"]
+web = ["dioxus/web"]
+desktop = ["dioxus/desktop"]
+mobile = ["dioxus/mobile"]

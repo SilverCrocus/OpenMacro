@@ -60,14 +60,30 @@ This number only matters for the first few days. After that, §3 takes over.
 
 ## 3. Adaptive expenditure — `expenditure.rs`
 
-Energy balance gives `intake − expenditure = ρ · Δmass/Δt`. Rearranged, for a trailing window of days:
+Energy balance gives `intake − expenditure = ρ · Δmass/Δt`. Rearranged, each day produces a **measurement** from a trailing window:
 
 ```text
-raw[d] = mean(usable intake in window) − ρ · slope(trend weight in window)
-E[d]   = E[d-1] + clamp(β · (raw[d] − E[d-1]), ±cap)
+raw[d] = mean(usable intake in window) − ρ · slope(scale weight in window)
 ```
 
-The slope is a least-squares fit over the window's trend values, in kg/day. The step size β and the cap smooth the estimate so it doesn't jump around.
+The slope is a least-squares fit to the **raw weigh-ins** in the window, in kg/day. It is deliberately *not* taken from the smoothed trend line. An EMA trend starts flat at the first weigh-in, so for the first few weeks it understates how fast weight is changing. In testing, that biased new users' expenditure low by 100–300 kcal and gave them targets that were too low.
+
+Raw weigh-ins are noisy, so each measurement is blended in with a one-dimensional Kalman update:
+
+```text
+P      += q²                                       expenditure can drift a little each day
+R       = ((ρ·σ_w)² / Σ(x−x̄)² + σ_i² / n) · W · k   how uncertain this window's measurement is
+K       = P / (P + R)                              how much to trust it
+E      += clamp(K · (raw − E), ±cap)
+P      *= 1 − K
+```
+
+The terms:
+- `σ_w` is the day-to-day scale noise, and `Σ(x−x̄)²` is the spread of the weigh-in days.
+- `σ_i` is the day-to-day intake variation, and `n` is the number of usable intake days.
+- `W · k` corrects for consecutive windows sharing most of their days: W is the window length and k the overlap factor.
+
+The effect is intuitive. Three weigh-ins over three days barely move the estimate, while two weeks of daily weigh-ins move it a lot. `√P` is reported with every point as a 1σ uncertainty band for charts.
 
 **The estimate depends only on what was eaten and how weight changed.** Whether the user hit their targets doesn't matter, so the estimate stays correct when they're off plan.
 
@@ -82,32 +98,44 @@ The slope is a least-squares fit over the window's trend values, in kg/day. The 
 
 ### Hold rule
 
-The estimate **holds** at its previous value on any day where either of these is true:
+The estimate **holds** at its previous value (while its uncertainty keeps growing) on any day where any of these is true:
 - fewer than `min_intake_days` days in the window have usable intake;
+- the window has fewer than two weigh-ins on different days;
 - the user hasn't weighed in within the last `weigh_in_lookback_days`.
 
 Until the first successful update, the status is `Initial`. After that, a day that fails the check is `Holding`.
 
 ### Defaults
 
+These were chosen by simulation: 200 simulated people with Gaussian scale noise (σ 0.6 kg) and intake noise (σ 250 kcal), priors 350 kcal too high or too low, and both a constant expenditure and a 200 kcal drop at day 45.
+
 | Parameter | Default |
 |---|---|
-| `window_days` | 14 |
+| `window_days` (W) | 14 |
 | `min_intake_days` | 3 (the first update can happen on day 3) |
 | `weigh_in_lookback_days` | 7 |
-| `response` (β) | 0.10 per day |
-| `max_daily_change_kcal` | 100 |
-| `trend_alpha` | 0.10 |
+| `weight_noise_kg` (σ_w) | 0.6 |
+| `intake_noise_kcal` (σ_i) | 350 |
+| `process_noise_kcal` (q) | 40 per day |
+| `initial_uncertainty_kcal` | 350 |
+| `overlap_factor` (k) | 0.5 |
+| `max_daily_change_kcal` | 150 |
+
+Over days 14–89 of those simulations, the RMS error was **115 kcal** for this estimator against **154 kcal** for the earlier trend-slope version.
+
+The reported band is conservative: by day 89 it is about ±220 kcal, while the actual errors are about ±40. It should be calibrated against real data before it is shown as a confidence interval.
 
 ### Tested behaviour
 
 - **Convergence:** a simulated person has a true expenditure of 2500 kcal, eats 2000 ± 200 kcal, and has ±0.5 kg of water noise on the scale. Starting from a wrong prior of 2200, the estimate converges to within 60 kcal of the truth in 90 days.
+- **No early drag:** starting from the correct prior, the estimate stays within ±120 kcal of the truth throughout the first four weeks.
+- **Uncertainty:** the band shrinks as data accumulates.
 - **Logging stops:** the estimate updates while ≥ 3 logged days remain in the window, then holds.
 - **No weigh-ins:** the estimate never leaves its initial value.
 
 ### Planned
 
-- An uncertainty band ("flux range") from the residual variance of the window.
+- Calibrating the uncertainty band.
 - Step-informed updates: use changes in step count as an early signal that expenditure is moving.
 - A predictive adjustment when the goal changes (metabolic adaptation).
 

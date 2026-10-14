@@ -1,26 +1,31 @@
 //! Adaptive daily energy expenditure (TDEE) from logged intake and weight change.
 //!
 //! Energy balance says `intake - expenditure = ρ · Δmass / Δt`, with ρ the
-//! energy content of body-mass change ([`KCAL_PER_KG_BODY_MASS`]). Rearranged:
+//! energy content of body-mass change ([`KCAL_PER_KG_BODY_MASS`]). Rearranged,
+//! over a trailing window of days:
 //!
 //! ```text
-//! expenditure ≈ mean(intake over window) - ρ · slope(trend weight over window)
+//! raw ≈ mean(usable intake in window) - ρ · slope(scale weight in window)
 //! ```
 //!
-//! Each day we compute that "raw" estimate over a trailing window, then move
-//! the running estimate a fraction of the way toward it, with the step size
-//! capped. The estimate depends only on what was eaten and how weight changed,
-//! never on how closely the user followed their targets.
+//! The slope is a least-squares fit to the raw weigh-ins, so it has no lag.
+//! Scale weight is noisy, though, so each day's `raw` is treated as a noisy
+//! measurement of the true expenditure and blended in with a one-dimensional
+//! Kalman update: the estimate's variance grows a little every day (expenditure
+//! drifts), and shrinks when a measurement arrives, by an amount that depends on
+//! how informative that window is. Two weigh-ins three days apart barely move
+//! the estimate; two weeks of daily weigh-ins move it a lot.
 //!
-//! When there isn't enough data (too few usable intake days in the window, or
-//! no weigh-in recently) the estimate holds its last value.
+//! The estimate depends only on what was eaten and how weight changed, never on
+//! how closely the user followed their targets. When there isn't enough data
+//! (too few usable intake days in the window, too few weigh-ins, or none
+//! recently) the estimate holds its last value.
 
 use std::collections::BTreeMap;
 
 use chrono::{Duration, NaiveDate};
 
 use crate::KCAL_PER_KG_BODY_MASS;
-use crate::trend::{WeighIn, ema_trend};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum DayStatus {
@@ -57,18 +62,26 @@ impl DayRecord {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ExpenditureConfig {
     pub energy_density_kcal_per_kg: f64,
-    /// Length of the trailing window used for each raw estimate.
+    /// Length of the trailing window used for each measurement.
     pub window_days: i64,
     /// Minimum usable intake days inside the window before updating.
     pub min_intake_days: usize,
     /// The user must have weighed in within this many days to update.
     pub weigh_in_lookback_days: i64,
-    /// Fraction of the gap to the raw estimate closed each day (0..=1).
-    pub response: f64,
+    /// Assumed day-to-day scale noise (water, gut contents), 1σ.
+    pub weight_noise_kg: f64,
+    /// Assumed day-to-day variation in logged intake, 1σ.
+    pub intake_noise_kcal: f64,
+    /// How much true expenditure may drift per day, 1σ.
+    pub process_noise_kcal: f64,
+    /// Uncertainty of the initial estimate, 1σ.
+    pub initial_uncertainty_kcal: f64,
+    /// Consecutive windows share most of their days, so their measurements are
+    /// correlated. Each measurement's variance is multiplied by
+    /// `window_days * overlap_factor` to avoid counting the same data many times.
+    pub overlap_factor: f64,
     /// Cap on how far the estimate may move in a single day.
     pub max_daily_change_kcal: f64,
-    /// EMA alpha for the trend weight used to measure mass change.
-    pub trend_alpha: f64,
 }
 
 impl Default for ExpenditureConfig {
@@ -78,9 +91,12 @@ impl Default for ExpenditureConfig {
             window_days: 14,
             min_intake_days: 3,
             weigh_in_lookback_days: 7,
-            response: 0.1,
-            max_daily_change_kcal: 100.0,
-            trend_alpha: 0.1,
+            weight_noise_kg: 0.6,
+            intake_noise_kcal: 350.0,
+            process_noise_kcal: 40.0,
+            initial_uncertainty_kcal: 350.0,
+            overlap_factor: 0.5,
+            max_daily_change_kcal: 150.0,
         }
     }
 }
@@ -99,9 +115,17 @@ pub enum EstimateStatus {
 pub struct ExpenditurePoint {
     pub date: NaiveDate,
     pub kcal: f64,
+    /// One standard deviation of the estimate, for drawing an uncertainty band.
+    pub uncertainty_kcal: f64,
     pub status: EstimateStatus,
-    /// The unsmoothed window estimate, when one could be computed.
+    /// The window measurement used today, when there was one.
     pub raw_kcal: Option<f64>,
+}
+
+/// A window's expenditure measurement and its variance.
+struct Measurement {
+    kcal: f64,
+    variance: f64,
 }
 
 /// Runs the estimator over every day from the first to the last record.
@@ -118,26 +142,21 @@ pub fn estimate(
         return Vec::new();
     };
 
-    let weigh_ins: Vec<WeighIn> = days
-        .iter()
-        .filter_map(|d| d.weight_kg.map(|kg| WeighIn { date: d.date, kg }))
-        .collect();
-    let trend: BTreeMap<NaiveDate, f64> = ema_trend(&weigh_ins, config.trend_alpha, end)
-        .into_iter()
-        .map(|p| (p.date, p.trend_kg))
-        .collect();
-
     let mut kcal = initial_kcal;
+    let mut variance = config.initial_uncertainty_kcal.powi(2);
     let mut status = EstimateStatus::Initial;
     let mut points = Vec::new();
 
     for date in start.iter_days().take_while(|d| *d <= end) {
+        variance += config.process_noise_kcal.powi(2);
         let window_start = (date - Duration::days(config.window_days - 1)).max(start);
-        let raw = raw_estimate(&by_date, &trend, window_start, date, config);
-        match raw {
-            Some(raw) => {
+        let measurement = measure(&by_date, window_start, date, config);
+        match &measurement {
+            Some(m) => {
+                let gain = variance / (variance + m.variance);
                 let max = config.max_daily_change_kcal;
-                kcal += (config.response * (raw - kcal)).clamp(-max, max);
+                kcal += (gain * (m.kcal - kcal)).clamp(-max, max);
+                variance *= 1.0 - gain;
                 status = EstimateStatus::Updated;
             }
             None if status != EstimateStatus::Initial => status = EstimateStatus::Holding,
@@ -146,47 +165,55 @@ pub fn estimate(
         points.push(ExpenditurePoint {
             date,
             kcal,
+            uncertainty_kcal: variance.sqrt(),
             status,
-            raw_kcal: raw,
+            raw_kcal: measurement.map(|m| m.kcal),
         });
     }
     points
 }
 
-fn raw_estimate(
+fn measure(
     by_date: &BTreeMap<NaiveDate, &DayRecord>,
-    trend: &BTreeMap<NaiveDate, f64>,
     from: NaiveDate,
     to: NaiveDate,
     config: &ExpenditureConfig,
-) -> Option<f64> {
-    let intakes: Vec<f64> = by_date
-        .range(from..=to)
-        .filter_map(|(_, d)| d.usable_intake())
-        .collect();
+) -> Option<Measurement> {
+    let window = || by_date.range(from..=to).map(|(_, d)| *d);
+
+    let intakes: Vec<f64> = window().filter_map(DayRecord::usable_intake).collect();
     if intakes.len() < config.min_intake_days {
         return None;
     }
 
     let lookback_start = to - Duration::days(config.weigh_in_lookback_days - 1);
-    if !by_date
-        .range(lookback_start..=to)
-        .any(|(_, d)| d.weight_kg.is_some())
-    {
+    if !window().any(|d| d.date >= lookback_start && d.weight_kg.is_some()) {
         return None;
     }
 
-    let slope_kg_per_day = trend_slope(trend, from, to)?;
-    let mean_intake = intakes.iter().sum::<f64>() / intakes.len() as f64;
-    Some(mean_intake - config.energy_density_kcal_per_kg * slope_kg_per_day)
+    let weights: Vec<(f64, f64)> = window()
+        .filter_map(|d| {
+            d.weight_kg
+                .map(|kg| ((d.date - from).num_days() as f64, kg))
+        })
+        .collect();
+    let (slope, sxx) = least_squares_slope(&weights)?;
+
+    let n = intakes.len() as f64;
+    let mean_intake = intakes.iter().sum::<f64>() / n;
+    let rho = config.energy_density_kcal_per_kg;
+    let variance = ((rho * config.weight_noise_kg).powi(2) / sxx
+        + config.intake_noise_kcal.powi(2) / n)
+        * config.window_days as f64
+        * config.overlap_factor;
+    Some(Measurement {
+        kcal: mean_intake - rho * slope,
+        variance,
+    })
 }
 
-/// Least-squares slope of the trend weight over `[from, to]`, in kg/day.
-fn trend_slope(trend: &BTreeMap<NaiveDate, f64>, from: NaiveDate, to: NaiveDate) -> Option<f64> {
-    let points: Vec<(f64, f64)> = trend
-        .range(from..=to)
-        .map(|(d, kg)| ((*d - from).num_days() as f64, *kg))
-        .collect();
+/// Least-squares slope of `(x, y)` points and the spread of x (Σ(x - x̄)²).
+fn least_squares_slope(points: &[(f64, f64)]) -> Option<(f64, f64)> {
     if points.len() < 2 {
         return None;
     }
@@ -195,7 +222,7 @@ fn trend_slope(trend: &BTreeMap<NaiveDate, f64>, from: NaiveDate, to: NaiveDate)
     let mean_y = points.iter().map(|p| p.1).sum::<f64>() / n;
     let sxx: f64 = points.iter().map(|p| (p.0 - mean_x).powi(2)).sum();
     let sxy: f64 = points.iter().map(|p| (p.0 - mean_x) * (p.1 - mean_y)).sum();
-    (sxx > 0.0).then(|| sxy / sxx)
+    (sxx > 0.0).then(|| (sxy / sxx, sxx))
 }
 
 #[cfg(test)]
@@ -310,6 +337,24 @@ mod tests {
             .usable_intake(),
             None
         );
+    }
+
+    #[test]
+    fn correct_prior_is_not_dragged_down_early() {
+        // A lagging trend would read early weight loss as too slow and pull the
+        // estimate below the truth; the raw-weight slope should not.
+        let points = estimate(&simulate(28, 2500.0), 2500.0, &ExpenditureConfig::default());
+        for p in &points {
+            assert!((p.kcal - 2500.0).abs() < 120.0, "{}: {}", p.date, p.kcal);
+        }
+    }
+
+    #[test]
+    fn uncertainty_shrinks_with_data() {
+        let points = estimate(&simulate(60, 2500.0), 2200.0, &ExpenditureConfig::default());
+        let first = points[0].uncertainty_kcal;
+        let last = points.last().unwrap().uncertainty_kcal;
+        assert!(last < first * 0.6, "first {first}, last {last}");
     }
 
     #[test]
