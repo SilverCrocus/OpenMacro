@@ -443,6 +443,21 @@ fn EstimateSettings() -> Element {
             p { class: "muted small",
                 "Faster follows the scale more closely; slower smooths out more day-to-day noise."
             }
+            label { class: "field",
+                span { "Daily water goal (ml)" }
+                input {
+                    r#type: "text",
+                    "inputmode": "numeric",
+                    value: "{settings.water_goal_ml.unwrap_or(crate::state::DEFAULT_WATER_GOAL_ML)}",
+                    onchange: move |e| {
+                        if let Ok(v) = e.value().trim().parse::<f64>() {
+                            if v > 0.0 {
+                                state.coach_settings.write().water_goal_ml = Some(v);
+                            }
+                        }
+                    },
+                }
+            }
         }
     }
 }

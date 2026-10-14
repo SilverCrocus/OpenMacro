@@ -451,7 +451,7 @@ fn BalanceInsight(range: Range) -> Element {
             let eaten = match statuses.get(&date).copied().unwrap_or_default() {
                 DayStatus::Partial => return None,
                 DayStatus::Fasted => 0.0,
-                DayStatus::Normal => *intake.get(&date)?,
+                DayStatus::Normal => intake.get(&date).copied().filter(|k| *k > 0.0)?,
             };
             Some((date, eaten - expenditure.get(&date)?))
         })
@@ -592,7 +592,7 @@ fn MacrosInsight(range: Range) -> Element {
         .filter_map(|date| {
             let totals = crate::state::day_totals(&log, date);
             // Days with nothing logged aren't counted.
-            totals.get(Nutrient::Energy)?;
+            totals.get(Nutrient::Energy).filter(|k| *k > 0.0)?;
             let target = crate::state::target_on(date, &check_ins, &coach)
                 .unwrap_or_else(|| coach.target_for(date));
             Some((date, picked.eaten(&totals), picked.target(&target)))
@@ -841,7 +841,10 @@ pub fn nutrient_rows(
         .iter_days()
         .take_while(|d| *d < end)
         .filter(|d| statuses.get(d).copied().unwrap_or_default() != DayStatus::Partial)
-        .filter(|d| log.iter().any(|e| e.date == *d))
+        .filter(|d| {
+            log.iter()
+                .any(|e| e.date == *d && e.nutrients.get_or_zero(Nutrient::Energy) > 0.0)
+        })
         .collect();
     let entries: Vec<&LogEntry> = log.iter().filter(|e| days.contains(&e.date)).collect();
     let rows = goals

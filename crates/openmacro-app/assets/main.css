@@ -726,3 +726,6 @@ a.link-tile:active { border-color: var(--accent); }
 .field-grid.three { grid-template-columns: 1fr 1fr 1fr; }
 .hour-total { margin-left: auto; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .see-more { margin: 4px 0 8px; }
+.water-fill { background: var(--kcal); }
+.water-buttons { display: flex; gap: 6px; }
+.water-buttons .chip { flex: 1; }

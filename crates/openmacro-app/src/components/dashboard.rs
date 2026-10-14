@@ -157,6 +157,18 @@ pub fn Dashboard() -> Element {
             })
     };
 
+    // Water today.
+    let water_ml: f64 = log
+        .iter()
+        .filter(|e| e.date == today)
+        .map(|e| e.nutrients.get_or_zero(Nutrient::Water))
+        .sum();
+    let water_goal = state
+        .coach_settings
+        .read()
+        .water_goal_ml
+        .unwrap_or(crate::state::DEFAULT_WATER_GOAL_ML);
+
     // Habits this week.
     let weighed_days = (0..7)
         .filter(|i| {
@@ -167,7 +179,10 @@ pub fn Dashboard() -> Element {
     let logged_days = (0..7)
         .filter(|i| {
             let d = start + Duration::days(*i);
-            d <= today && log.iter().any(|e| e.date == d)
+            d <= today
+                && log
+                    .iter()
+                    .any(|e| e.date == d && e.nutrients.get_or_zero(Nutrient::Energy) > 0.0)
         })
         .count();
 
@@ -304,6 +319,24 @@ pub fn Dashboard() -> Element {
                         div { class: "tile-num", "—" }
                         div { class: "muted", "Add measurements" }
                     },
+                }
+            }
+            section { class: "card tile",
+                h3 { "Water" }
+                div { class: "tile-num", {fmt0(water_ml)} span { class: "unit", " / {fmt0(water_goal)} ml" } }
+                div { class: "bar-track tile-progress",
+                    div { class: "bar-fill water-fill", style: "width: {(water_ml / water_goal.max(1.0) * 100.0).min(100.0):.0}%" }
+                }
+                div { class: "water-buttons",
+                    for ml in [250.0, 500.0] {
+                        button {
+                            key: "{ml}",
+                            class: "chip",
+                            aria_label: "Log {ml} ml of water",
+                            onclick: move |_| state.log_water(today, ml),
+                            "+{ml}"
+                        }
+                    }
                 }
             }
             section { class: "card tile",

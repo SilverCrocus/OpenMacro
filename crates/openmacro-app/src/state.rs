@@ -118,6 +118,8 @@ pub struct CoachSettings {
     pub smoothing: TrendSmoothing,
     /// Plan with this expenditure instead of the adaptive estimate.
     pub fixed_expenditure_kcal: Option<f64>,
+    /// Daily water goal in millilitres; `None` means the default.
+    pub water_goal_ml: Option<f64>,
     /// The user's own nutrient goals, by nutrient key, replacing the
     /// standard ones.
     pub nutrient_goals: BTreeMap<String, NutrientGoal>,
@@ -284,16 +286,23 @@ fn day_records(data: &Data, today: NaiveDate) -> Vec<DayRecord> {
         .take_while(|d| *d <= today)
         .map(|date| DayRecord {
             date,
+            // Days with no energy logged (nothing, or only water) count as
+            // unlogged; a real fast is marked with the Fasted status.
             intake_kcal: if date == today {
                 None
             } else {
-                intake.get(&date).copied()
+                intake.get(&date).copied().filter(|kcal| *kcal > 0.0)
             },
             status: data.day_status.get(&date).copied().unwrap_or_default(),
             weight_kg: weights.get(&date).copied(),
         })
         .collect()
 }
+
+/// The food id of water logged from the water tile.
+pub const WATER_ID: &str = "water";
+/// The daily water goal when the user hasn't set one.
+pub const DEFAULT_WATER_GOAL_ML: f64 = 2000.0;
 
 /// Entries picked for copying to another day.
 #[derive(Debug, Clone, PartialEq)]
@@ -595,6 +604,22 @@ impl AppState {
         food
     }
 
+    /// Logs a drink of water now, as a zero-energy entry with the Water nutrient.
+    pub fn log_water(self, date: NaiveDate, ml: f64) {
+        let entry = LogEntry {
+            id: 0,
+            date,
+            hour: current_hour(),
+            name: "Water".into(),
+            amount: format!("{} ml", ml.round()),
+            nutrients: NutrientProfile::new()
+                .with(Nutrient::Energy, 0.0)
+                .with(Nutrient::Water, ml),
+            food_id: Some(WATER_ID.into()),
+        };
+        self.insert_entries(vec![entry]);
+    }
+
     /// Saves a recipe; it becomes a food in the Library and search.
     pub fn add_recipe(mut self, recipe: &Recipe) -> Food {
         let id = self
@@ -859,6 +884,27 @@ mod tests {
         let faster = CoachSnapshot::compute(&data, date());
         // The demo person is losing, so a faster trend sits lower.
         assert!(faster.trend_kg().unwrap() < adaptive.trend_kg().unwrap());
+    }
+
+    #[test]
+    fn water_only_days_count_as_unlogged() {
+        let mut data = crate::seed::demo(date());
+        let yesterday = date() - Duration::days(1);
+        data.log.retain(|e| e.date != yesterday);
+        data.log.push(LogEntry {
+            id: 9999,
+            date: yesterday,
+            hour: 9,
+            name: "Water".into(),
+            amount: "500 ml".into(),
+            nutrients: NutrientProfile::new()
+                .with(Nutrient::Energy, 0.0)
+                .with(Nutrient::Water, 500.0),
+            food_id: Some(WATER_ID.into()),
+        });
+        let records = day_records(&data, date());
+        let day = records.iter().find(|r| r.date == yesterday).unwrap();
+        assert_eq!(day.intake_kcal, None);
     }
 
     #[test]
