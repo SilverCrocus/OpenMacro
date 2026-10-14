@@ -10,3 +10,6 @@ research/private/
 .idea/
 .vscode/
 *.swp
+
+# Rust
+/target/

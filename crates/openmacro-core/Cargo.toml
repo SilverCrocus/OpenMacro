@@ -1,0 +1,11 @@
+[package]
+name = "openmacro-core"
+version = "0.1.0"
+description = "Pure domain logic for OpenMacro: nutrients, foods, weight trend, adaptive expenditure and macro targets"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+chrono.workspace = true
