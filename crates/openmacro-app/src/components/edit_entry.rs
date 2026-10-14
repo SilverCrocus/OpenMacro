@@ -10,7 +10,7 @@ use crate::back::use_back_handler;
 use crate::food_search::{self, Database};
 use crate::foods::fmt_qty;
 use crate::prefs;
-use crate::state::{AppState, LogEntry, PlateItem};
+use crate::state::{AppState, LogEntry, PlateItem, WATER_ID};
 
 #[component]
 pub fn EditEntrySheet(entry: LogEntry) -> Element {
@@ -57,7 +57,9 @@ pub fn EditEntrySheet(entry: LogEntry) -> Element {
                     div { class: "sheet-total", "Editing" }
                 }
                 div { class: "sheet-body",
-                    if let Some(food) = food {
+                    if entry.food_id.as_deref() == Some(WATER_ID) {
+                        WaterForm { entry: entry.clone(), on_save: move |item| state.update_entry(id, hour(), item) }
+                    } else if let Some(food) = food {
                         FoodDetail {
                             food,
                             editing: Some(entry.clone()),
@@ -69,6 +71,41 @@ pub fn EditEntrySheet(entry: LogEntry) -> Element {
                     }
                 }
             }
+        }
+    }
+}
+
+/// Edits how much water was logged.
+#[component]
+fn WaterForm(entry: LogEntry, on_save: EventHandler<PlateItem>) -> Element {
+    let mut ml = use_signal(|| fmt_qty(entry.nutrients.get_or_zero(Nutrient::Water)));
+    let value = parse_quantity(&ml()).filter(|v| *v > 0.0);
+    rsx! {
+        label { class: "field",
+            span { "Water (ml)" }
+            input {
+                r#type: "text",
+                "inputmode": "decimal",
+                value: "{ml}",
+                oninput: move |e| ml.set(e.value()),
+            }
+        }
+        button {
+            class: "primary wide",
+            disabled: value.is_none(),
+            onclick: move |_| {
+                let Some(v) = value else { return };
+                let mut nutrients = entry.nutrients.clone();
+                nutrients.set(Nutrient::Water, v);
+                on_save.call(PlateItem {
+                    name: entry.name.clone(),
+                    amount: format!("{} ml", v.round()),
+                    nutrients,
+                    food_id: entry.food_id.clone(),
+                    grams: None,
+                });
+            },
+            "Save"
         }
     }
 }
