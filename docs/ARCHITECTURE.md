@@ -8,8 +8,8 @@ OpenMacro is written in Rust. All domain logic is pure and UI-agnostic, so it ca
 crates/
   openmacro-core/    pure domain logic: nutrients, foods, trend, expenditure, targets   [exists]
   openmacro-coach/   goals, programs, weekly check-in orchestration                     [planned]
-  openmacro-store/   SQLite persistence, migrations, repositories                       [planned]
-  openmacro-foods/   food-database importers and local search                           [planned]
+  openmacro-store/   SQLite persistence for user data, migrations                       [exists]
+  openmacro-foods/   food database: importers and FTS5 search                           [exists]
   openmacro-app/     cross-platform UI with Dioxus (web + Android)                      [preview]
 ```
 

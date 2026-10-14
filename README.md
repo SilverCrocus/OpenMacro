@@ -9,14 +9,17 @@ Early development.
 | Component | State |
 |---|---|
 | [`openmacro-core`](crates/openmacro-core) | Working and tested: nutrient model (55 nutrients), foods and servings, BMR equations, trend weight, adaptive expenditure (Kalman-style estimator with an uncertainty band), goal-driven calorie targets, weekly calorie shifting, macro splits |
-| [`openmacro-app`](crates/openmacro-app) | Preview UI built with [Dioxus](https://dioxuslabs.com) (Rust, runs on web and Android). Includes the dashboard, a food-log timeline, a logging sheet (search, food detail, quick add, plate), and plan settings. Uses demo data and sample foods; nothing is saved yet. |
-| Storage, food database import, check-in coach | Planned; see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| [`openmacro-store`](crates/openmacro-store) | SQLite storage for the food log, weigh-ins, day status and settings, on the device |
+| [`openmacro-foods`](crates/openmacro-foods) | Food database: 62k foods from USDA, the Australian AFCD and Open Food Facts (AU + US), with full-text search; see [docs/FOOD_DATA.md](docs/FOOD_DATA.md) |
+| [`openmacro-app`](crates/openmacro-app) | Dioxus app (Rust; Android and web preview) with a dashboard, food log timeline, logging sheet (search, number pad, quick add, plate) and plan settings. Data is saved on the device. |
+| Barcode scanning, check-in coach, Health Connect | Planned; see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 
 ## Docs
 
 - [Feature specification](docs/FEATURES.md): what the app does, with priorities
 - [Algorithms](docs/ALGORITHMS.md): trend weight, expenditure, targets and macros
 - [Architecture](docs/ARCHITECTURE.md): crates, storage, food data, UI plan
+- [Food data](docs/FOOD_DATA.md): sources, licences and how to build `foods.db`
 
 ## Development
 
@@ -46,4 +49,4 @@ OpenMacro is an independent project. It is not affiliated with, endorsed by, or 
 
 ## License
 
-MIT; see [LICENSE](LICENSE). Food data imported from Open Food Facts is licensed separately under the ODbL.
+Code: MIT; see [LICENSE](LICENSE). The food database has its own licences (USDA public domain, FSANZ CC BY 4.0, Open Food Facts ODbL); see [docs/FOOD_DATA.md](docs/FOOD_DATA.md).

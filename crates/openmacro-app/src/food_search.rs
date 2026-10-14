@@ -199,6 +199,26 @@ mod tests {
         assert_eq!(food_count(None), FOODS.len());
     }
 
+    /// Runs against a locally built database when one exists
+    /// (`data/foods-full.db`); skipped otherwise, e.g. in CI.
+    #[cfg(not(target_arch = "wasm32"))]
+    #[test]
+    fn real_database_sections_and_regions() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../data/foods-full.db");
+        let Ok(db) = Database::open(&path) else { return };
+        if db.count().unwrap_or(0) == 0 {
+            return;
+        }
+        let au = search(Some(&db), "weet bix", FoodRegion::Australia);
+        assert!(!au.branded.is_empty(), "Australian branded cereal expected");
+        assert!(au.branded.iter().all(|f| f.source == "Open Food Facts"));
+        assert!(au.common.iter().any(|f| f.source == "AFCD"));
+
+        let us = search(Some(&db), "greek yoghurt", FoodRegion::UnitedStates);
+        assert!(us.common.iter().any(|f| f.food.name.to_lowercase().contains("yogurt")));
+        assert!(attribution(Some(&db)).unwrap().contains("Food Standards Australia New Zealand"));
+    }
+
     #[test]
     fn region_codes_round_trip() {
         for r in FoodRegion::ALL {
