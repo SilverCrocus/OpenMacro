@@ -268,6 +268,7 @@ fn UpdateStep() -> Element {
     let state = use_context::<AppState>();
     let coach = use_context::<Memo<CoachSnapshot>>();
     let coach = coach.read();
+    let manual = state.manual_targets.read().is_some();
     let new_kcal = coach.expenditure_kcal();
     let old_kcal = coach.last_check_in.as_ref().map(|c| c.expenditure_kcal);
     let new_target = coach.live_target.kcal;
@@ -314,32 +315,40 @@ fn UpdateStep() -> Element {
     ];
 
     rsx! {
-        div { class: "update-summary",
-            div { class: "update-row",
-                span { class: "muted", "Expenditure" }
-                strong { "{expenditure_line}" }
-            }
-            div { class: "update-row",
-                span { class: "muted", "Average daily target" }
-                strong { "{target_line}" }
-            }
-            for (name , grams) in macros {
-                div { key: "{name}", class: "update-row",
-                    span { class: "muted", "{name}" }
-                    strong { "{grams} g" }
+            div { class: "update-summary",
+                div { class: "update-row",
+                    span { class: "muted", "Expenditure" }
+                    strong { "{expenditure_line}" }
+                }
+                div { class: "update-row",
+                    span { class: "muted", "Average daily target" }
+                    strong { "{target_line}" }
+                }
+                for (name , grams) in macros {
+                    div { key: "{name}", class: "update-row",
+                        span { class: "muted", "{name}" }
+                        strong { "{grams} g" }
+                    }
                 }
             }
-        }
-        h3 { class: "section-title", "This week" }
-        div { class: "checkin-week",
-            for (i , day) in ["M", "T", "W", "T", "F", "S", "S"].iter().enumerate() {
-                div { key: "{i}", class: "checkin-day",
-                    span { class: "muted small", "{day}" }
-                    strong { {fmt0(week[i].kcal)} }
+            h3 { class: "section-title", "This week" }
+            div { class: "checkin-week",
+                for (i , day) in ["M", "T", "W", "T", "F", "S", "S"].iter().enumerate() {
+                    div { key: "{i}", class: "checkin-day",
+                        span { class: "muted small", "{day}" }
+                        strong { {fmt0(week[i].kcal)} }
+                    }
                 }
             }
+    if manual {
+                p { class: "muted small",
+                    "You're on a manual program, so your targets stay as you set them. The check-in records your expenditure estimate."
+                }
+            } else {
+                p { class: "muted small",
+                    "These targets stay fixed until your next check-in. Changing your goal or program updates them straight away."
+                }
+            }
+            button { class: "primary wide", onclick: move |_| state.add_check_in(check_in.clone()), "Apply new targets" }
         }
-        p { class: "muted small", "These targets stay fixed until your next check-in. Changing your goal or program updates them straight away." }
-        button { class: "primary wide", onclick: move |_| state.add_check_in(check_in.clone()), "Apply new targets" }
-    }
 }

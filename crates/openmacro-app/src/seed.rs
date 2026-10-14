@@ -155,5 +155,6 @@ pub fn demo(today: NaiveDate) -> Data {
             distribution: WeeklyDistribution::Even,
         },
         check_ins: Vec::new(),
+        manual_targets: None,
     }
 }

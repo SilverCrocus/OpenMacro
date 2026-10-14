@@ -4,8 +4,10 @@ use chrono::Weekday;
 use dioxus::prelude::*;
 use openmacro_core::KCAL_PER_KG_BODY_MASS;
 use openmacro_core::expenditure::EstimateStatus;
+use openmacro_core::nutrients::{KCAL_PER_G_CARBS, KCAL_PER_G_FAT, KCAL_PER_G_PROTEIN};
 use openmacro_core::targets::{
-    CalorieFloor, DietType, HIGH_DAY_MULTIPLIER, ProteinPreference, WeeklyDistribution,
+    CalorieFloor, DietType, HIGH_DAY_MULTIPLIER, MacroTargets, ProteinPreference,
+    WeeklyDistribution,
 };
 
 use super::{fmt0, fmt1};
@@ -51,6 +53,17 @@ pub fn Plan() -> Element {
     };
     let shifting = !high_days.is_empty();
     let week = coach.week;
+    let manual = state.manual_targets.read().is_some();
+    // Switching to manual starts from the current targets' daily average.
+    let coach_week_average = {
+        let avg = |f: fn(&MacroTargets) -> f64| (week.iter().map(f).sum::<f64>() / 7.0).round();
+        MacroTargets {
+            kcal: avg(|t| t.kcal),
+            protein_g: avg(|t| t.protein_g),
+            fat_g: avg(|t| t.fat_g),
+            carbs_g: avg(|t| t.carbs_g),
+        }
+    };
     let bar_max = week.iter().map(|d| d.kcal).fold(1.0, f64::max);
     let status = match coach.expenditure_status() {
         EstimateStatus::Initial => "from your profile; it will adapt once you log for a few days",
@@ -124,69 +137,120 @@ pub fn Plan() -> Element {
         }
         section { class: "card",
             h2 { "Program" }
-            Choice { label: "Diet",
-                for (value , text) in [
-                    (DietType::Balanced, "Balanced"),
-                    (DietType::LowFat, "Low-fat"),
-                    (DietType::LowCarb, "Low-carb"),
-                    (DietType::Keto, "Keto"),
-                ]
-                {
-                    button {
-                        key: "{text}",
-                        class: if program.diet == value { "active" },
-                        onclick: move |_| state.program.write().diet = value,
-                        "{text}"
-                    }
-                }
-            }
-            Choice { label: "Protein",
-                for (value , text) in [
-                    (ProteinPreference::Low, "Low"),
-                    (ProteinPreference::Moderate, "Moderate"),
-                    (ProteinPreference::High, "High"),
-                    (ProteinPreference::ExtraHigh, "Extra high"),
-                ]
-                {
-                    button {
-                        key: "{text}",
-                        class: if program.protein == value { "active" },
-                        onclick: move |_| state.program.write().protein = value,
-                        "{text}"
-                    }
-                }
-            }
-            Choice { label: "Calorie floor",
-                for (value , text) in [
-                    (CalorieFloor::Standard, "1200 kcal"),
-                    (CalorieFloor::Low, "800 kcal"),
-                    (CalorieFloor::None, "None"),
-                ]
-                {
-                    button {
-                        key: "{text}",
-                        class: if program.floor == value { "active" },
-                        onclick: move |_| state.program.write().floor = value,
-                        "{text}"
-                    }
-                }
-            }
-            Choice { label: "Weekly calories",
+            Choice { label: "Style",
                 button {
-                    class: if !shifting { "active" },
-                    onclick: move |_| state.program.write().distribution = WeeklyDistribution::Even,
-                    "Even"
+                    class: if !manual { "active" },
+                    onclick: move |_| state.manual_targets.set(None),
+                    "Coached"
                 }
                 button {
-                    class: if shifting { "active" },
+                    class: if manual { "active" },
                     onclick: move |_| {
-                        if !shifting {
-                            state.program.write().distribution = WeeklyDistribution::Shift {
-                                high_days: vec![Weekday::Sat, Weekday::Sun],
-                            };
+                        if !manual {
+                            state.manual_targets.set(Some(coach_week_average));
                         }
                     },
-                    "Higher on some days"
+                    "Manual"
+                }
+            }
+            if manual {
+                ManualTargets {}
+            } else {
+                Choice { label: "Diet",
+                    for (value , text) in [
+                        (DietType::Balanced, "Balanced"),
+                        (DietType::LowFat, "Low-fat"),
+                        (DietType::LowCarb, "Low-carb"),
+                        (DietType::Keto, "Keto"),
+                    ]
+                    {
+                        button {
+                            key: "{text}",
+                            class: if program.diet == value { "active" },
+                            onclick: move |_| state.program.write().diet = value,
+                            "{text}"
+                        }
+                    }
+                }
+                Choice { label: "Protein",
+                    for (value , text) in [
+                        (ProteinPreference::Low, "Low"),
+                        (ProteinPreference::Moderate, "Moderate"),
+                        (ProteinPreference::High, "High"),
+                        (ProteinPreference::ExtraHigh, "Extra high"),
+                    ]
+                    {
+                        button {
+                            key: "{text}",
+                            class: if program.protein == value { "active" },
+                            onclick: move |_| state.program.write().protein = value,
+                            "{text}"
+                        }
+                    }
+                }
+                Choice { label: "Calorie floor",
+                    for (value , text) in [
+                        (CalorieFloor::Standard, "1200 kcal"),
+                        (CalorieFloor::Low, "800 kcal"),
+                        (CalorieFloor::None, "None"),
+                    ]
+                    {
+                        button {
+                            key: "{text}",
+                            class: if program.floor == value { "active" },
+                            onclick: move |_| state.program.write().floor = value,
+                            "{text}"
+                        }
+                    }
+                }
+                Choice { label: "Weekly calories",
+                    button {
+                        class: if !shifting { "active" },
+                        onclick: move |_| state.program.write().distribution = WeeklyDistribution::Even,
+                        "Even"
+                    }
+                    button {
+                        class: if shifting { "active" },
+                        onclick: move |_| {
+                            if !shifting {
+                                state.program.write().distribution = WeeklyDistribution::Shift {
+                                    high_days: vec![Weekday::Sat, Weekday::Sun],
+                                };
+                            }
+                        },
+                        "Higher on some days"
+                    }
+                }
+                if shifting {
+                    div { class: "weekday-picker",
+                        for (day , letter) in WEEKDAYS {
+                            {
+                                let on = high_days.contains(&day);
+                                let days = high_days.clone();
+                                rsx! {
+                                    button {
+                                        key: "{day}",
+                                        class: if on { "day-toggle active" } else { "day-toggle" },
+                                        aria_label: "{day} higher calories",
+                                        onclick: move |_| {
+                                            let mut days = days.clone();
+                                            if on {
+                                                days.retain(|d| *d != day);
+                                            } else {
+                                                days.push(day);
+                                            }
+                                            state.program.write().distribution = if days.is_empty() {
+                                                WeeklyDistribution::Even
+                                            } else {
+                                                WeeklyDistribution::Shift { high_days: days }
+                                            };
+                                        },
+                                        "{letter}"
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             Choice { label: "Check-in day", even: true,
@@ -197,37 +261,6 @@ pub fn Plan() -> Element {
                         aria_label: "Check in on {day}",
                         onclick: move |_| state.check_in_day.set(day),
                         "{letter}"
-                    }
-                }
-            }
-            if shifting {
-                div { class: "weekday-picker",
-                    for (day , letter) in WEEKDAYS {
-                        {
-                            let on = high_days.contains(&day);
-                            let days = high_days.clone();
-                            rsx! {
-                                button {
-                                    key: "{day}",
-                                    class: if on { "day-toggle active" } else { "day-toggle" },
-                                    aria_label: "{day} higher calories",
-                                    onclick: move |_| {
-                                        let mut days = days.clone();
-                                        if on {
-                                            days.retain(|d| *d != day);
-                                        } else {
-                                            days.push(day);
-                                        }
-                                        state.program.write().distribution = if days.is_empty() {
-                                            WeeklyDistribution::Even
-                                        } else {
-                                            WeeklyDistribution::Shift { high_days: days }
-                                        };
-                                    },
-                                    "{letter}"
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -249,43 +282,52 @@ pub fn Plan() -> Element {
                 }
             }
         }
-        section { class: "card",
-            h2 { "How these targets were set" }
-            ol { class: "explain",
-                li {
-                    strong { "Expenditure: {fmt0(basis_kcal)} kcal/day. " }
-                    if let Some((_, date)) = &locked {
-                        "Set at your check-in on {date}. The current estimate is {fmt0(expenditure)} kcal/day, {status}."
-                    } else {
-                        "Estimated {status}."
-                    }
-                }
-                li {
-                    strong { "Average target: {fmt0(coach.average_target.kcal)} kcal/day. " }
-                    "Your rate of {goal.rate_pct_per_week:+.2}% of body weight per week is about {weekly_kg:+.2} kg, or {daily_delta:+.0} kcal/day relative to expenditure.{floor_note}"
-                }
-                if shifting {
-                    li {
-                        strong { "Calorie shift. " }
-                        "Selected days get {((HIGH_DAY_MULTIPLIER - 1.0) * 100.0):.0}% more than the others; the weekly total stays the same."
-                    }
-                }
-                li {
-                    strong { "Protein: {fmt0(week[0].protein_g)} g. " }
-                    "{program.protein.grams_per_kg()} g per kg of trend weight."
-                }
-                li {
-                    strong { "Fat and carbs. " }
-                    "The remaining calories are split according to your diet type."
+        if manual {
+            section { class: "card",
+                h2 { "How these targets were set" }
+                p { class: "muted",
+                    "You're on a manual program, so these are the targets you entered, every day. Your expenditure estimate is {fmt0(expenditure)} kcal/day ({status}), if you want to compare."
                 }
             }
-            if locked.is_none() {
-                p { class: "muted small",
-                    "Until your first check-in, targets follow the live estimate. A check-in fixes them for the week."
+        } else {
+            section { class: "card",
+                h2 { "How these targets were set" }
+                ol { class: "explain",
+                    li {
+                        strong { "Expenditure: {fmt0(basis_kcal)} kcal/day. " }
+                        if let Some((_, date)) = &locked {
+                            "Set at your check-in on {date}. The current estimate is {fmt0(expenditure)} kcal/day, {status}."
+                        } else {
+                            "Estimated {status}."
+                        }
+                    }
+                    li {
+                        strong { "Average target: {fmt0(coach.average_target.kcal)} kcal/day. " }
+                        "Your rate of {goal.rate_pct_per_week:+.2}% of body weight per week is about {weekly_kg:+.2} kg, or {daily_delta:+.0} kcal/day relative to expenditure.{floor_note}"
+                    }
+                    if shifting {
+                        li {
+                            strong { "Calorie shift. " }
+                            "Selected days get {((HIGH_DAY_MULTIPLIER - 1.0) * 100.0):.0}% more than the others; the weekly total stays the same."
+                        }
+                    }
+                    li {
+                        strong { "Protein: {fmt0(week[0].protein_g)} g. " }
+                        "{program.protein.grams_per_kg()} g per kg of trend weight."
+                    }
+                    li {
+                        strong { "Fat and carbs. " }
+                        "The remaining calories are split according to your diet type."
+                    }
                 }
-            } else if live_change.abs() >= 1.0 {
-                p { class: "muted small",
-                    "Checking in today would change your average target by {live_change:+.0} kcal."
+                if locked.is_none() {
+                    p { class: "muted small",
+                        "Until your first check-in, targets follow the live estimate. A check-in fixes them for the week."
+                    }
+                } else if live_change.abs() >= 1.0 {
+                    p { class: "muted small",
+                        "Checking in today would change your average target by {live_change:+.0} kcal."
+                    }
                 }
             }
         }
@@ -293,6 +335,62 @@ pub fn Plan() -> Element {
 }
 
 /// A labelled segmented control; `even` gives every option the same width.
+/// Picks one value out of a set of targets, to edit it.
+type TargetField = fn(&mut MacroTargets) -> &mut f64;
+
+/// The manual program: calories and macros the user sets, used every day.
+#[component]
+fn ManualTargets() -> Element {
+    let mut state = use_context::<AppState>();
+    let Some(targets) = *state.manual_targets.read() else {
+        return rsx! {};
+    };
+    let from_macros = targets.protein_g * KCAL_PER_G_PROTEIN
+        + targets.fat_g * KCAL_PER_G_FAT
+        + targets.carbs_g * KCAL_PER_G_CARBS;
+    let mut set = move |field: TargetField, text: String| {
+        if let Ok(v) = text.trim().replace(',', ".").parse::<f64>() {
+            if v >= 0.0 {
+                if let Some(t) = state.manual_targets.write().as_mut() {
+                    *field(t) = v;
+                }
+            }
+        }
+    };
+    let fields: [(&str, &str, f64, TargetField); 4] = [
+        ("Calories", "kcal", targets.kcal, |t| &mut t.kcal),
+        ("Protein", "g", targets.protein_g, |t| &mut t.protein_g),
+        ("Fat", "g", targets.fat_g, |t| &mut t.fat_g),
+        ("Carbs", "g", targets.carbs_g, |t| &mut t.carbs_g),
+    ];
+
+    rsx! {
+        p { class: "muted small",
+            "Your own targets, the same every day. Check-ins still update your expenditure estimate but leave these alone."
+        }
+        div { class: "field-grid",
+            for (label , unit , value , field) in fields {
+                label { key: "{label}", class: "field",
+                    span { "{label} ({unit})" }
+                    input {
+                        r#type: "text",
+                        "inputmode": "decimal",
+                        value: "{fmt0(value)}",
+                        onchange: move |e| set(field, e.value()),
+                    }
+                }
+            }
+        }
+        if (from_macros - targets.kcal).abs() > 50.0 {
+            p { class: "muted small",
+                "Your macros add up to {fmt0(from_macros)} kcal, {fmt0((from_macros - targets.kcal).abs())} kcal "
+                if from_macros > targets.kcal { "more" } else { "less" }
+                " than your calorie target."
+            }
+        }
+    }
+}
+
 #[component]
 fn Choice(label: &'static str, #[props(default)] even: bool, children: Element) -> Element {
     rsx! {

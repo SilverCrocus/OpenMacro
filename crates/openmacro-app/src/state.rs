@@ -99,6 +99,9 @@ pub struct Data {
     pub program: CoachedProgram,
     /// Completed check-ins, oldest first.
     pub check_ins: Vec<CheckIn>,
+    /// Targets the user set themselves (the manual program), used every
+    /// day instead of the coached ones.
+    pub manual_targets: Option<MacroTargets>,
 }
 
 impl Data {
@@ -120,6 +123,7 @@ impl Data {
                 distribution: Default::default(),
             },
             check_ins: Vec::new(),
+            manual_targets: None,
         }
     }
 }
@@ -170,12 +174,29 @@ impl CoachSnapshot {
         };
         let rate = data.goal.rate_pct_per_week;
         let floor = data.program.floor;
+        let (average_target, week, live_target, live_week) = match data.manual_targets {
+            // A manual program sets the same targets every day; check-ins
+            // don't change them.
+            Some(manual) => {
+                let target = CalorieTarget {
+                    kcal: manual.kcal,
+                    limited_by_floor: false,
+                };
+                (target, [manual; 7], target, [manual; 7])
+            }
+            None => (
+                targets::average_daily_target(kcal, weight, rate, floor),
+                targets::weekly_plan(&data.program, kcal, weight, rate),
+                targets::average_daily_target(live_kcal, live_weight, rate, floor),
+                targets::weekly_plan(&data.program, live_kcal, live_weight, rate),
+            ),
+        };
         Self {
             prior_kcal,
-            average_target: targets::average_daily_target(kcal, weight, rate, floor),
-            week: targets::weekly_plan(&data.program, kcal, weight, rate),
-            live_target: targets::average_daily_target(live_kcal, live_weight, rate, floor),
-            live_week: targets::weekly_plan(&data.program, live_kcal, live_weight, rate),
+            average_target,
+            week,
+            live_target,
+            live_week,
             last_check_in,
             expenditure,
             trend,
@@ -306,6 +327,8 @@ pub struct AppState {
     /// Starred foods, most recent first.
     pub favorites: Signal<Vec<Food>>,
     pub check_ins: Signal<Vec<CheckIn>>,
+    /// Set when the user runs a manual program.
+    pub manual_targets: Signal<Option<MacroTargets>>,
     /// Weekday the weekly check-in falls on.
     pub check_in_day: Signal<Weekday>,
     /// Whether the check-in flow is showing.
@@ -343,6 +366,7 @@ impl AppState {
             custom_foods: Signal::new(custom_foods),
             favorites: Signal::new(favorites),
             check_ins: Signal::new(data.check_ins.clone()),
+            manual_targets: Signal::new(data.manual_targets),
             check_in_day: Signal::new(check_in_day),
             check_in_open: Signal::new(false),
             editing: Signal::new(None),
@@ -374,6 +398,7 @@ impl AppState {
         self.goal.set(saved.data.goal);
         self.program.set(saved.data.program);
         self.check_ins.set(saved.data.check_ins);
+        self.manual_targets.set(saved.data.manual_targets);
         self.region.set(saved.region);
         self.custom_foods.set(saved.custom_foods);
         self.favorites.set(saved.favorites);
@@ -396,6 +421,7 @@ impl AppState {
             goal: *self.goal.read(),
             program: self.program.read().clone(),
             check_ins: self.check_ins.read().clone(),
+            manual_targets: *self.manual_targets.read(),
         }
     }
 
@@ -721,6 +747,24 @@ mod tests {
         data.goal.rate_pct_per_week = 0.0;
         let maintain = CoachSnapshot::compute(&data, date());
         assert_eq!(maintain.average_target.kcal, 2000.0);
+    }
+
+    #[test]
+    fn manual_targets_replace_coached_ones() {
+        let mut data = crate::seed::demo(date());
+        let manual = MacroTargets {
+            kcal: 2000.0,
+            protein_g: 150.0,
+            fat_g: 70.0,
+            carbs_g: 195.0,
+        };
+        data.manual_targets = Some(manual);
+        let snapshot = CoachSnapshot::compute(&data, date());
+        assert_eq!(snapshot.week, [manual; 7]);
+        assert_eq!(snapshot.live_week, [manual; 7]);
+        assert_eq!(snapshot.average_target.kcal, 2000.0);
+        // Expenditure is still estimated from the data.
+        assert_eq!(snapshot.expenditure_status(), EstimateStatus::Updated);
     }
 
     #[test]

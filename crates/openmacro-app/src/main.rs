@@ -56,6 +56,12 @@ fn App() -> Element {
     let foods = use_resource(food_search::open_bundled);
     use_context_provider(|| foods);
 
+    // Save the manual program's targets whenever they change.
+    use_effect(move || {
+        let targets = *state.manual_targets.read();
+        state.persist.peek().save_manual_targets(targets);
+    });
+
     // Save the check-in day whenever it changes.
     use_effect(move || {
         let day = state.check_in_day.read().to_string();

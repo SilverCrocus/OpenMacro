@@ -10,7 +10,7 @@ use openmacro_core::expenditure::DayStatus;
 use openmacro_core::food::Food;
 use openmacro_core::log::{Goal, LogEntry, Profile};
 use openmacro_core::recipe::Recipe;
-use openmacro_core::targets::CoachedProgram;
+use openmacro_core::targets::{CoachedProgram, MacroTargets};
 use openmacro_core::trend::WeighIn;
 
 use crate::state::Data;
@@ -36,6 +36,7 @@ mod native {
     const PROGRAM: &str = "program";
     const REGION: &str = "food_region";
     const CHECK_IN_DAY: &str = "check_in_day";
+    const MANUAL_TARGETS: &str = "manual_targets";
 
     pub struct Persistence {
         store: Option<Store>,
@@ -95,6 +96,7 @@ mod native {
                         .setting::<CoachedProgram>(PROGRAM)?
                         .unwrap_or(defaults.program),
                     check_ins: store.check_ins()?,
+                    manual_targets: store.setting(MANUAL_TARGETS)?.flatten(),
                 })
             };
             report("load saved data", load())
@@ -198,6 +200,15 @@ mod native {
         pub fn insert_check_in(&self, check_in: &CheckIn) {
             if let Some(store) = &self.store {
                 report("save a check-in", store.insert_check_in(check_in));
+            }
+        }
+
+        pub fn save_manual_targets(&self, targets: Option<MacroTargets>) {
+            if let Some(store) = &self.store {
+                report(
+                    "save the manual targets",
+                    store.set_setting(MANUAL_TARGETS, &targets),
+                );
             }
         }
 
@@ -391,6 +402,8 @@ mod web {
         }
 
         pub fn insert_check_in(&self, _check_in: &CheckIn) {}
+
+        pub fn save_manual_targets(&self, _targets: Option<MacroTargets>) {}
 
         pub fn save_check_in_day(&self, _day: &str) {}
 
