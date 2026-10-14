@@ -139,6 +139,24 @@ pub fn Dashboard() -> Element {
         .filter(|r| r.coverage > 0.0 && r.standing == openmacro_core::micros::Standing::Met)
         .count();
 
+    // The most recent body measurement, preferring waist.
+    let body_latest = {
+        use openmacro_core::body::{MeasurementKind, latest};
+        let measurements = state.measurements.read();
+        [MeasurementKind::Waist, MeasurementKind::BodyFat]
+            .into_iter()
+            .chain(MeasurementKind::ALL)
+            .find_map(|k| latest(&measurements, k).map(|(_, v)| (k, v)))
+            .map(|(k, v)| {
+                let text = if k.is_length() {
+                    format!("{:.1} {}", prefs::length_value(v), prefs::length_symbol())
+                } else {
+                    format!("{v:.1}%")
+                };
+                (k.label(), text)
+            })
+    };
+
     // Habits this week.
     let weighed_days = (0..7)
         .filter(|i| {
@@ -273,6 +291,19 @@ pub fn Dashboard() -> Element {
                 } else {
                     div { class: "tile-num", "—" }
                     div { class: "muted", "Log a few days to see this" }
+                }
+            }
+            Link { to: super::insight::route("body"), class: "card tile link-tile",
+                h3 { "Body" }
+                match body_latest {
+                    Some((label, text)) => rsx! {
+                        div { class: "tile-num", "{text}" }
+                        div { class: "muted", "{label}" }
+                    },
+                    None => rsx! {
+                        div { class: "tile-num", "—" }
+                        div { class: "muted", "Add measurements" }
+                    },
                 }
             }
             section { class: "card tile",

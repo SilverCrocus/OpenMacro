@@ -133,6 +133,32 @@ pub fn kg_from_input(value: f64) -> f64 {
     weight_unit().to_kg(value)
 }
 
+/// Lengths follow the weight unit: inches with pounds, else centimetres.
+fn uses_inches() -> bool {
+    weight_unit() == WeightUnit::Pounds
+}
+
+/// "cm" or "in".
+pub fn length_symbol() -> &'static str {
+    if uses_inches() { "in" } else { "cm" }
+}
+
+pub fn length_value(cm: f64) -> f64 {
+    if uses_inches() {
+        cm / openmacro_core::units::CM_PER_INCH
+    } else {
+        cm
+    }
+}
+
+pub fn cm_from_input(value: f64) -> f64 {
+    if uses_inches() {
+        value * openmacro_core::units::CM_PER_INCH
+    } else {
+        value
+    }
+}
+
 /// Applies the theme to the page.
 pub fn apply_theme(theme: Theme) {
     document::eval(&format!(

@@ -6,6 +6,7 @@ use std::collections::BTreeMap;
 use chrono::{Duration, NaiveDate};
 use dioxus::prelude::*;
 use openmacro_core::KCAL_PER_KG_BODY_MASS;
+use openmacro_core::body::{self, Measurement, MeasurementKind};
 use openmacro_core::expenditure::{DayStatus, EstimateStatus};
 use openmacro_core::micros::{Standing, standard_goals, standing};
 use openmacro_core::nutrients::{Nutrient, NutrientGroup};
@@ -78,6 +79,7 @@ enum Metric {
     Macros,
     Goal,
     Nutrients,
+    Body,
 }
 
 impl Metric {
@@ -89,6 +91,7 @@ impl Metric {
             "macros" => Some(Metric::Macros),
             "goal" => Some(Metric::Goal),
             "nutrients" => Some(Metric::Nutrients),
+            "body" => Some(Metric::Body),
             _ => None,
         }
     }
@@ -101,6 +104,7 @@ impl Metric {
             Metric::Macros => "Calories and macros",
             Metric::Goal => "Goal progress",
             Metric::Nutrients => "Nutrients",
+            Metric::Body => "Body measurements",
         }
     }
 }
@@ -158,6 +162,9 @@ pub fn Insight(metric: String) -> Element {
             },
             Metric::Nutrients => rsx! {
                 NutrientsInsight { range }
+            },
+            Metric::Body => rsx! {
+                BodyInsight { range }
             },
         }
     }
@@ -1083,6 +1090,214 @@ fn NutrientsInsight(range: Range) -> Element {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+/// A measurement in the user's units: "84.5 cm", "33.3 in", "18.5%".
+fn measure_text(kind: MeasurementKind, value: f64) -> String {
+    if kind.is_length() {
+        format!(
+            "{:.1} {}",
+            prefs::length_value(value),
+            prefs::length_symbol()
+        )
+    } else {
+        format!("{value:.1}%")
+    }
+}
+
+#[component]
+fn BodyInsight(range: Range) -> Element {
+    let state = use_context::<AppState>();
+    let today = today();
+    let mut open = use_signal(|| None::<MeasurementKind>);
+    let measurements = state.measurements.read().clone();
+    let height = state.profile.read().stats.height_cm;
+    let first = measurements.first().map_or(today, |m| m.date);
+    let start = range.start(today, first);
+    let measured: Vec<MeasurementKind> = MeasurementKind::ALL
+        .into_iter()
+        .filter(|k| measurements.iter().any(|m| m.kind == *k))
+        .collect();
+    let ratios = [
+        (
+            "Waist to height",
+            body::waist_to_height(&measurements, height),
+            "Under 0.5 is the usual guide.",
+        ),
+        ("Waist to hip", body::waist_to_hip(&measurements), ""),
+    ];
+
+    rsx! {
+        MeasurementForm {}
+        if ratios.iter().any(|r| r.1.is_some()) {
+            section { class: "card",
+                div { class: "stat-row",
+                    for (label , value , _) in ratios.iter().filter(|r| r.1.is_some()) {
+                        Stat { key: "{label}", label: label.to_string(), value: format!("{:.2}", value.unwrap_or_default()) }
+                    }
+                }
+                p { class: "muted small", "{ratios[0].2}" }
+            }
+        }
+        if measured.is_empty() {
+            section { class: "card",
+                p { class: "muted", "Add a measurement above to start tracking it." }
+            }
+        }
+        for kind in measured {
+            {
+                let points = body::series(&measurements, kind);
+                let latest = points.last().copied();
+                let in_range: Vec<(NaiveDate, f64)> = points.iter().copied().filter(|p| p.0 >= start).collect();
+                let change = in_range.first().zip(latest).map(|(f, l)| l.1 - f.1);
+                let is_open = open() == Some(kind);
+                let entries: Vec<Measurement> = measurements.iter().rev().filter(|m| m.kind == kind).copied().collect();
+                let data = ChartData {
+                    start: Some(start),
+                    end: Some(today),
+                    line: in_range
+                        .iter()
+                        .map(|(d, v)| (*d, if kind.is_length() { prefs::length_value(*v) } else { *v }))
+                        .collect(),
+                    dots: in_range
+                        .iter()
+                        .map(|(d, v)| (*d, if kind.is_length() { prefs::length_value(*v) } else { *v }))
+                        .collect(),
+                    decimals: 1,
+                    ..Default::default()
+                };
+                rsx! {
+                    section { key: "{kind.key()}", class: "card",
+                        button {
+                            class: "nutrient-row",
+                            onclick: move |_| open.set(if is_open { None } else { Some(kind) }),
+                            div { class: "nutrient-head",
+                                span { class: "nutrient-name", "{kind.label()}" }
+                                strong { {latest.map(|(_, v)| measure_text(kind, v)).unwrap_or_default()} }
+                            }
+                            div { class: "muted small",
+                                {match (latest, change) {
+                                    (Some((date, _)), Some(c)) if c.abs() > 1e-9 => format!(
+                                        "{} in this range · last {}",
+                                        if kind.is_length() {
+                                            format!("{:+.1} {}", prefs::length_value(c), prefs::length_symbol())
+                                        } else {
+                                            format!("{c:+.1} points")
+                                        },
+                                        date.format("%-d %b")
+                                    ),
+                                    (Some((date, _)), _) => format!("Last measured {}", date.format("%-d %b")),
+                                    _ => String::new(),
+                                }}
+                            }
+                        }
+                        if is_open {
+                            if in_range.len() >= 2 {
+                                Chart { data, class: "trend" }
+                            }
+                            ul { class: "weigh-in-list",
+                                for (i , m) in entries.into_iter().enumerate() {
+                                    li { key: "{i}-{m.date}-{m.value}",
+                                        span { {m.date.format("%a %-d %b %Y").to_string()} }
+                                        strong { {measure_text(m.kind, m.value)} }
+                                        button {
+                                            class: "icon-btn small",
+                                            aria_label: "Delete the {kind.label()} measurement on {m.date}",
+                                            onclick: move |_| state.delete_measurement(m),
+                                            Icon { name: "close" }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// Adds a measurement for today.
+#[component]
+fn MeasurementForm() -> Element {
+    let state = use_context::<AppState>();
+    let mut kind = use_signal(|| MeasurementKind::Waist);
+    let mut text = use_signal(String::new);
+    let mut saved = use_signal(|| None::<String>);
+    let unit = if kind().is_length() {
+        prefs::length_symbol()
+    } else {
+        "%"
+    };
+    let value = text()
+        .trim()
+        .replace(',', ".")
+        .parse::<f64>()
+        .ok()
+        .filter(|v| *v > 0.0)
+        .map(|v| {
+            if kind().is_length() {
+                prefs::cm_from_input(v)
+            } else {
+                v
+            }
+        })
+        .filter(|v| {
+            if kind().is_length() {
+                *v < 300.0
+            } else {
+                *v < 75.0
+            }
+        });
+
+    rsx! {
+        section { class: "card",
+            h2 { "Add a measurement" }
+            div { class: "field-grid",
+                label { class: "field",
+                    span { "What" }
+                    select {
+                        onchange: move |e| {
+                            if let Some(k) = MeasurementKind::from_key(&e.value()) {
+                                kind.set(k);
+                            }
+                        },
+                        for k in MeasurementKind::ALL {
+                            option { key: "{k.key()}", value: "{k.key()}", selected: k == kind(), "{k.label()}" }
+                        }
+                    }
+                }
+                label { class: "field",
+                    span { "Today ({unit})" }
+                    input {
+                        r#type: "text",
+                        "inputmode": "decimal",
+                        value: "{text}",
+                        oninput: move |e| {
+                            text.set(e.value());
+                            saved.set(None);
+                        },
+                    }
+                }
+            }
+            button {
+                class: "primary wide",
+                disabled: value.is_none(),
+                onclick: move |_| {
+                    if let Some(v) = value {
+                        let m = Measurement { date: today(), kind: kind(), value: v };
+                        state.add_measurement(m);
+                        saved.set(Some(format!("Saved {} {}.", kind().label().to_lowercase(), measure_text(m.kind, v))));
+                        text.set(String::new());
+                    }
+                },
+                "Save"
+            }
+            if let Some(message) = saved() {
+                p { class: "muted small", "{message}" }
             }
         }
     }

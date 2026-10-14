@@ -15,6 +15,7 @@
 //! - [`checkin`]: weekly check-in timing and the days to review before one.
 
 pub mod bmr;
+pub mod body;
 pub mod checkin;
 pub mod expenditure;
 pub mod food;

@@ -5,6 +5,7 @@
 //! SQLite, so it keeps everything in memory and every method is a no-op.
 
 use chrono::NaiveDate;
+use openmacro_core::body::Measurement;
 use openmacro_core::checkin::CheckIn;
 use openmacro_core::expenditure::DayStatus;
 use openmacro_core::food::Food;
@@ -129,6 +130,25 @@ mod native {
             if let Some(store) = &self.store {
                 report("save a weigh-in", store.insert_weigh_in(weigh_in));
             }
+        }
+
+        pub fn insert_measurement(&self, m: &Measurement) {
+            if let Some(store) = &self.store {
+                report("save a measurement", store.insert_measurement(m));
+            }
+        }
+
+        pub fn delete_measurement(&self, m: &Measurement) {
+            if let Some(store) = &self.store {
+                report("delete a measurement", store.delete_measurement(m));
+            }
+        }
+
+        pub fn measurements(&self) -> Vec<Measurement> {
+            self.store
+                .as_ref()
+                .and_then(|s| report("load measurements", s.measurements()))
+                .unwrap_or_default()
         }
 
         pub fn delete_weigh_in(&self, weigh_in: &WeighIn) {
@@ -398,6 +418,14 @@ mod web {
         pub fn delete_entry(&self, _id: i64) {}
 
         pub fn insert_weigh_in(&self, _weigh_in: &WeighIn) {}
+
+        pub fn insert_measurement(&self, _m: &Measurement) {}
+
+        pub fn delete_measurement(&self, _m: &Measurement) {}
+
+        pub fn measurements(&self) -> Vec<Measurement> {
+            Vec::new()
+        }
 
         pub fn delete_weigh_in(&self, _weigh_in: &WeighIn) {}
 

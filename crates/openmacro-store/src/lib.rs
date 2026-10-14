@@ -10,6 +10,7 @@ use std::collections::BTreeMap;
 use std::path::Path;
 
 use chrono::{NaiveDate, Utc};
+use openmacro_core::body::{Measurement, MeasurementKind};
 use openmacro_core::checkin::CheckIn;
 use openmacro_core::expenditure::DayStatus;
 use openmacro_core::food::{Food, FoodSource, Serving};
@@ -79,6 +80,7 @@ pub struct Snapshot {
     pub custom_foods: Vec<SavedFood>,
     pub favorites: Vec<Food>,
     pub settings: BTreeMap<String, serde_json::Value>,
+    pub measurements: Vec<Measurement>,
 }
 
 /// Ordered schema migrations; index + 1 is the version each one produces.
@@ -151,6 +153,16 @@ const MIGRATIONS: &[&str] = &[
 ",
     "
     ALTER TABLE custom_food ADD COLUMN recipe TEXT;
+",
+    "
+    CREATE TABLE measurement (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT NOT NULL,
+        kind TEXT NOT NULL,
+        value REAL NOT NULL,
+        updated_at TEXT NOT NULL,
+        deleted_at TEXT
+    );
 ",
 ];
 
@@ -315,6 +327,52 @@ impl Store {
             params![weigh_in.date.to_string(), weigh_in.kg, now()],
         )?;
         Ok(self.conn.last_insert_rowid())
+    }
+
+    pub fn insert_measurement(&self, m: &Measurement) -> Result<()> {
+        self.conn.execute(
+            "INSERT INTO measurement (date, kind, value, updated_at) VALUES (?1, ?2, ?3, ?4)",
+            params![m.date.to_string(), m.kind.key(), m.value, now()],
+        )?;
+        Ok(())
+    }
+
+    /// Removes one measurement with this date, kind and value.
+    pub fn delete_measurement(&self, m: &Measurement) -> Result<bool> {
+        let changed = self.conn.execute(
+            "UPDATE measurement SET deleted_at = ?1, updated_at = ?1 WHERE id = (
+                 SELECT id FROM measurement WHERE date = ?2 AND kind = ?3 AND value = ?4
+                 AND deleted_at IS NULL ORDER BY id DESC LIMIT 1)",
+            params![now(), m.date.to_string(), m.kind.key(), m.value],
+        )?;
+        Ok(changed > 0)
+    }
+
+    /// Every live measurement, oldest first. Unknown kinds (from a newer
+    /// version) are skipped.
+    pub fn measurements(&self) -> Result<Vec<Measurement>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT date, kind, value FROM measurement WHERE deleted_at IS NULL ORDER BY date, id",
+        )?;
+        let rows = stmt.query_map([], |r| {
+            Ok((
+                r.get::<_, String>(0)?,
+                r.get::<_, String>(1)?,
+                r.get::<_, f64>(2)?,
+            ))
+        })?;
+        let mut out = Vec::new();
+        for row in rows {
+            let (date, kind, value) = row?;
+            if let Some(kind) = MeasurementKind::from_key(&kind) {
+                out.push(Measurement {
+                    date: parse_date(&date)?,
+                    kind,
+                    value,
+                });
+            }
+        }
+        Ok(out)
     }
 
     /// Removes one weigh-in with this date and weight (there may be several
@@ -660,6 +718,7 @@ impl Store {
             custom_foods,
             favorites: self.favorites()?.into_iter().rev().collect(),
             settings,
+            measurements: self.measurements()?,
         })
     }
 
@@ -670,7 +729,7 @@ impl Store {
         tx.execute_batch(
             "DELETE FROM log_entry; DELETE FROM weigh_in; DELETE FROM day_status;
              DELETE FROM check_in; DELETE FROM custom_food; DELETE FROM favorite;
-             DELETE FROM setting;",
+             DELETE FROM setting; DELETE FROM measurement;",
         )?;
         let at = now();
         {
@@ -745,6 +804,17 @@ impl Store {
                 tx.prepare("INSERT INTO setting (key, value, updated_at) VALUES (?1, ?2, ?3)")?;
             for (key, value) in &snapshot.settings {
                 insert_setting.execute(params![key, value.to_string(), at])?;
+            }
+            let mut insert_measurement = tx.prepare(
+                "INSERT INTO measurement (date, kind, value, updated_at) VALUES (?1, ?2, ?3, ?4)",
+            )?;
+            for m in &snapshot.measurements {
+                insert_measurement.execute(params![
+                    m.date.to_string(),
+                    m.kind.key(),
+                    m.value,
+                    at
+                ])?;
             }
         }
         tx.commit()?;
@@ -999,6 +1069,13 @@ mod tests {
             .unwrap();
         source.set_day_status(date(12), DayStatus::Fasted).unwrap();
         source
+            .insert_measurement(&Measurement {
+                date: date(13),
+                kind: MeasurementKind::Waist,
+                value: 84.5,
+            })
+            .unwrap();
+        source
             .insert_check_in(&CheckIn {
                 date: date(13),
                 expenditure_kcal: 2300.0,
@@ -1046,6 +1123,26 @@ mod tests {
         // New rows don't collide with restored ids.
         let next = target.insert_log_entry(&entry(14, 8, 100.0)).unwrap();
         assert!(next > restored[0].id);
+    }
+
+    #[test]
+    fn measurements_round_trip_and_delete() {
+        let store = Store::open_in_memory().unwrap();
+        let waist = Measurement {
+            date: date(12),
+            kind: MeasurementKind::Waist,
+            value: 84.0,
+        };
+        let fat = Measurement {
+            date: date(12),
+            kind: MeasurementKind::BodyFat,
+            value: 18.5,
+        };
+        store.insert_measurement(&waist).unwrap();
+        store.insert_measurement(&fat).unwrap();
+        assert_eq!(store.measurements().unwrap(), vec![waist, fat]);
+        assert!(store.delete_measurement(&waist).unwrap());
+        assert_eq!(store.measurements().unwrap(), vec![fat]);
     }
 
     #[test]

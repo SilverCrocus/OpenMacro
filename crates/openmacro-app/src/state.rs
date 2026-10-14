@@ -6,6 +6,7 @@ use std::collections::BTreeMap;
 use chrono::{Datelike, Duration, Local, NaiveDate, Timelike, Weekday};
 use dioxus::prelude::*;
 use openmacro_core::bmr::{self, ActivityLevel, BmrEquation, BodyStats, Sex};
+use openmacro_core::body::Measurement;
 use openmacro_core::checkin::CheckIn;
 use openmacro_core::expenditure::{
     self, DayRecord, DayStatus, EstimateStatus, ExpenditureConfig, ExpenditurePoint,
@@ -310,6 +311,7 @@ struct Saved {
     favorites: Vec<Food>,
     check_in_day: Weekday,
     recipes: BTreeMap<String, Recipe>,
+    measurements: Vec<Measurement>,
 }
 
 impl Saved {
@@ -329,6 +331,7 @@ impl Saved {
                 .and_then(|day| day.parse().ok())
                 .unwrap_or(Weekday::Mon),
             recipes: persist.recipes().into_iter().collect(),
+            measurements: persist.measurements(),
         }
     }
 }
@@ -363,6 +366,8 @@ pub struct AppState {
     pub check_in_open: Signal<bool>,
     /// The logged entry being edited, if any.
     pub editing: Signal<Option<LogEntry>>,
+    /// Body measurements, oldest first.
+    pub measurements: Signal<Vec<Measurement>>,
     /// Entries chosen to copy to another day, if the copy sheet is open.
     pub copying: Signal<Option<Copying>>,
     /// Recipes' ingredients, by food id.
@@ -388,6 +393,7 @@ impl AppState {
             favorites,
             check_in_day,
             recipes,
+            measurements,
         } = Saved::read(&persist);
         Self {
             region: Signal::new(region),
@@ -400,6 +406,7 @@ impl AppState {
             check_in_open: Signal::new(false),
             editing: Signal::new(None),
             copying: Signal::new(None),
+            measurements: Signal::new(measurements),
             recipes: Signal::new(recipes),
             recipe_edit: Signal::new(None),
             next_id: Signal::new(next_id_after(&data.log)),
@@ -434,6 +441,7 @@ impl AppState {
         self.favorites.set(saved.favorites);
         self.check_in_day.set(saved.check_in_day);
         self.recipes.set(saved.recipes);
+        self.measurements.set(saved.measurements);
         if let Some(prefs) = self.persist.peek().load_prefs() {
             *crate::prefs::PREFS.write() = prefs;
         }
@@ -716,6 +724,21 @@ impl AppState {
         let weigh_in = WeighIn { date, kg };
         self.persist.read().insert_weigh_in(&weigh_in);
         self.weigh_ins.write().push(weigh_in);
+    }
+
+    pub fn add_measurement(mut self, m: Measurement) {
+        self.persist.read().insert_measurement(&m);
+        let mut list = self.measurements.write();
+        list.push(m);
+        list.sort_by_key(|m| m.date);
+    }
+
+    pub fn delete_measurement(mut self, m: Measurement) {
+        self.persist.read().delete_measurement(&m);
+        let mut list = self.measurements.write();
+        if let Some(i) = list.iter().rposition(|x| *x == m) {
+            list.remove(i);
+        }
     }
 
     pub fn delete_weigh_in(mut self, weigh_in: WeighIn) {
