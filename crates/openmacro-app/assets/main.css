@@ -554,3 +554,37 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .update-row strong { text-align: right; font-variant-numeric: tabular-nums; }
 .checkin-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 12px; }
 .checkin-day { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 2px; background: var(--surface-2); border-radius: 8px; text-align: center; font-variant-numeric: tabular-nums; }
+
+/* Insight pages */
+
+a.link-tile { color: inherit; text-decoration: none; display: block; }
+a.link-tile:active { border-color: var(--accent); }
+.insight-header { display: flex; align-items: center; justify-content: flex-start; gap: 10px; }
+.insight-header .icon-btn { color: var(--text); text-decoration: none; }
+.range-chips { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; }
+.range-chips .chip { flex: 1; min-width: 44px; }
+.chart { width: 100%; height: auto; display: block; }
+.chart-empty { padding: 48px 0; text-align: center; }
+.chart-grid { stroke: var(--border); stroke-width: 1; }
+.chart-zero { stroke: var(--muted); stroke-width: 1; }
+.chart-label { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.chart-line { fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.chart-band { fill: currentColor; opacity: 0.15; }
+.chart-dot { fill: var(--text); opacity: 0.55; }
+.chart-bar.below { fill: var(--carbs); }
+.chart-bar.above { fill: var(--protein); }
+.chart.exp { color: var(--protein); }
+.chart.trend { color: #b28cff; }
+.legend { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 8px 0 0; }
+.swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-left: 6px; }
+.swatch:first-child { margin-left: 0; }
+.swatch.exp { background: var(--protein); }
+.swatch.band { background: var(--protein); opacity: 0.25; }
+.swatch.trend { background: #b28cff; }
+.swatch.dot { background: var(--text); opacity: 0.55; border-radius: 50%; width: 8px; height: 8px; }
+.swatch.below { background: var(--carbs); }
+.swatch.above { background: var(--protein); }
+.insight-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; margin-bottom: 8px; }
+.insight-table th { text-align: left; font-weight: 500; color: var(--muted); font-size: 13px; padding: 4px 0; }
+.insight-table td { padding: 6px 0; border-top: 1px solid var(--border); }
+.insight-table th:not(:first-child), .insight-table td:not(:first-child) { text-align: right; }

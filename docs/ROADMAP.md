@@ -21,14 +21,15 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | ✅ Barcode scanning | Live camera scanning (EAN/UPC, decoded in Rust with rxing), torch, manual entry; local database first, then Open Food Facts online |
 | ✅ Weekly check-in | Check-in day setting, due card on Plan and Dashboard. Three steps: weigh-in, review of unlogged and partly logged days, then new targets. Targets stay fixed until the next check-in |
 | ✅ Data export | CSV files for the food log (every nutrient), weigh-ins and a daily summary (intake, weight, trend, expenditure, targets). Saved to Downloads/OpenMacro on Android |
+| ✅ Insight pages | Tap the Expenditure, Weight trend or Energy balance tile for a chart with 1W–All ranges. Expenditure shows its likely range; weight shows scale weigh-ins and trend change over 3–90 days; energy balance shows each complete day's surplus or deficit and the weight change it implies |
 
 ## Next
 
 | # | Feature | Plan |
 |---|---|---|
-| 1 | ⏭ **Insight pages** | Tap a dashboard card for its chart: expenditure, weight trend and energy balance, with 1W–All ranges and short insights (e.g. weight change over 7/14/30/90 days). |
-| 2 | ⏭ **Recipes** | Build from ingredients with a cooked weight; log by serving or grams. |
-| 3 | ⏭ **Backup and restore** | One file with all data that can be restored on a new phone. |
+| 1 | ⏭ **Recipes** | Build from ingredients with a cooked weight; log by serving or grams. |
+| 2 | ⏭ **Backup and restore** | One file with all data that can be restored on a new phone. |
+| 3 | ⏭ **More insight pages** | Goal progress, macros over time, and weekly or monthly averages on the charts. |
 
 ## Later
 

@@ -145,19 +145,19 @@ pub fn Dashboard() -> Element {
             }
         }
         div { class: "tiles",
-            section { class: "card tile",
+            Link { to: super::insight::route("expenditure"), class: "card tile link-tile",
                 h3 { "Expenditure" }
                 div { class: "tile-num", {fmt0(expenditure)} span { class: "unit", " kcal" } }
                 div { class: "muted", "{status}" }
                 Sparkline { values: exp_series, class: "exp" }
             }
-            section { class: "card tile",
+            Link { to: super::insight::route("weight"), class: "card tile link-tile",
                 h3 { "Weight trend" }
                 div { class: "tile-num", "{trend_text}" span { class: "unit", " kg" } }
                 div { class: "muted", "{trend_change_text}" }
                 Sparkline { values: trend_series, class: "trend" }
             }
-            section { class: "card tile",
+            Link { to: super::insight::route("energy-balance"), class: "card tile link-tile",
                 h3 { "Energy balance" }
                 div { class: "tile-num", "{balance_text}" span { class: "unit", " kcal/day" } }
                 div { class: "muted", "Last 7 days, intake − expenditure" }

@@ -14,7 +14,7 @@ mod updater;
 
 use dioxus::prelude::*;
 
-use components::{Dashboard, FoodLog, More, Plan, Shell, check_for_update};
+use components::{Dashboard, FoodLog, Insight, More, Plan, Shell, check_for_update};
 use state::{AppState, today};
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
@@ -31,6 +31,8 @@ pub enum Route {
         Plan {},
         #[route("/more")]
         More {},
+        #[route("/insight/:metric")]
+        Insight { metric: String },
 }
 
 fn main() {
