@@ -112,6 +112,7 @@ fn schema() -> String {
             regions INTEGER NOT NULL,
             branded INTEGER NOT NULL,
             popularity REAL NOT NULL,
+            listed INTEGER NOT NULL DEFAULT 1,
             {}
         );
         CREATE TABLE serving (
@@ -219,7 +220,19 @@ impl FoodDbWriter {
             }
         }
         self.conn.execute_batch(
-            "CREATE INDEX food_barcode ON food (barcode) WHERE barcode IS NOT NULL;
+            "-- Several barcodes (pack sizes) often share one name and brand. Keep
+             -- them all for barcode lookup but list only the most-scanned in search.
+             UPDATE food SET listed = 0
+             WHERE branded = 1 AND id NOT IN (
+                 SELECT id FROM (
+                     SELECT id, ROW_NUMBER() OVER (
+                         PARTITION BY lower(name), lower(coalesce(brand, ''))
+                         ORDER BY popularity DESC, id
+                     ) AS rank
+                     FROM food WHERE branded = 1
+                 ) WHERE rank = 1
+             );
+             CREATE INDEX food_barcode ON food (barcode) WHERE barcode IS NOT NULL;
              INSERT INTO food_fts (food_fts) VALUES ('rebuild');
              INSERT INTO food_fts (food_fts) VALUES ('optimize');
              COMMIT;
@@ -317,6 +330,7 @@ impl FoodDb {
             "SELECT {} FROM food_fts
              JOIN food f ON f.id = food_fts.rowid
              WHERE food_fts MATCH ?1
+               AND f.listed = 1
                AND (f.branded = 0 OR (f.regions & ?2) != 0)
              ORDER BY bm25(food_fts, 10.0, 3.0)
                  - CASE WHEN (f.regions & ?2) != 0 THEN 1.5 ELSE 0.0 END
@@ -467,6 +481,25 @@ mod tests {
         ))
         .unwrap();
         FoodDb::from_connection(w.finish(&[("attribution", "test")]).unwrap())
+    }
+
+    #[test]
+    fn duplicate_products_are_listed_once_but_keep_barcodes() {
+        let mut w = FoodDbWriter::in_memory().unwrap();
+        let mut small = record("Weet-Bix", Dataset::OpenFoodFacts, region::AU, true, 350.0);
+        small.barcode = Some("9300652000000".into());
+        small.popularity = 3.0;
+        let mut large = small.clone();
+        large.barcode = Some("9300652999999".into());
+        large.popularity = 40.0;
+        w.insert(&small).unwrap();
+        w.insert(&large).unwrap();
+        let db = FoodDb::from_connection(w.finish(&[]).unwrap());
+
+        let hits = db.search("weet bix", region::AU, 10).unwrap();
+        assert_eq!(hits.len(), 1);
+        assert_eq!(hits[0].food.barcode.as_deref(), Some("9300652999999"));
+        assert!(db.by_barcode("9300652000000").unwrap().is_some());
     }
 
     #[test]

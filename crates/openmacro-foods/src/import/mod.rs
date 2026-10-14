@@ -26,6 +26,25 @@ pub fn plausible(food: &FoodRecord) -> bool {
     finite && !food.name.trim().is_empty() && kcal <= 950.0 && p + f + c <= 110.0
 }
 
+/// True when the stated energy roughly matches the energy implied by the
+/// macros (Atwater factors, fibre at 2 kcal/g). Catches label typos and unit
+/// mix-ups in crowd-sourced data.
+pub fn energy_consistent(n: &NutrientProfile) -> bool {
+    let kcal = n.get_or_zero(Nutrient::Energy);
+    let fiber = n.get_or_zero(Nutrient::Fiber);
+    let net_carbs = (n.get_or_zero(Nutrient::Carbs) - fiber).max(0.0);
+    let implied = 4.0 * n.get_or_zero(Nutrient::Protein)
+        + 9.0 * n.get_or_zero(Nutrient::Fat)
+        + 4.0 * net_carbs
+        + 2.0 * fiber
+        + 7.0 * n.get_or_zero(Nutrient::Alcohol);
+    if kcal < 40.0 {
+        (implied - kcal).abs() <= 15.0
+    } else {
+        (0.75..=1.25).contains(&(implied / kcal))
+    }
+}
+
 /// Sets `nutrient` from the first present value, scaled.
 pub fn set_first(
     profile: &mut NutrientProfile,
@@ -75,6 +94,20 @@ mod tests {
         assert_eq!(split_count("1/2 cup"), (0.5, "cup".into()));
         assert_eq!(split_count("medium banana"), (1.0, "medium banana".into()));
         assert_eq!(split_count("12"), (1.0, "12".into()));
+    }
+
+    #[test]
+    fn energy_consistency() {
+        // 105 kcal: 3.8 g protein, 1.3 g fat, 24.4 g carbs incl. 4 g fibre.
+        let good = NutrientProfile::from_macros(105.0, 3.8, 1.3, 24.4).with(Nutrient::Fiber, 4.0);
+        assert!(energy_consistent(&good));
+        // Carbs mistyped as 8 g.
+        let bad = NutrientProfile::from_macros(114.0, 1.0, 1.0, 8.0);
+        assert!(!energy_consistent(&bad));
+        // Near-zero foods use an absolute tolerance.
+        assert!(energy_consistent(&NutrientProfile::from_macros(
+            2.0, 0.1, 0.0, 0.0
+        )));
     }
 
     #[test]

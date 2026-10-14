@@ -277,9 +277,15 @@ fn FoodDetail(food: Food, on_back: EventHandler<()>) -> Element {
         .map(|i| i.nutrients.clone())
         .unwrap_or_default();
     let kcal = per.get_or_zero(Nutrient::Energy);
-    let share = |grams: f64, kcal_per_g: f64| {
-        if kcal > 0.0 {
-            grams * kcal_per_g / kcal * 100.0
+    // Share of the energy coming from each macro. Carbs use net carbs: fibre
+    // contributes little energy, and including it pushes the total past 100%.
+    let protein_kcal = per.get_or_zero(Nutrient::Protein) * KCAL_PER_G_PROTEIN;
+    let fat_kcal = per.get_or_zero(Nutrient::Fat) * KCAL_PER_G_FAT;
+    let carbs_kcal = per.net_carbs().unwrap_or(0.0) * KCAL_PER_G_CARBS;
+    let macro_total = protein_kcal + fat_kcal + carbs_kcal;
+    let share = |part: f64| {
+        if macro_total > 0.0 {
+            part / macro_total * 100.0
         } else {
             0.0
         }
@@ -288,19 +294,19 @@ fn FoodDetail(food: Food, on_back: EventHandler<()>) -> Element {
         (
             "Protein",
             per.get_or_zero(Nutrient::Protein),
-            share(per.get_or_zero(Nutrient::Protein), KCAL_PER_G_PROTEIN),
+            share(protein_kcal),
             "protein",
         ),
         (
             "Fat",
             per.get_or_zero(Nutrient::Fat),
-            share(per.get_or_zero(Nutrient::Fat), KCAL_PER_G_FAT),
+            share(fat_kcal),
             "fat",
         ),
         (
             "Carbs",
             per.get_or_zero(Nutrient::Carbs),
-            share(per.get_or_zero(Nutrient::Carbs), KCAL_PER_G_CARBS),
+            share(carbs_kcal),
             "carbs",
         ),
     ];

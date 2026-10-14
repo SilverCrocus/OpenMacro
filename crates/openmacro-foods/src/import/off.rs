@@ -11,7 +11,7 @@ use flate2::read::MultiGzDecoder;
 use openmacro_core::food::Serving;
 use openmacro_core::nutrients::{Nutrient, NutrientProfile};
 
-use super::{Result, plausible};
+use super::{Result, energy_consistent, plausible};
 use crate::{Dataset, FoodDbWriter, FoodRecord, region};
 
 /// OFF stores every per-100 g value in grams (energy aside); scale to our unit.
@@ -188,7 +188,10 @@ pub fn import(path: &Path, options: Options, writer: &mut FoodDbWriter) -> Resul
             continue;
         }
         let food = record(&row, regions);
-        if food.barcode.is_none() || !plausible(&food) || !seen_codes.insert(food.source_id.clone())
+        if food.barcode.is_none()
+            || !plausible(&food)
+            || !energy_consistent(&food.per_100g)
+            || !seen_codes.insert(food.source_id.clone())
         {
             continue;
         }
