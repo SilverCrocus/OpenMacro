@@ -214,23 +214,46 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .day-pill .dow { font-size: 11px; color: var(--muted); }
 .day-pill .dom { font-size: 13px; font-weight: 600; }
 
-.macro-summary {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  margin-bottom: 12px;
+.sticky-head {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg);
+  margin: calc(-16px - env(safe-area-inset-top)) -16px 10px;
+  padding: calc(env(safe-area-inset-top) + 12px) 16px 10px;
+  border-bottom: 1px solid var(--border);
 }
 
-.macro-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin-bottom: 12px; }
-.macro-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
-.macro-value { color: var(--muted); font-variant-numeric: tabular-nums; }
+.sticky-head .page-header { margin-bottom: 8px; }
+.sticky-head .week-strip { margin-bottom: 8px; }
+
+.macro-strip {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  padding: 2px 0 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  text-align: left;
+}
+
+.macro-cell-text { display: flex; align-items: baseline; gap: 3px; font-size: 12px; white-space: nowrap; overflow: hidden; }
+.macro-cell-text .num { font-weight: 600; }
+.macro-letter { font-weight: 700; }
+.macro-cell .bar-track { height: 4px; margin-top: 5px; }
+.macro-cell.kcal .macro-letter { color: var(--kcal); }
+.macro-cell.protein .macro-letter { color: var(--protein); }
+.macro-cell.fat .macro-letter { color: var(--fat); }
+.macro-cell.carbs .macro-letter { color: var(--carbs); }
+.macro-cell.kcal .bar-fill { background: var(--kcal); }
+.macro-cell.protein .bar-fill { background: var(--protein); }
+.macro-cell.fat .bar-fill { background: var(--fat); }
+.macro-cell.carbs .bar-fill { background: var(--carbs); }
+.macro-cell.over .bar-fill { background: var(--danger); }
 .bar-track { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
 .bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
-.macro-bar.kcal .bar-fill { background: var(--kcal); }
-.macro-bar.protein .bar-fill { background: var(--protein); }
-.macro-bar.fat .bar-fill { background: var(--fat); }
-.macro-bar.carbs .bar-fill { background: var(--carbs); }
 
 .segmented {
   display: inline-flex;
@@ -242,7 +265,6 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 }
 
 .segmented button { border: none; background: transparent; padding: 6px 12px; font-size: 13px; }
-.segmented.small { display: flex; width: fit-content; margin: 0 auto; }
 
 .day-status { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; }
 
@@ -395,6 +417,47 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .explain { padding-left: 20px; margin: 0 0 8px; display: grid; gap: 8px; font-size: 14px; color: var(--muted); }
 .explain strong { color: var(--text); font-weight: 600; }
 
+/* Number pad */
+
+.keypad-dock {
+  position: sticky;
+  bottom: 0;
+  margin: 16px -16px -16px;
+  padding: 10px 16px calc(12px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.amount-display {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.qty-text { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 1ch; }
+.qty-text.fresh { background: rgba(79, 209, 165, 0.25); border-radius: 4px; padding: 0 3px; }
+.amount-detail { margin-left: auto; font-size: 13px; color: var(--muted); text-align: right; }
+.amount-detail.error { color: var(--danger); }
+
+.unit-chips { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+.unit-chips .chip { flex: none; }
+
+.keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.keypad button {
+  height: 50px;
+  border-radius: 12px;
+  font-size: 20px;
+  background: var(--surface-2);
+  border: none;
+}
+.keypad button:active { background: var(--border); }
+.keypad .key-log { font-size: 15px; font-weight: 600; }
+.keypad .key-add { font-size: 15px; font-weight: 600; background: var(--accent); color: var(--accent-ink); }
+
 @media (max-width: 380px) {
-  .macro-bars, .field-grid, .tiles { grid-template-columns: 1fr; }
+  .field-grid, .tiles { grid-template-columns: 1fr; }
 }

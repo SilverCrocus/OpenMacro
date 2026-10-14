@@ -198,48 +198,46 @@ pub fn Sparkline(values: Vec<f64>, class: &'static str) -> Element {
     }
 }
 
-/// Calories and macros against targets, as consumed or remaining.
+/// One compact row of calories and macros against targets. Tapping it switches
+/// between what has been eaten and what remains.
 #[component]
-pub fn MacroSummary(totals: NutrientProfile, target: MacroTargets) -> Element {
+pub fn MacroStrip(totals: NutrientProfile, target: MacroTargets) -> Element {
     let mut remaining = use_signal(|| false);
-    let rows = [
-        ("Calories", "kcal", Nutrient::Energy, target.kcal, "kcal"),
-        (
-            "Protein",
-            "g",
-            Nutrient::Protein,
-            target.protein_g,
-            "protein",
-        ),
-        ("Fat", "g", Nutrient::Fat, target.fat_g, "fat"),
-        ("Carbs", "g", Nutrient::Carbs, target.carbs_g, "carbs"),
+    let cells = [
+        ("kcal", Nutrient::Energy, target.kcal, "kcal"),
+        ("P", Nutrient::Protein, target.protein_g, "protein"),
+        ("F", Nutrient::Fat, target.fat_g, "fat"),
+        ("C", Nutrient::Carbs, target.carbs_g, "carbs"),
     ];
+    let mode = if remaining() { "Remaining" } else { "Eaten" };
     rsx! {
-        div { class: "macro-summary",
-            div { class: "macro-bars",
-                for (label, unit, nutrient, goal, class) in rows {
-                    {
-                        let value = totals.get_or_zero(nutrient);
-                        let shown = if remaining() { (goal - value).max(0.0) } else { value };
-                        let width = (value / goal.max(1.0) * 100.0).clamp(0.0, 100.0);
-                        let text = format!("{} / {} {unit}", fmt0(shown), fmt0(goal));
-                        rsx! {
-                            div { class: "macro-bar {class}",
-                                div { class: "macro-label",
-                                    span { "{label}" }
-                                    span { class: "macro-value", "{text}" }
+        button {
+            class: "macro-strip",
+            aria_label: "{mode}. Tap to switch between eaten and remaining.",
+            onclick: move |_| remaining.set(!remaining()),
+            for (letter , nutrient , goal , class) in cells {
+                {
+                    let value = totals.get_or_zero(nutrient);
+                    let shown = if remaining() { (goal - value).max(0.0) } else { value };
+                    let width = (value / goal.max(1.0) * 100.0).clamp(0.0, 100.0);
+                    let over = value > goal * 1.05;
+                    rsx! {
+                        div { key: "{letter}", class: if over { "macro-cell {class} over" } else { "macro-cell {class}" },
+                            div { class: "macro-cell-text",
+                                span { class: "macro-letter", "{letter}" }
+                                span { class: "num", {fmt0(shown)} }
+                                if remaining() {
+                                    span { class: "muted", "left" }
+                                } else {
+                                    span { class: "muted", "/{fmt0(goal)}" }
                                 }
-                                div { class: "bar-track",
-                                    div { class: "bar-fill", style: "width: {width}%" }
-                                }
+                            }
+                            div { class: "bar-track",
+                                div { class: "bar-fill", style: "width: {width}%" }
                             }
                         }
                     }
                 }
-            }
-            div { class: "segmented small",
-                button { class: if !remaining() { "active" }, onclick: move |_| remaining.set(false), "Consumed" }
-                button { class: if remaining() { "active" }, onclick: move |_| remaining.set(true), "Remaining" }
             }
         }
     }

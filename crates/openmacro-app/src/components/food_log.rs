@@ -5,7 +5,7 @@ use dioxus::prelude::*;
 use openmacro_core::expenditure::DayStatus;
 use openmacro_core::nutrients::Nutrient;
 
-use super::{Icon, MacroSummary, Ring, fmt0, hour_label, macro_line};
+use super::{Icon, MacroStrip, Ring, fmt0, hour_label, macro_line};
 use crate::state::{AppState, CoachSnapshot, LogEntry, day_totals, today, week_start};
 
 const FIRST_HOUR: u32 = 6;
@@ -44,38 +44,40 @@ pub fn FoodLog() -> Element {
     let title = day_title(selected);
 
     rsx! {
-        header { class: "page-header",
-            h1 { "{title}" }
-            div { class: "header-actions",
-                button {
-                    class: "icon-btn",
-                    aria_label: "Previous week",
-                    onclick: move |_| state.selected_date.set(selected - Duration::days(7)),
-                    Icon { name: "left" }
-                }
-                button { class: "chip", onclick: move |_| state.selected_date.set(today()), "Today" }
-                button {
-                    class: "icon-btn",
-                    aria_label: "Next week",
-                    onclick: move |_| state.selected_date.set(selected + Duration::days(7)),
-                    Icon { name: "right" }
-                }
-            }
-        }
-        div { class: "week-strip",
-            for (date , fraction) in week {
-                button {
-                    key: "{date}",
-                    class: if date == selected { "day-pill selected" } else { "day-pill" },
-                    aria_label: date.format("%A %-d %B").to_string(),
-                    onclick: move |_| state.selected_date.set(date),
-                    span { class: "dow", {date.format("%a").to_string()} }
-                    Ring { fraction, size: 34 }
-                    span { class: "dom", "{date.day()}" }
+        div { class: "sticky-head",
+            header { class: "page-header",
+                h1 { "{title}" }
+                div { class: "header-actions",
+                    button {
+                        class: "icon-btn",
+                        aria_label: "Previous week",
+                        onclick: move |_| state.selected_date.set(selected - Duration::days(7)),
+                        Icon { name: "left" }
+                    }
+                    button { class: "chip", onclick: move |_| state.selected_date.set(today()), "Today" }
+                    button {
+                        class: "icon-btn",
+                        aria_label: "Next week",
+                        onclick: move |_| state.selected_date.set(selected + Duration::days(7)),
+                        Icon { name: "right" }
+                    }
                 }
             }
+            div { class: "week-strip",
+                for (date , fraction) in week {
+                    button {
+                        key: "{date}",
+                        class: if date == selected { "day-pill selected" } else { "day-pill" },
+                        aria_label: date.format("%A %-d %B").to_string(),
+                        onclick: move |_| state.selected_date.set(date),
+                        span { class: "dow", {date.format("%a").to_string()} }
+                        Ring { fraction, size: 30 }
+                        span { class: "dom", "{date.day()}" }
+                    }
+                }
+            }
+            MacroStrip { totals, target }
         }
-        MacroSummary { totals, target }
         div { class: "day-status",
             span { class: "muted", "Day is" }
             for (value , label) in [

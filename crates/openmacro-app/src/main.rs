@@ -1,5 +1,6 @@
 mod components;
 mod foods;
+mod keypad;
 mod seed;
 mod state;
 

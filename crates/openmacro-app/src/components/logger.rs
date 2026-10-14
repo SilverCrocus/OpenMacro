@@ -1,13 +1,14 @@
 //! The logging sheet: stage foods on a plate, then log them together.
 
 use dioxus::prelude::*;
-use openmacro_core::food::{Amount, Food, parse_quantity};
+use openmacro_core::food::Food;
 use openmacro_core::nutrients::{
     KCAL_PER_G_CARBS, KCAL_PER_G_FAT, KCAL_PER_G_PROTEIN, Nutrient, NutrientProfile,
 };
 
 use super::{Icon, fmt0, fmt1, hour_label, macro_line};
-use crate::foods::{FOODS, fmt_qty, plate_item, search};
+use crate::foods::{FOODS, plate_item, search};
+use crate::keypad::{self, Key};
 use crate::state::{AppState, CoachSnapshot, PlateItem, day_totals};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -100,7 +101,7 @@ pub fn Logger() -> Element {
                         }
                     }
                 }
-                if count > 0 {
+                if count > 0 && detail().is_none() {
                     footer { class: "sheet-footer",
                         button { class: "primary wide", onclick: move |_| state.log_plate(), "{log_text}" }
                     }
@@ -212,22 +213,12 @@ fn FoodDetail(index: usize, on_back: EventHandler<()>) -> Element {
     let state = use_context::<AppState>();
     let coach = use_context::<Memo<CoachSnapshot>>();
     let food: &'static Food = &FOODS[index];
+    let units = keypad::units(food);
     let mut qty = use_signal(|| "1".to_string());
-    let mut unit = use_signal(|| 0usize);
+    let mut fresh = use_signal(|| true);
+    let mut unit = use_signal(|| units[0]);
 
-    // Units are the food's servings followed by grams.
-    let grams_unit = food.servings.len();
-    let amount = parse_quantity(&qty()).map(|q| {
-        if unit() < grams_unit {
-            Amount::Servings {
-                index: unit(),
-                count: q,
-            }
-        } else {
-            Amount::Grams(q)
-        }
-    });
-    let item = amount.and_then(|a| plate_item(food, a));
+    let item = keypad::item_for(food, &qty(), unit());
     let target = coach.read().target_for(state.plate.read().date);
 
     let per = item
@@ -287,6 +278,36 @@ fn FoodDetail(index: usize, on_back: EventHandler<()>) -> Element {
         })
         .collect();
 
+    let shown_qty = if qty().is_empty() {
+        "0".to_string()
+    } else {
+        qty()
+    };
+    let amount_detail = match &item {
+        Some(i) => i.amount.clone(),
+        None => "Enter an amount like 1, 1.5 or 1 1/2".to_string(),
+    };
+    let mut press = move |key: Key| {
+        qty.set(keypad::apply_key(&qty(), key, fresh()));
+        fresh.set(false);
+    };
+    let keys: [(&str, &str, Key); 12] = [
+        ("1", "1", Key::Digit(1)),
+        ("2", "2", Key::Digit(2)),
+        ("3", "3", Key::Digit(3)),
+        ("/", "Fraction", Key::Slash),
+        ("4", "4", Key::Digit(4)),
+        ("5", "5", Key::Digit(5)),
+        ("6", "6", Key::Digit(6)),
+        ("␣", "Space", Key::Space),
+        ("7", "7", Key::Digit(7)),
+        ("8", "8", Key::Digit(8)),
+        ("9", "9", Key::Digit(9)),
+        ("⌫", "Delete", Key::Backspace),
+    ];
+    let add = item.clone();
+    let log_now = item.clone();
+
     rsx! {
         button { class: "link-btn", onclick: move |_| on_back.call(()),
             Icon { name: "left" }
@@ -304,35 +325,6 @@ fn FoodDetail(index: usize, on_back: EventHandler<()>) -> Element {
                     span { class: "muted", "{label} · {pct:.0}%" }
                 }
             }
-        }
-        div { class: "amount-row",
-            input {
-                class: "qty",
-                r#type: "text",
-                "inputmode": "decimal",
-                aria_label: "Quantity",
-                value: "{qty}",
-                oninput: move |e| qty.set(e.value()),
-            }
-            select {
-                aria_label: "Unit",
-                onchange: move |e| unit.set(e.value().parse().unwrap_or(0)),
-                {
-                    food.servings
-                        .iter()
-                        .enumerate()
-                        .map(|(i, s)| {
-                            let text = format!("{} ({} g)", s.label, fmt_qty(s.grams));
-                            rsx! {
-                                option { key: "{i}", value: "{i}", selected: unit() == i, "{text}" }
-                            }
-                        })
-                }
-                option { value: "{grams_unit}", selected: unit() == grams_unit, "g" }
-            }
-        }
-        if item.is_none() {
-            p { class: "error", "Enter an amount like 1, 1.5 or 1 1/2." }
         }
         h3 { class: "section-title", "Impact on today's targets" }
         div { class: "impact",
@@ -355,16 +347,61 @@ fn FoodDetail(index: usize, on_back: EventHandler<()>) -> Element {
                 }
             }
         }
-        button {
-            class: "primary wide",
-            disabled: item.is_none(),
-            onclick: move |_| {
-                if let Some(item) = item.clone() {
-                    state.add_to_plate(item);
-                    on_back.call(());
+        div { class: "keypad-dock",
+            div { class: "amount-display", "aria-live": "polite",
+                span { class: if fresh() { "qty-text fresh" } else { "qty-text" }, "{shown_qty}" }
+                span { class: if item.is_some() { "amount-detail" } else { "amount-detail error" }, "{amount_detail}" }
+            }
+            div { class: "unit-chips", role: "radiogroup", aria_label: "Unit",
+                for u in units {
+                    button {
+                        key: "{u:?}",
+                        role: "radio",
+                        aria_checked: "{unit() == u}",
+                        class: if unit() == u { "chip active" } else { "chip" },
+                        onclick: move |_| {
+                            let from = unit();
+                            if from != u {
+                                if let Some(converted) = keypad::convert(food, &qty(), from, u) {
+                                    qty.set(converted);
+                                }
+                                unit.set(u);
+                                fresh.set(true);
+                            }
+                        },
+                        {keypad::unit_label(food, u)}
+                    }
                 }
-            },
-            "Add to plate"
+            }
+            div { class: "keypad",
+                for (text , label , key) in keys {
+                    button { key: "{label}", aria_label: "{label}", onclick: move |_| press(key), "{text}" }
+                }
+                button { aria_label: "Decimal point", onclick: move |_| press(Key::Dot), "." }
+                button { aria_label: "0", onclick: move |_| press(Key::Digit(0)), "0" }
+                button {
+                    class: "key-log",
+                    disabled: log_now.is_none(),
+                    onclick: move |_| {
+                        if let Some(item) = log_now.clone() {
+                            state.add_to_plate(item);
+                            state.log_plate();
+                        }
+                    },
+                    "Log"
+                }
+                button {
+                    class: "key-add",
+                    disabled: add.is_none(),
+                    onclick: move |_| {
+                        if let Some(item) = add.clone() {
+                            state.add_to_plate(item);
+                            on_back.call(());
+                        }
+                    },
+                    "Add"
+                }
+            }
         }
     }
 }
