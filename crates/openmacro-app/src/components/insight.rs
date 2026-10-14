@@ -73,6 +73,8 @@ enum Metric {
     Expenditure,
     Weight,
     Balance,
+    Macros,
+    Goal,
 }
 
 impl Metric {
@@ -81,6 +83,8 @@ impl Metric {
             "expenditure" => Some(Metric::Expenditure),
             "weight" => Some(Metric::Weight),
             "energy-balance" => Some(Metric::Balance),
+            "macros" => Some(Metric::Macros),
+            "goal" => Some(Metric::Goal),
             _ => None,
         }
     }
@@ -90,6 +94,8 @@ impl Metric {
             Metric::Expenditure => "Expenditure",
             Metric::Weight => "Weight trend",
             Metric::Balance => "Energy balance",
+            Metric::Macros => "Calories and macros",
+            Metric::Goal => "Goal progress",
         }
     }
 }
@@ -138,6 +144,12 @@ pub fn Insight(metric: String) -> Element {
             },
             Metric::Balance => rsx! {
                 BalanceInsight { range }
+            },
+            Metric::Macros => rsx! {
+                MacrosInsight { range }
+            },
+            Metric::Goal => rsx! {
+                GoalInsight { range }
             },
         }
     }
@@ -419,6 +431,247 @@ fn BalanceInsight(range: Range) -> Element {
                 }
             }
             p { class: "muted small", "Energy balance is what you logged minus your estimated expenditure for each complete day. Partial days and today are left out." }
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Macro {
+    Calories,
+    Protein,
+    Fat,
+    Carbs,
+}
+
+impl Macro {
+    const ALL: [Macro; 4] = [Macro::Calories, Macro::Protein, Macro::Fat, Macro::Carbs];
+
+    fn label(self) -> &'static str {
+        match self {
+            Macro::Calories => "Calories",
+            Macro::Protein => "Protein",
+            Macro::Fat => "Fat",
+            Macro::Carbs => "Carbs",
+        }
+    }
+
+    fn unit(self) -> &'static str {
+        if self == Macro::Calories { "kcal" } else { "g" }
+    }
+
+    fn eaten(self, totals: &openmacro_core::nutrients::NutrientProfile) -> f64 {
+        totals.get_or_zero(match self {
+            Macro::Calories => Nutrient::Energy,
+            Macro::Protein => Nutrient::Protein,
+            Macro::Fat => Nutrient::Fat,
+            Macro::Carbs => Nutrient::Carbs,
+        })
+    }
+
+    /// Within 10% of target; protein is a minimum, so more is fine.
+    fn on_target(self, eaten: f64, target: f64) -> bool {
+        match self {
+            Macro::Protein => eaten >= target * (1.0 - ON_TARGET),
+            _ => (eaten - target).abs() <= target * ON_TARGET,
+        }
+    }
+
+    fn target(self, t: &openmacro_core::targets::MacroTargets) -> f64 {
+        match self {
+            Macro::Calories => t.kcal,
+            Macro::Protein => t.protein_g,
+            Macro::Fat => t.fat_g,
+            Macro::Carbs => t.carbs_g,
+        }
+    }
+}
+
+static MACRO: GlobalSignal<Macro> = Signal::global(|| Macro::Calories);
+
+/// Share of days within this fraction of target that count as on target.
+const ON_TARGET: f64 = 0.10;
+
+#[component]
+fn MacrosInsight(range: Range) -> Element {
+    let state = use_context::<AppState>();
+    let coach = use_context::<Memo<CoachSnapshot>>();
+    let coach = coach.read();
+    let today = today();
+    let picked = MACRO();
+    let log = state.log.read();
+    let statuses = state.day_status.read();
+    let check_ins = state.check_ins.read();
+    let Some(first) = log.iter().map(|e| e.date).min() else {
+        return rsx! {
+            EmptyInsight {}
+        };
+    };
+    let start = range.start(today, first);
+    // Complete, fully logged days: today is still in progress.
+    let days: Vec<(NaiveDate, f64, f64)> = start
+        .iter_days()
+        .take_while(|d| *d < today)
+        .filter(|d| statuses.get(d).copied().unwrap_or_default() != DayStatus::Partial)
+        .filter_map(|date| {
+            let totals = crate::state::day_totals(&log, date);
+            // Days with nothing logged aren't counted.
+            totals.get(Nutrient::Energy)?;
+            let target = crate::state::target_on(date, &check_ins, &coach)
+                .unwrap_or_else(|| coach.target_for(date));
+            Some((date, picked.eaten(&totals), picked.target(&target)))
+        })
+        .collect();
+    let n = days.len().max(1) as f64;
+    let average = days.iter().map(|d| d.1).sum::<f64>() / n;
+    let average_target = days.iter().map(|d| d.2).sum::<f64>() / n;
+    let on_target = days
+        .iter()
+        .filter(|(_, eaten, target)| picked.on_target(*eaten, *target))
+        .count();
+    let data = ChartData {
+        start: Some(start),
+        end: Some(today - Duration::days(1)),
+        bars: days.iter().map(|d| (d.0, d.1)).collect(),
+        plain_bars: true,
+        dashed: days.iter().map(|d| (d.0, d.2)).collect(),
+        decimals: 0,
+        ..Default::default()
+    };
+    let unit = picked.unit();
+    let percent = if average_target > 0.0 {
+        average / average_target * 100.0
+    } else {
+        0.0
+    };
+
+    rsx! {
+        div { class: "range-chips macro-chips",
+            for m in Macro::ALL {
+                button {
+                    key: "{m.label()}",
+                    class: if m == picked { "chip active" } else { "chip" },
+                    onclick: move |_| *MACRO.write() = m,
+                    "{m.label()}"
+                }
+            }
+        }
+        section { class: "card",
+            if days.is_empty() {
+                div { class: "chart-empty muted", "No complete days logged in this range." }
+            } else {
+                Chart { data, class: "macros" }
+            }
+            p { class: "muted small legend",
+                span { class: "swatch intake" }
+                "Eaten"
+                span { class: "swatch dashed" }
+                "Target"
+            }
+        }
+        section { class: "card",
+            div { class: "stat-row",
+                Stat { label: "Average per day", value: format!("{} {unit}", fmt0(average)) }
+                Stat { label: "Of target", value: format!("{percent:.0}%") }
+                Stat { label: "Days on target", value: format!("{on_target} of {}", days.len()) }
+            }
+        }
+        p { class: "muted small pad",
+            "A day is on target within {ON_TARGET * 100.0:.0}% of that day's target (for protein, anything from {100.0 - ON_TARGET * 100.0:.0}% up). Today and partly logged days are left out."
+        }
+    }
+}
+
+#[component]
+fn GoalInsight(range: Range) -> Element {
+    let state = use_context::<AppState>();
+    let coach = use_context::<Memo<CoachSnapshot>>();
+    let coach = coach.read();
+    let today = today();
+    let goal = (state.goal)();
+    let (Some(first), Some(current)) = (coach.trend.first(), coach.trend_kg()) else {
+        return rsx! {
+            EmptyInsight {}
+        };
+    };
+    let start_kg = first.trend_kg;
+    let start = range.start(today, first.date);
+    let to_go = goal.goal_weight_kg - current;
+    let weekly_kg = current * goal.rate_pct_per_week / 100.0;
+    // Days to the goal at the goal rate, if that rate heads towards it.
+    let eta_days =
+        (weekly_kg.abs() > 1e-6 && to_go.signum() == weekly_kg.signum() && to_go.abs() > 0.05)
+            .then(|| (to_go / weekly_kg * 7.0).ceil() as i64);
+    // Project at most as far ahead as the range looks back, and a year at most.
+    let horizon = (today - start).num_days().clamp(28, 365);
+    let projection_days = eta_days.map(|d| d.min(horizon));
+    let end = today + Duration::days(projection_days.unwrap_or(0));
+    let data = ChartData {
+        start: Some(start),
+        end: Some(end),
+        line: coach
+            .trend
+            .iter()
+            .filter(|t| t.date >= start)
+            .map(|t| (t.date, t.trend_kg))
+            .collect(),
+        dashed: projection_days.map_or_else(Vec::new, |d| {
+            vec![
+                (today, current),
+                (end, current + weekly_kg * d as f64 / 7.0),
+            ]
+        }),
+        level: Some(goal.goal_weight_kg),
+        decimals: 1,
+        ..Default::default()
+    };
+    let total = goal.goal_weight_kg - start_kg;
+    let progress = if total.abs() > 0.05 {
+        ((current - start_kg) / total * 100.0).clamp(0.0, 100.0)
+    } else {
+        100.0
+    };
+    let summary = match eta_days {
+        _ if to_go.abs() <= 0.05 => "You're at your goal weight.".to_string(),
+        Some(days) => format!(
+            "At your goal rate of {:+.2}% a week ({weekly_kg:+.2} kg), you'd reach {:.1} kg around {}.",
+            goal.rate_pct_per_week,
+            goal.goal_weight_kg,
+            (today + Duration::days(days)).format("%-d %B %Y")
+        ),
+        None => {
+            "Your goal rate doesn't move you towards your goal weight. Change it on the Plan tab."
+                .to_string()
+        }
+    };
+
+    rsx! {
+        section { class: "card",
+            Chart { data, class: "goal" }
+            p { class: "muted small legend",
+                span { class: "swatch trend" }
+                "Trend weight"
+                span { class: "swatch dashed" }
+                "Projection"
+                span { class: "swatch level" }
+                "Goal"
+            }
+        }
+        section { class: "card",
+            div { class: "stat-row",
+                Stat { label: "Started", value: format!("{start_kg:.1} kg") }
+                Stat { label: "Now", value: format!("{current:.1} kg") }
+                Stat { label: "Goal", value: format!("{:.1} kg", goal.goal_weight_kg) }
+            }
+            div { class: "goal-progress",
+                div { class: "bar-track",
+                    div { class: "bar-fill goal-fill", style: "width: {progress:.0}%" }
+                }
+                p { class: "muted small", "{progress:.0}% of the way · {to_go.abs():.1} kg to go" }
+            }
+        }
+        section { class: "card",
+            p { class: "muted", "{summary}" }
+            p { class: "muted small", "Started is your first trend weight in OpenMacro." }
         }
     }
 }

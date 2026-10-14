@@ -615,3 +615,15 @@ a.link-tile:active { border-color: var(--accent); }
 .copy-day .icon { width: 14px; height: 14px; }
 .hour-copy { margin-left: 0; color: var(--muted); }
 input[type="date"] { color-scheme: dark; }
+.chart-dashed { fill: none; stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 4 4; opacity: 0.7; }
+.chart-level { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.chart-bar.intake { fill: #6ea8fe; }
+.chart.macros { color: var(--text); }
+.chart.goal { color: #b28cff; }
+.swatch.dashed { background: none; border-top: 2px dashed var(--text); border-radius: 0; height: 0; width: 14px; }
+.swatch.level { background: none; border-top: 2px dashed var(--accent); border-radius: 0; height: 0; width: 14px; }
+.swatch.intake { background: #6ea8fe; }
+.macro-chips .chip { min-width: 0; }
+.goal-progress { margin-top: 14px; }
+.goal-fill { background: #b28cff; }
+.tile-progress { margin: 8px 0 6px; }

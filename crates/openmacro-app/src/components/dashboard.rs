@@ -76,6 +76,53 @@ pub fn Dashboard() -> Element {
     let balance = (!logged.is_empty())
         .then(|| logged.iter().sum::<f64>() / logged.len() as f64 - expenditure);
 
+    // Calories and protein over the last 7 complete days that were logged.
+    let recent: Vec<(f64, f64, f64, f64)> = (1..=7)
+        .map(|i| today - Duration::days(i))
+        .filter_map(|date| {
+            let totals = day_totals(&log, date);
+            let kcal = totals.get(Nutrient::Energy).filter(|k| *k > 0.0)?;
+            let target = coach.target_for(date);
+            Some((
+                kcal,
+                target.kcal,
+                totals.get_or_zero(Nutrient::Protein),
+                target.protein_g,
+            ))
+        })
+        .collect();
+    let macros_text = (!recent.is_empty()).then(|| {
+        let n = recent.len() as f64;
+        let kcal: f64 = recent.iter().map(|r| r.0).sum::<f64>() / n;
+        let kcal_target: f64 = recent.iter().map(|r| r.1).sum::<f64>() / n;
+        let protein: f64 = recent.iter().map(|r| r.2).sum::<f64>() / n;
+        let protein_target: f64 = recent.iter().map(|r| r.3).sum::<f64>() / n;
+        (
+            format!("{:.0}%", kcal / kcal_target.max(1.0) * 100.0),
+            format!(
+                "Protein {} / {} g a day",
+                fmt0(protein),
+                fmt0(protein_target)
+            ),
+        )
+    });
+
+    // Goal progress from the first trend weight.
+    let goal = (state.goal)();
+    let goal_text = trend_now.map(|now| {
+        let start = coach.trend.first().map_or(now, |t| t.trend_kg);
+        let total = goal.goal_weight_kg - start;
+        let progress = if total.abs() > 0.05 {
+            ((now - start) / total).clamp(0.0, 1.0)
+        } else {
+            1.0
+        };
+        (
+            format!("{:.1}", (goal.goal_weight_kg - now).abs()),
+            progress,
+        )
+    });
+
     // Habits this week.
     let weighed_days = (0..7)
         .filter(|i| {
@@ -161,6 +208,36 @@ pub fn Dashboard() -> Element {
                 h3 { "Energy balance" }
                 div { class: "tile-num", "{balance_text}" span { class: "unit", " kcal/day" } }
                 div { class: "muted", "Last 7 days, intake − expenditure" }
+            }
+            Link { to: super::insight::route("macros"), class: "card tile link-tile",
+                h3 { "Calories and macros" }
+                match &macros_text {
+                    Some((pct, protein)) => rsx! {
+                        div { class: "tile-num", "{pct}" span { class: "unit", " of target" } }
+                        div { class: "muted", "{protein}" }
+                    },
+                    None => rsx! {
+                        div { class: "tile-num", "—" }
+                        div { class: "muted", "Log a few days to see this" }
+                    },
+                }
+                div { class: "muted small", "Last 7 days" }
+            }
+            Link { to: super::insight::route("goal"), class: "card tile link-tile",
+                h3 { "Goal" }
+                match goal_text {
+                    Some((left, progress)) => rsx! {
+                        div { class: "tile-num", "{left}" span { class: "unit", " kg to go" } }
+                        div { class: "bar-track tile-progress",
+                            div { class: "bar-fill goal-fill", style: "width: {progress * 100.0:.0}%" }
+                        }
+                        div { class: "muted", {format!("Goal {:.1} kg", goal.goal_weight_kg)} }
+                    },
+                    None => rsx! {
+                        div { class: "tile-num", "—" }
+                        div { class: "muted", "Weigh in to track progress" }
+                    },
+                }
             }
             section { class: "card tile",
                 h3 { "Habits" }

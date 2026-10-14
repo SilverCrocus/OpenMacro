@@ -24,6 +24,7 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | ✅ Insight pages | Tap the Expenditure, Weight trend or Energy balance tile for a chart with 1W–All ranges. Expenditure shows its likely range; weight shows scale weigh-ins and trend change over 3–90 days; energy balance shows each complete day's surplus or deficit and the weight change it implies |
 | ✅ Recipes | Put the ingredients on the plate and tap *Save as recipe*: name, servings and an optional cooked weight. Recipes appear in search and the Library and log by the serving, the whole recipe or by weight. Ingredients are kept for editing later |
 | ✅ Backup and restore | One JSON file with everything (log, weigh-ins, check-ins, your foods and recipes, favorites, settings), saved to Downloads/OpenMacro and restored with the system file picker after a confirmation. The food database is kept out of Android's automatic backup so the user's own data fits its 25 MB limit |
+| ✅ Macros and goal insights | *Calories and macros*: daily intake against target for calories, protein, fat or carbs, with averages and days on target. *Goal progress*: trend weight against the goal with a projection at the goal rate and an estimated date. Both have dashboard tiles |
 | ✅ Copy meals | Copy an hour's food or a whole day to another date, from the food log |
 | ✅ Edit foods and recipes | The Library's edit button reopens a custom food's form, or puts a recipe's ingredients back on the plate to change, then *Update recipe*. Log entries keep the values they were logged with |
 | ✅ Edit log entries | Tap a logged food to change its amount (with its servings and the number pad) or time; quick adds edit their calories and macros |
@@ -33,9 +34,9 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 
 | # | Feature | Plan |
 |---|---|---|
-| 1 | ⏭ **More insight pages** | Goal progress, macros over time, and weekly or monthly averages on the charts. |
-| 2 | ⏭ **Micronutrient targets** | Floors, targets and ceilings for vitamins and minerals, with a nutrient explorer. |
-| 3 | ⏭ **Steps and body measurements** | Manual entry first; Health Connect later. |
+| 1 | ⏭ **Micronutrient targets** | Floors, targets and ceilings for vitamins and minerals, with a nutrient explorer. |
+| 2 | ⏭ **Steps and body measurements** | Manual entry first; Health Connect later. |
+| 3 | ⏭ **Weekly and monthly views** | Weekly or monthly averages on the insight charts. |
 
 ## Later
 

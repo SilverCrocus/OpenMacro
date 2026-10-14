@@ -15,6 +15,12 @@ pub struct ChartData {
     pub dots: Vec<(NaiveDate, f64)>,
     /// Drawn from zero; negative values go down.
     pub bars: Vec<(NaiveDate, f64)>,
+    /// Draw bars in one colour rather than by sign (above or below zero).
+    pub plain_bars: bool,
+    /// A dashed line, e.g. a target or a projection.
+    pub dashed: Vec<(NaiveDate, f64)>,
+    /// A dashed horizontal line across the chart, e.g. a goal.
+    pub level: Option<f64>,
     pub decimals: usize,
 }
 
@@ -70,6 +76,8 @@ pub fn Chart(data: ChartData, class: &'static str) -> Element {
         .chain(data.band.iter().flat_map(|b| [b.1, b.2]))
         .chain(data.dots.iter().map(|p| p.1))
         .chain(data.bars.iter().map(|p| p.1))
+        .chain(data.dashed.iter().map(|p| p.1))
+        .chain(data.level)
         .chain((!data.bars.is_empty()).then_some(0.0));
     let (min, max) = values.fold((f64::INFINITY, f64::NEG_INFINITY), |(lo, hi), v| {
         (lo.min(v), hi.max(v))
@@ -101,6 +109,20 @@ pub fn Chart(data: ChartData, class: &'static str) -> Element {
             )
         })
         .collect::<String>();
+    let dashed = data
+        .dashed
+        .iter()
+        .enumerate()
+        .map(|(i, (d, v))| {
+            format!(
+                "{}{:.1},{:.1}",
+                if i == 0 { "M" } else { "L" },
+                x(*d),
+                y(*v)
+            )
+        })
+        .collect::<String>();
+    let level = data.level.map(y);
     let band = data
         .band
         .iter()
@@ -131,6 +153,7 @@ pub fn Chart(data: ChartData, class: &'static str) -> Element {
         (x(end), "end", end),
     ];
     let decimals = data.decimals;
+    let plain_bars = data.plain_bars;
 
     rsx! {
         svg {
@@ -170,13 +193,29 @@ pub fn Chart(data: ChartData, class: &'static str) -> Element {
             for (i , (left , top , height , negative)) in bars.into_iter().enumerate() {
                 rect {
                     key: "{i}",
-                    class: if negative { "chart-bar below" } else { "chart-bar above" },
+                    class: match (plain_bars, negative) {
+                        (true, _) => "chart-bar intake",
+                        (false, true) => "chart-bar below",
+                        (false, false) => "chart-bar above",
+                    },
                     x: "{left:.1}",
                     y: "{top:.1}",
                     width: "{bar_w:.1}",
                     height: "{height:.1}",
                     rx: "1",
                 }
+            }
+            if let Some(level) = level {
+                line {
+                    class: "chart-level",
+                    x1: "{LEFT}",
+                    x2: "{WIDTH - RIGHT}",
+                    y1: "{level:.1}",
+                    y2: "{level:.1}",
+                }
+            }
+            if !dashed.is_empty() {
+                path { class: "chart-dashed", d: "{dashed}" }
             }
             if !line.is_empty() {
                 path { class: "chart-line", d: "{line}" }

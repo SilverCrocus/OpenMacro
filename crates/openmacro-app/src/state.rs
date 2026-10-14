@@ -201,6 +201,24 @@ impl CoachSnapshot {
     }
 }
 
+/// The targets in force on `date`: from the check-in active then, or the
+/// current targets from the latest check-in onwards. None before the first.
+pub fn target_on(
+    date: NaiveDate,
+    check_ins: &[CheckIn],
+    coach: &CoachSnapshot,
+) -> Option<MacroTargets> {
+    let active = check_ins
+        .iter()
+        .filter(|c| c.date <= date)
+        .max_by_key(|c| c.date)?;
+    if coach.last_check_in.as_ref() == Some(active) {
+        Some(coach.target_for(date))
+    } else {
+        active.week.get(weekday_index(date)).copied()
+    }
+}
+
 /// One record per day through today. Today's intake is left out because the
 /// day is still in progress, but today's weigh-in counts.
 fn day_records(data: &Data, today: NaiveDate) -> Vec<DayRecord> {

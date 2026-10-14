@@ -8,7 +8,6 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use chrono::NaiveDate;
-use openmacro_core::checkin::CheckIn;
 use openmacro_core::expenditure::DayStatus;
 use openmacro_core::nutrients::Nutrient;
 use openmacro_core::targets::MacroTargets;
@@ -16,7 +15,7 @@ use openmacro_core::trend;
 
 use openmacro_core::trend::WeighIn;
 
-use crate::state::{CoachSnapshot, Data, LogEntry, weekday_index};
+use crate::state::{CoachSnapshot, Data, LogEntry};
 
 /// Where exports are saved, under the user's Downloads folder.
 #[cfg(not(target_arch = "wasm32"))]
@@ -145,24 +144,6 @@ fn weigh_ins(weigh_ins: &[WeighIn]) -> String {
     csv.0
 }
 
-/// The targets in force on `date`: from the check-in active then, or the
-/// current targets from the latest check-in onwards. None before the first.
-fn target_on(
-    date: NaiveDate,
-    check_ins: &[CheckIn],
-    coach: &CoachSnapshot,
-) -> Option<MacroTargets> {
-    let active = check_ins
-        .iter()
-        .filter(|c| c.date <= date)
-        .max_by_key(|c| c.date)?;
-    if coach.last_check_in.as_ref() == Some(active) {
-        Some(coach.target_for(date))
-    } else {
-        active.week.get(weekday_index(date)).copied()
-    }
-}
-
 fn daily(data: &Data, coach: &CoachSnapshot, today: NaiveDate) -> String {
     let mut intake: BTreeMap<NaiveDate, Vec<&LogEntry>> = BTreeMap::new();
     for e in &data.log {
@@ -206,7 +187,7 @@ fn daily(data: &Data, coach: &CoachSnapshot, today: NaiveDate) -> String {
                 .sum::<openmacro_core::nutrients::NutrientProfile>()
         });
         let total = |n: Nutrient| totals.as_ref().map(|t| t.get_or_zero(n));
-        let target = target_on(date, &data.check_ins, coach);
+        let target = crate::state::target_on(date, &data.check_ins, coach);
         let goal = |f: fn(&MacroTargets) -> f64| target.as_ref().map(f);
         csv.row([
             date.to_string(),
@@ -319,6 +300,7 @@ mod platform {
 
 #[cfg(test)]
 mod tests {
+    use openmacro_core::checkin::CheckIn;
     use openmacro_core::nutrients::NutrientProfile;
 
     use super::*;
