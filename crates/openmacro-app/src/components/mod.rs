@@ -292,11 +292,20 @@ pub fn MacroStrip(totals: NutrientProfile, target: MacroTargets) -> Element {
 }
 
 pub fn fmt0(v: f64) -> String {
-    format!("{:.0}", v)
+    unsigned_zero(format!("{:.0}", v))
 }
 
 pub fn fmt1(v: f64) -> String {
-    format!("{:.1}", v)
+    unsigned_zero(format!("{:.1}", v))
+}
+
+/// "-0" and "-0.0" (from rounding tiny negatives, or summing nothing,
+/// which gives -0.0) read as zero.
+pub fn unsigned_zero(text: String) -> String {
+    match text.strip_prefix('-') {
+        Some(rest) if rest.chars().all(|c| c == '0' || c == '.') => rest.to_string(),
+        _ => text,
+    }
 }
 
 /// An hour in the user's clock format.
@@ -329,6 +338,15 @@ pub fn macro_line(n: &NutrientProfile) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn no_negative_zero() {
+        assert_eq!(fmt0(-0.0), "0");
+        assert_eq!(fmt0(-0.3), "0");
+        assert_eq!(fmt1(-0.04), "0.0");
+        assert_eq!(fmt0(-12.0), "-12");
+        assert_eq!(fmt0([0.0f64; 0].iter().sum::<f64>()), "0");
+    }
 
     #[test]
     fn hour_labels() {

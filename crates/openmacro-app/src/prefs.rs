@@ -95,7 +95,7 @@ pub fn energy_value(kcal: f64) -> f64 {
 
 /// Energy in the user's unit, rounded, without the unit: "1894".
 pub fn energy(kcal: f64) -> String {
-    format!("{:.0}", energy_value(kcal))
+    crate::components::unsigned_zero(format!("{:.0}", energy_value(kcal)))
 }
 
 /// Energy with its unit: "1894 kcal".
@@ -120,7 +120,7 @@ pub fn weight_value(kg: f64) -> f64 {
 
 /// Weight in the user's unit with `decimals` places, without the unit.
 pub fn weight(kg: f64, decimals: usize) -> String {
-    format!("{:.decimals$}", weight_value(kg))
+    crate::components::unsigned_zero(format!("{:.decimals$}", weight_value(kg)))
 }
 
 /// Weight with its unit: "70.6 kg".
