@@ -38,7 +38,7 @@ impl Theme {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(
     not(target_arch = "wasm32"),
     derive(serde::Serialize, serde::Deserialize),
@@ -49,6 +49,26 @@ pub struct Prefs {
     pub clock_24h: bool,
     pub energy: EnergyUnit,
     pub weight: WeightUnit,
+    /// The food log's first and last hours (earlier or later entries
+    /// still show).
+    pub log_first_hour: u32,
+    pub log_last_hour: u32,
+    /// Show each hour's calories beside its label.
+    pub hour_totals: bool,
+}
+
+impl Default for Prefs {
+    fn default() -> Self {
+        Self {
+            theme: Theme::default(),
+            clock_24h: false,
+            energy: EnergyUnit::default(),
+            weight: WeightUnit::default(),
+            log_first_hour: 6,
+            log_last_hour: 23,
+            hour_totals: false,
+        }
+    }
 }
 
 pub static PREFS: GlobalSignal<Prefs> = Signal::global(Prefs::default);

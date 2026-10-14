@@ -3,6 +3,7 @@
 use dioxus::prelude::*;
 use openmacro_core::bmr::{self, ActivityLevel, BmrEquation, Sex};
 
+use super::hour_label;
 use crate::export;
 use crate::food_search::{self, Database, FoodRegion};
 use crate::prefs::{EnergyUnit, PREFS, Theme, WeightUnit};
@@ -396,6 +397,53 @@ fn DisplaySettings() -> Element {
                             onclick: move |_| PREFS.write().weight = unit,
                             "{unit.symbol()}"
                         }
+                    }
+                }
+            }
+            div { class: "field-grid",
+                label { class: "field",
+                    span { "Food log starts at" }
+                    select {
+                        onchange: move |e| {
+                            if let Ok(h) = e.value().parse::<u32>() {
+                                let mut p = PREFS.write();
+                                p.log_first_hour = h;
+                                p.log_last_hour = p.log_last_hour.max(h);
+                            }
+                        },
+                        for h in 0..24u32 {
+                            option { key: "{h}", value: "{h}", selected: h == prefs.log_first_hour, {hour_label(h)} }
+                        }
+                    }
+                }
+                label { class: "field",
+                    span { "and ends at" }
+                    select {
+                        onchange: move |e| {
+                            if let Ok(h) = e.value().parse::<u32>() {
+                                let mut p = PREFS.write();
+                                p.log_last_hour = h;
+                                p.log_first_hour = p.log_first_hour.min(h);
+                            }
+                        },
+                        for h in 0..24u32 {
+                            option { key: "{h}", value: "{h}", selected: h == prefs.log_last_hour, {hour_label(h)} }
+                        }
+                    }
+                }
+            }
+            div { class: "choice",
+                span { class: "choice-label", "Calories beside each hour" }
+                div { class: "segmented",
+                    button {
+                        class: if !prefs.hour_totals { "active" },
+                        onclick: move |_| PREFS.write().hour_totals = false,
+                        "Hide"
+                    }
+                    button {
+                        class: if prefs.hour_totals { "active" },
+                        onclick: move |_| PREFS.write().hour_totals = true,
+                        "Show"
                     }
                 }
             }

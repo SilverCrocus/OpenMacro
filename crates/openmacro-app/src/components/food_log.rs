@@ -8,9 +8,6 @@ use openmacro_core::nutrients::Nutrient;
 use super::{Icon, MacroStrip, Ring, hour_label, macro_line};
 use crate::state::{AppState, CoachSnapshot, Copying, LogEntry, day_totals, today, week_start};
 
-const FIRST_HOUR: u32 = 6;
-const LAST_HOUR: u32 = 23;
-
 #[component]
 pub fn FoodLog() -> Element {
     let mut state = use_context::<AppState>();
@@ -38,9 +35,15 @@ pub fn FoodLog() -> Element {
 
     let mut entries: Vec<LogEntry> = log.into_iter().filter(|e| e.date == selected).collect();
     entries.sort_by_key(|e| (e.hour, e.id));
+    let prefs = crate::prefs::PREFS();
+    // The chosen range, stretched to include any entries outside it.
     let first_hour = entries
         .first()
-        .map_or(FIRST_HOUR, |e| e.hour.min(FIRST_HOUR));
+        .map_or(prefs.log_first_hour, |e| e.hour.min(prefs.log_first_hour));
+    let last_hour = entries
+        .last()
+        .map_or(prefs.log_last_hour, |e| e.hour.max(prefs.log_last_hour))
+        .max(first_hour);
     let title = day_title(selected);
 
     rsx! {
@@ -117,7 +120,7 @@ pub fn FoodLog() -> Element {
             }
         }
         div { class: "timeline",
-            for hour in first_hour..=LAST_HOUR {
+            for hour in first_hour..=last_hour {
                 HourRow {
                     key: "{hour}",
                     date: selected,
@@ -146,6 +149,11 @@ fn day_title(date: NaiveDate) -> String {
 fn HourRow(date: NaiveDate, hour: u32, entries: Vec<LogEntry>) -> Element {
     let mut state = use_context::<AppState>();
     let meal = entries.clone();
+    let hour_kcal: f64 = entries
+        .iter()
+        .map(|e| e.nutrients.get_or_zero(Nutrient::Energy))
+        .sum();
+    let show_total = crate::prefs::PREFS.read().hour_totals && !entries.is_empty();
     let label = hour_label(hour);
     let class = if entries.is_empty() {
         "hour-row"
@@ -161,6 +169,9 @@ fn HourRow(date: NaiveDate, hour: u32, entries: Vec<LogEntry>) -> Element {
                     aria_label: "Add food at {label}",
                     onclick: move |_| state.open_plate(date, hour),
                     Icon { name: "plus" }
+                }
+                if show_total {
+                    span { class: "hour-total", {crate::prefs::energy_text(hour_kcal)} }
                 }
                 if !meal.is_empty() {
                     button {
