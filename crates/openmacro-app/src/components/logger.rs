@@ -343,13 +343,13 @@ fn SearchTab(query: Signal<String>, on_select: EventHandler<Food>) -> Element {
             p { class: "muted pad", "No matches. Try another spelling or Quick Add." }
         }
         if !results.yours.is_empty() {
-            ResultSection { title: "Your foods", foods: results.yours, on_select }
+            ResultSection { key: "Your foods-{q}", title: "Your foods", foods: results.yours, on_select }
         }
         if !results.common.is_empty() {
-            ResultSection { title: "Common", foods: results.common, on_select }
+            ResultSection { key: "Common-{q}", title: "Common", foods: results.common, on_select }
         }
         if !results.branded.is_empty() {
-            ResultSection { title: "Branded", foods: results.branded, on_select }
+            ResultSection { key: "Branded-{q}", title: "Branded", foods: results.branded, on_select }
         }
     }
 }
@@ -360,11 +360,20 @@ fn ResultSection(
     foods: Vec<FoundFood>,
     on_select: EventHandler<Food>,
 ) -> Element {
+    /// Results shown before "See more".
+    const SHOWN: usize = 8;
     let state = use_context::<AppState>();
+    let mut expanded = use_signal(|| false);
+    let total = foods.len();
+    let hidden = if expanded() {
+        0
+    } else {
+        total.saturating_sub(SHOWN)
+    };
     rsx! {
         h3 { class: "section-title result-section", "{title}" }
         ul { class: "results",
-            for (i , found) in foods.into_iter().enumerate() {
+            for (i , found) in foods.into_iter().take(total - hidden).enumerate() {
                 {
                     let food = Rc::new(found.food);
                     let origin = match &food.brand {
@@ -393,6 +402,9 @@ fn ResultSection(
                     }
                 }
             }
+        }
+        if hidden > 0 {
+            button { class: "link-btn see-more", onclick: move |_| expanded.set(true), "See {hidden} more" }
         }
     }
 }

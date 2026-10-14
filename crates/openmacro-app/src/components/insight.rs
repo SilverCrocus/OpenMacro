@@ -1125,7 +1125,7 @@ fn BodyInsight(range: Range) -> Element {
         (
             "Waist to height",
             body::waist_to_height(&measurements, height),
-            "Under 0.5 is the usual guide.",
+            "A waist under half your height is the usual healthy guide.",
         ),
         ("Waist to hip", body::waist_to_hip(&measurements), ""),
     ];

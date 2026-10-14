@@ -105,8 +105,9 @@ pub fn search_custom(custom: &[Food], query: &str) -> Vec<FoundFood> {
         .collect()
 }
 
+/// Results kept per section; the list shows a few and offers the rest.
 #[cfg(not(target_arch = "wasm32"))]
-const PER_SECTION: usize = 15;
+const PER_SECTION: usize = 50;
 
 /// Searches the user's custom foods and the database if there is one,
 /// otherwise the sample foods. Within each section, foods the user has

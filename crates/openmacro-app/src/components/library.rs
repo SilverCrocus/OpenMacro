@@ -17,8 +17,32 @@ pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<Stri
     let mut creating = use_signal(|| false);
     let mut editing = use_signal(|| None::<Food>);
     let mut new_barcode = new_barcode;
-    let foods = state.custom_foods.read().clone();
-    let favorites = state.favorites.read().clone();
+    let mut filter = use_signal(String::new);
+    // Every word of the filter must appear in the name or brand.
+    let words: Vec<String> = filter()
+        .to_lowercase()
+        .split_whitespace()
+        .map(String::from)
+        .collect();
+    let matches = move |food: &Food| {
+        let text = format!(
+            "{} {}",
+            food.name,
+            food.brand.as_deref().unwrap_or_default()
+        )
+        .to_lowercase();
+        words.iter().all(|w| text.contains(w.as_str()))
+    };
+    let all_foods = state.custom_foods.read().clone();
+    let has_foods = !all_foods.is_empty();
+    let foods: Vec<Food> = all_foods.into_iter().filter(|f| matches(f)).collect();
+    let favorites: Vec<Food> = state
+        .favorites
+        .read()
+        .iter()
+        .filter(|f| matches(f))
+        .cloned()
+        .collect();
 
     if let Some(food) = editing() {
         return rsx! {
@@ -38,6 +62,17 @@ pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<Stri
     }
 
     rsx! {
+        if has_foods || !state.favorites.read().is_empty() {
+            div { class: "search-box",
+                Icon { name: "search" }
+                input {
+                    r#type: "search",
+                    placeholder: "Filter your foods",
+                    value: "{filter}",
+                    oninput: move |e| filter.set(e.value()),
+                }
+            }
+        }
         if !favorites.is_empty() {
             h3 { class: "section-title", "Favorites" }
             ul { class: "results",
@@ -66,7 +101,9 @@ pub fn LibraryTab(on_select: EventHandler<Food>, new_barcode: Signal<Option<Stri
                 "New food"
             }
         }
-        if foods.is_empty() {
+        if foods.is_empty() && has_foods {
+            p { class: "muted pad", "Nothing matches \"{filter}\"." }
+        } else if foods.is_empty() {
             p { class: "muted pad",
                 "Foods you create appear here and in search. Add things the database doesn't have, like home cooking or local products. To make a recipe, put its ingredients on the plate and tap Save as recipe."
             }
