@@ -17,6 +17,10 @@ pub struct LogEntry {
     /// Human-readable amount, e.g. "1.5 large (75 g)".
     pub amount: String,
     pub nutrients: NutrientProfile,
+    /// Stable id of the food this came from (e.g. `afcd:F002893`,
+    /// `custom:3`), or `None` for quick adds.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub food_id: Option<String>,
 }
 
 /// Sum of every entry on `date`.
@@ -58,6 +62,7 @@ mod tests {
             name: "Oats".into(),
             amount: "40 g".into(),
             nutrients: NutrientProfile::from_macros(kcal, 5.0, 3.0, 27.0),
+            food_id: Some("sample:oats".into()),
         }
     }
 

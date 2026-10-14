@@ -15,16 +15,17 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | ✅ On-device storage | SQLite: food log, weigh-ins, day status, profile, goal, program |
 | ✅ Food database | 58k foods: USDA, AFCD (Australia) and Open Food Facts (AU + US). Common and Branded sections, region setting, spelling variants. See [FOOD_DATA.md](FOOD_DATA.md) |
 | ✅ Releases and in-app updates | Signed APKs built by GitHub Actions on version tags. The app checks GitHub Releases, downloads the update and opens Android's installer |
+| ✅ Custom foods | Library tab and a new-food form (per serving / 100 g / 100 ml, Australian or US label, kJ or kcal, salt or sodium); shown first in search and barcode lookups |
+| ✅ Recent foods | Log entries remember their food; search shows recent foods when empty and ranks foods you log often higher |
 | ✅ Barcode scanning | Live camera scanning (EAN/UPC, decoded in Rust with rxing), torch, manual entry; local database first, then Open Food Facts online |
 
 ## Next
 
 | # | Feature | Plan |
 |---|---|---|
-| 1 | ⏭ **Custom foods** | 4-step form: name and brand (+ barcode), nutrition basis (serving / 100 g / 100 ml with serving weight), nutrients in US-label or non-US-label layout. Searchable in the Library and in search results. |
-| 2 | ⏭ **Recents and favorites** | Search boosts foods you've logged before. History and favorites appear in Library. |
-| 3 | ⏭ **Weekly check-in** | Targets lock in at a weekly check-in on a chosen day. The check-in steps through weigh-in, partial days, fasted days and program update. |
-| 4 | ⏭ **Data export** | CSV export of the food log, weigh-ins, expenditure and trend. |
+| 1 | ⏭ **Favorites** | Star foods on their detail page; favorites appear in the Library. |
+| 2 | ⏭ **Weekly check-in** | Targets lock in at a weekly check-in on a chosen day. The check-in steps through weigh-in, partial days, fasted days and program update. |
+| 3 | ⏭ **Data export** | CSV export of the food log, weigh-ins, expenditure and trend. |
 
 ## Later
 

@@ -41,6 +41,8 @@ pub struct PlateItem {
     pub name: String,
     pub amount: String,
     pub nutrients: NutrientProfile,
+    /// Stable id of the food, so the log can offer it again later.
+    pub food_id: Option<String>,
 }
 
 /// Foods staged for logging together at one date and hour.
@@ -323,6 +325,7 @@ impl AppState {
                     name: item.name,
                     amount: item.amount,
                     nutrients: item.nutrients,
+                    food_id: item.food_id,
                 };
                 entry.id = match self.persist.read().insert_entry(&entry) {
                     Some(id) => id,

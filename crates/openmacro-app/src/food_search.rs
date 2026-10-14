@@ -1,9 +1,13 @@
 //! Food search: the full food database on native builds when it is bundled,
 //! otherwise the small built-in sample list.
 
-use openmacro_core::food::Food;
+use std::cmp::Reverse;
+use std::collections::{HashMap, HashSet};
+
 #[cfg(not(target_arch = "wasm32"))]
 use openmacro_core::food::FoodSource;
+use openmacro_core::food::{Food, Serving};
+use openmacro_core::log::LogEntry;
 
 use crate::foods::{FOODS, search as search_samples};
 
@@ -98,8 +102,32 @@ pub fn search_custom(custom: &[Food], query: &str) -> Vec<FoundFood> {
 const PER_SECTION: usize = 15;
 
 /// Searches the user's custom foods and the database if there is one,
-/// otherwise the sample foods.
-pub fn search(db: Option<&Database>, custom: &[Food], query: &str, region: FoodRegion) -> Results {
+/// otherwise the sample foods. Within each section, foods the user has
+/// logged before move up (most-logged first), keeping text rank otherwise.
+pub fn search(
+    db: Option<&Database>,
+    custom: &[Food],
+    history: &HashMap<String, usize>,
+    query: &str,
+    region: FoodRegion,
+) -> Results {
+    let mut results = search_unranked(db, custom, query, region);
+    for section in [
+        &mut results.yours,
+        &mut results.common,
+        &mut results.branded,
+    ] {
+        section.sort_by_key(|f| Reverse(history.get(&f.food.id).copied().unwrap_or(0)));
+    }
+    results
+}
+
+fn search_unranked(
+    db: Option<&Database>,
+    custom: &[Food],
+    query: &str,
+    region: FoodRegion,
+) -> Results {
     let yours = search_custom(custom, query);
     #[cfg(not(target_arch = "wasm32"))]
     if let Some(db) = db {
@@ -142,6 +170,93 @@ pub fn search(db: Option<&Database>, custom: &[Food], query: &str, region: FoodR
             .collect(),
         branded: Vec::new(),
     }
+}
+
+/// How many times each food (by stable id) appears in the log.
+pub fn history_counts(log: &[LogEntry]) -> HashMap<String, usize> {
+    let mut counts = HashMap::new();
+    for id in log.iter().filter_map(|e| e.food_id.as_ref()) {
+        *counts.entry(id.clone()).or_insert(0) += 1;
+    }
+    counts
+}
+
+/// Finds a food by its stable id in the user's foods, the samples or the database.
+fn resolve(db: Option<&Database>, custom: &[Food], id: &str) -> Option<FoundFood> {
+    if id.starts_with("custom:") {
+        return custom.iter().find(|f| f.id == id).map(|f| FoundFood {
+            food: f.clone(),
+            source: "Your food",
+        });
+    }
+    if id.starts_with("sample:") {
+        return crate::foods::food_by_id(id).map(|f| FoundFood {
+            food: f.clone(),
+            source: "Sample",
+        });
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    if let Some(hit) = db.and_then(|db| db.get_by_key(id).ok().flatten()) {
+        return Some(FoundFood {
+            food: hit.food,
+            source: hit.dataset.label(),
+        });
+    }
+    let _ = db;
+    None
+}
+
+/// Grams in an amount label such as "1.5 large (75 g)" or "250 g".
+fn grams_in(amount: &str) -> Option<f64> {
+    let inner = match (amount.rfind('('), amount.rfind(" g)")) {
+        (Some(open), Some(end)) if open < end => &amount[open + 1..end],
+        _ => amount.strip_suffix(" g")?,
+    };
+    inner.trim().parse().ok().filter(|g: &f64| *g > 0.0)
+}
+
+/// Rebuilds a food from a log entry when the original can't be found
+/// (e.g. an online-only product while offline).
+fn from_entry(entry: &LogEntry) -> Option<FoundFood> {
+    let grams = grams_in(&entry.amount)?;
+    Some(FoundFood {
+        food: Food {
+            id: entry.food_id.clone()?,
+            name: entry.name.clone(),
+            brand: None,
+            source: FoodSource::Common,
+            barcode: None,
+            per_100g: entry.nutrients.scaled(100.0 / grams),
+            servings: vec![Serving::new("portion", grams)],
+        },
+        source: "Logged",
+    })
+}
+
+/// Foods logged most recently, newest first, without repeats.
+pub fn recent_foods(
+    db: Option<&Database>,
+    custom: &[Food],
+    log: &[LogEntry],
+    limit: usize,
+) -> Vec<FoundFood> {
+    let mut entries: Vec<&LogEntry> = log.iter().filter(|e| e.food_id.is_some()).collect();
+    entries.sort_by_key(|e| Reverse((e.date, e.hour, e.id)));
+    let mut seen = HashSet::new();
+    let mut recent = Vec::new();
+    for entry in entries {
+        let id = entry.food_id.as_deref().unwrap_or_default();
+        if !seen.insert(id.to_string()) {
+            continue;
+        }
+        if let Some(found) = resolve(db, custom, id).or_else(|| from_entry(entry)) {
+            recent.push(found);
+            if recent.len() == limit {
+                break;
+            }
+        }
+    }
+    recent
 }
 
 /// A product by barcode: the user's custom foods first, then the database,
@@ -248,7 +363,7 @@ mod tests {
 
     #[test]
     fn sample_fallback_without_database() {
-        let results = search(None, &[], "yogurt", FoodRegion::Australia);
+        let results = search(None, &[], &HashMap::new(), "yogurt", FoodRegion::Australia);
         assert!(results.yours.is_empty());
         assert_eq!(results.common.len(), 1);
         assert_eq!(results.common[0].source, "Sample");
@@ -269,12 +384,24 @@ mod tests {
         if db.count().unwrap_or(0) == 0 {
             return;
         }
-        let au = search(Some(&db), &[], "weet bix", FoodRegion::Australia);
+        let au = search(
+            Some(&db),
+            &[],
+            &HashMap::new(),
+            "weet bix",
+            FoodRegion::Australia,
+        );
         assert!(!au.branded.is_empty(), "Australian branded cereal expected");
         assert!(au.branded.iter().all(|f| f.source == "Open Food Facts"));
         assert!(au.common.iter().any(|f| f.source == "AFCD"));
 
-        let us = search(Some(&db), &[], "greek yoghurt", FoodRegion::UnitedStates);
+        let us = search(
+            Some(&db),
+            &[],
+            &HashMap::new(),
+            "greek yoghurt",
+            FoodRegion::UnitedStates,
+        );
         assert!(
             us.common
                 .iter()
@@ -304,6 +431,69 @@ mod tests {
         let found = by_barcode(None, &custom, "0041196910759").unwrap();
         assert_eq!(found.food, mine);
         assert!(by_barcode(None, &custom, "9300652010053").is_none());
+    }
+
+    fn logged(id: i64, day: u32, food_id: &str, amount: &str) -> LogEntry {
+        LogEntry {
+            id,
+            date: chrono::NaiveDate::from_ymd_opt(2026, 10, day).unwrap(),
+            hour: 8,
+            name: food_id.to_string(),
+            amount: amount.to_string(),
+            nutrients: openmacro_core::nutrients::NutrientProfile::from_macros(
+                150.0, 10.0, 5.0, 15.0,
+            ),
+            food_id: Some(food_id.to_string()),
+        }
+    }
+
+    #[test]
+    fn recents_are_newest_first_without_repeats() {
+        let log = [
+            logged(1, 10, "sample:oats", "1 cup (80 g)"),
+            logged(2, 12, "sample:banana", "1 medium (118 g)"),
+            logged(3, 14, "sample:oats", "0.5 cup (40 g)"),
+            logged(4, 13, "off:000000", "1 serving (30 g)"),
+        ];
+        let recent = recent_foods(None, &[], &log, 10);
+        let ids: Vec<&str> = recent.iter().map(|f| f.food.id.as_str()).collect();
+        assert_eq!(ids, ["sample:oats", "off:000000", "sample:banana"]);
+        // The online product isn't available offline, so it is rebuilt from the entry.
+        assert_eq!(recent[1].source, "Logged");
+        assert_eq!(
+            recent[1]
+                .food
+                .per_100g
+                .get(openmacro_core::nutrients::Nutrient::Energy),
+            Some(500.0)
+        );
+        assert_eq!(recent_foods(None, &[], &log, 1).len(), 1);
+    }
+
+    #[test]
+    fn history_moves_logged_foods_up() {
+        let plain = search(None, &[], &HashMap::new(), "rice", FoodRegion::Australia);
+        assert_eq!(plain.common[0].food.id, "sample:brown-rice");
+        let log = [
+            logged(1, 10, "sample:white-rice", "1 cup (158 g)"),
+            logged(2, 11, "sample:white-rice", "1 cup (158 g)"),
+        ];
+        let results = search(
+            None,
+            &[],
+            &history_counts(&log),
+            "rice",
+            FoodRegion::Australia,
+        );
+        assert_eq!(results.common[0].food.id, "sample:white-rice");
+    }
+
+    #[test]
+    fn grams_are_read_from_amount_labels() {
+        assert_eq!(grams_in("1.5 large (75 g)"), Some(75.0));
+        assert_eq!(grams_in("250 g"), Some(250.0));
+        assert_eq!(grams_in("2 oz (56.7 g)"), Some(56.7));
+        assert_eq!(grams_in("1 entry"), None);
     }
 
     #[test]

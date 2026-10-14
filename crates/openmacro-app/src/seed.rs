@@ -105,6 +105,7 @@ pub fn demo(today: NaiveDate) -> Data {
                     name: item.name,
                     amount: item.amount,
                     nutrients: item.nutrients,
+                    food_id: item.food_id,
                 });
                 id += 1;
             }

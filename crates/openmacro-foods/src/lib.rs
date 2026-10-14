@@ -84,10 +84,13 @@ pub struct FoodRecord {
     pub servings: Vec<Serving>,
 }
 
-/// A search result or lookup.
+/// A search result or lookup. `food.id` is the stable key
+/// `<dataset>:<source id>` (e.g. `afcd:F002893`), which survives rebuilding
+/// the database; `row_id` is only valid for this build.
 #[derive(Debug, Clone, PartialEq)]
 pub struct FoodHit {
     pub food: Food,
+    pub row_id: i64,
     pub dataset: Dataset,
     pub regions: u8,
 }
@@ -140,7 +143,7 @@ fn select_columns() -> String {
         .map(|n| format!("f.n_{}", n.key()))
         .collect();
     format!(
-        "f.id, f.dataset, f.name, f.brand, f.barcode, f.regions, f.branded, {}",
+        "f.id, f.dataset, f.name, f.brand, f.barcode, f.regions, f.branded, f.source_id, {}",
         nutrients.join(", ")
     )
 }
@@ -233,6 +236,7 @@ impl FoodDbWriter {
                  ) WHERE rank = 1
              );
              CREATE INDEX food_barcode ON food (barcode) WHERE barcode IS NOT NULL;
+             CREATE INDEX food_key ON food (dataset, source_id);
              INSERT INTO food_fts (food_fts) VALUES ('rebuild');
              INSERT INTO food_fts (food_fts) VALUES ('optimize');
              COMMIT;
@@ -356,7 +360,7 @@ impl FoodDb {
         )?;
         let mut hits = rows.collect::<Result<Vec<_>>>()?;
         for hit in &mut hits {
-            hit.food.servings = self.servings(hit.food.id.parse().unwrap_or_default())?;
+            hit.food.servings = self.servings(hit.row_id)?;
         }
         Ok(hits)
     }
@@ -372,6 +376,22 @@ impl FoodDb {
             Ok(h)
         })
         .transpose()
+    }
+
+    /// Looks a food up by its stable key, `<dataset>:<source id>`.
+    pub fn get_by_key(&self, key: &str) -> Result<Option<FoodHit>> {
+        let Some((dataset, source_id)) = key.split_once(':') else {
+            return Ok(None);
+        };
+        let id: Option<i64> = self
+            .conn
+            .query_row(
+                "SELECT id FROM food WHERE dataset = ?1 AND source_id = ?2 LIMIT 1",
+                params![dataset, source_id],
+                |r| r.get(0),
+            )
+            .optional()?;
+        id.map(|id| self.get(id)).transpose().map(Option::flatten)
     }
 
     pub fn by_barcode(&self, barcode: &str) -> Result<Option<FoodHit>> {
@@ -398,18 +418,19 @@ impl FoodDb {
 }
 
 fn read_hit(row: &Row<'_>) -> Result<FoodHit> {
-    let id: i64 = row.get(0)?;
+    let row_id: i64 = row.get(0)?;
     let dataset: String = row.get(1)?;
     let branded: bool = row.get(6)?;
+    let source_id: String = row.get(7)?;
     let mut per_100g = NutrientProfile::new();
     for (i, n) in Nutrient::ALL.iter().enumerate() {
-        if let Some(v) = row.get::<_, Option<f64>>(7 + i)? {
+        if let Some(v) = row.get::<_, Option<f64>>(8 + i)? {
             per_100g.set(*n, v);
         }
     }
     Ok(FoodHit {
         food: Food {
-            id: id.to_string(),
+            id: format!("{dataset}:{source_id}"),
             name: row.get(2)?,
             brand: row.get(3)?,
             source: if branded {
@@ -421,6 +442,7 @@ fn read_hit(row: &Row<'_>) -> Result<FoodHit> {
             per_100g,
             servings: Vec::new(),
         },
+        row_id,
         dataset: Dataset::from_code(&dataset).unwrap_or(Dataset::OpenFoodFacts),
         regions: row.get::<_, i64>(5)? as u8,
     })
@@ -562,5 +584,12 @@ mod tests {
             .unwrap();
         assert_eq!(found.food.name, "Greek Yoghurt Honey");
         assert_eq!(db.meta("attribution").unwrap().as_deref(), Some("test"));
+
+        // Stable keys survive rebuilds and find the same food.
+        assert_eq!(found.food.id, "off:Greek Yoghurt Honey");
+        let again = db.get_by_key(&found.food.id).unwrap().unwrap();
+        assert_eq!(again.food, found.food);
+        assert!(db.get_by_key("afcd:missing").unwrap().is_none());
+        assert!(db.get_by_key("no-colon").unwrap().is_none());
     }
 }

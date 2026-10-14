@@ -179,10 +179,16 @@ fn SearchTab(query: Signal<String>, on_select: EventHandler<Food>) -> Element {
     let guard = foods.read();
     let db = guard.as_ref().and_then(Option::as_ref);
     let has_db = db.is_some();
+    let recent = if q.trim().is_empty() {
+        food_search::recent_foods(db, &state.custom_foods.read(), &state.log.read(), 15)
+    } else {
+        Vec::new()
+    };
     let results = if q.trim().is_empty() {
         food_search::Results::default()
     } else {
-        food_search::search(db, &state.custom_foods.read(), &q, region)
+        let history = food_search::history_counts(&state.log.read());
+        food_search::search(db, &state.custom_foods.read(), &history, &q, region)
     };
     let hint = if has_db {
         format!(
@@ -206,6 +212,9 @@ fn SearchTab(query: Signal<String>, on_select: EventHandler<Food>) -> Element {
         }
         if q.trim().is_empty() {
             p { class: "muted pad", "{hint}" }
+            if !recent.is_empty() {
+                ResultSection { title: "Recent", foods: recent, on_select }
+            }
         } else if results.is_empty() {
             p { class: "muted pad", "No matches. Try another spelling or Quick Add." }
         }
@@ -547,6 +556,7 @@ fn QuickAdd() -> Element {
                 let label = name();
                 state
                     .add_to_plate(PlateItem {
+                        food_id: None,
                         name: if label.trim().is_empty() { "Quick add".into() } else { label.trim().to_string() },
                         amount: "1 entry".into(),
                         nutrients: NutrientProfile::from_macros(energy, p, f, c),

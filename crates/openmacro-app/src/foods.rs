@@ -299,7 +299,7 @@ fn sample_foods() -> Vec<Food> {
     ROWS.iter()
         .map(
             |&(id, name, kcal, protein, fat, carbs, fiber, servings)| Food {
-                id: id.into(),
+                id: format!("sample:{id}"),
                 name: name.into(),
                 brand: None,
                 source: FoodSource::Common,
@@ -315,8 +315,12 @@ fn sample_foods() -> Vec<Food> {
         .collect()
 }
 
+/// A sample food by its short id ("oats") or full id ("sample:oats").
 pub fn food_by_id(id: &str) -> Option<&'static Food> {
-    FOODS.iter().find(|f| f.id == id)
+    let id = id.strip_prefix("sample:").unwrap_or(id);
+    FOODS
+        .iter()
+        .find(|f| f.id.strip_prefix("sample:") == Some(id))
 }
 
 /// Foods whose name contains every word of `query`, best matches first.
@@ -364,6 +368,7 @@ pub fn amount_label(food: &Food, amount: Amount) -> Option<String> {
 
 pub fn plate_item(food: &Food, amount: Amount) -> Option<PlateItem> {
     Some(PlateItem {
+        food_id: Some(food.id.clone()).filter(|id| !id.is_empty()),
         name: food.name.clone(),
         amount: amount_label(food, amount)?,
         nutrients: food.nutrients_for(amount)?,
