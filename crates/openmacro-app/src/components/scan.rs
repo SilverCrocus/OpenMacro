@@ -8,6 +8,7 @@ use serde_json::Value;
 use super::Icon;
 use crate::barcode;
 use crate::food_search::{self, Database};
+use crate::state::AppState;
 
 /// Runs in the web view: streams downscaled grayscale frames to Rust, one at
 /// a time, and stops the camera when told to or when the view goes away.
@@ -81,11 +82,20 @@ enum Status {
     Problem(String),
 }
 
-/// Finds a product for `code` locally, then on Open Food Facts.
-async fn lookup(foods: Resource<Option<Database>>, code: String) -> Result<Option<Food>, String> {
+/// Finds a product for `code` in the user's foods and the database, then on
+/// Open Food Facts.
+async fn lookup(
+    foods: Resource<Option<Database>>,
+    custom: Signal<Vec<Food>>,
+    code: String,
+) -> Result<Option<Food>, String> {
     let local = {
         let guard = foods.read();
-        food_search::by_barcode(guard.as_ref().and_then(Option::as_ref), &code)
+        food_search::by_barcode(
+            guard.as_ref().and_then(Option::as_ref),
+            &custom.read(),
+            &code,
+        )
     };
     if let Some(found) = local {
         return Ok(Some(found.food));
@@ -109,7 +119,8 @@ fn camera_problem(name: &str) -> String {
 }
 
 #[component]
-pub fn ScanTab(on_found: EventHandler<Food>) -> Element {
+pub fn ScanTab(on_found: EventHandler<Food>, on_create: EventHandler<String>) -> Element {
+    let state = use_context::<AppState>();
     let foods = use_context::<Resource<Option<Database>>>();
     let mut status = use_signal(|| Status::Starting);
     let mut torch_available = use_signal(|| false);
@@ -119,7 +130,7 @@ pub fn ScanTab(on_found: EventHandler<Food>) -> Element {
     let mut handle_code = move |code: String| {
         status.set(Status::LookingUp(code.clone()));
         spawn(async move {
-            match lookup(foods, code.clone()).await {
+            match lookup(foods, state.custom_foods, code.clone()).await {
                 Ok(Some(food)) => on_found.call(food),
                 Ok(None) => status.set(Status::NotFound(code)),
                 Err(message) => status.set(Status::Problem(message)),
@@ -193,6 +204,9 @@ pub fn ScanTab(on_found: EventHandler<Food>) -> Element {
             }
         }
         p { class: "muted pad scan-message", aria_live: "polite", "{message}" }
+        if let Status::NotFound(code) = status() {
+            button { class: "primary wide", onclick: move |_| on_create.call(code.clone()), "Create a food with this barcode" }
+        }
         div { class: "amount-row manual-barcode",
             input {
                 r#type: "text",

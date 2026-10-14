@@ -500,3 +500,15 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .manual-barcode input { flex: 1; font-size: 16px; letter-spacing: 0.04em; }
 .manual-barcode .primary { display: inline-flex; align-items: center; gap: 6px; }
 .manual-barcode .icon { width: 18px; height: 18px; }
+
+/* Library and custom foods */
+
+.library-head { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+.library-head .section-title { margin: 0; }
+.library-head .chip { display: inline-flex; align-items: center; gap: 4px; }
+.library-head .chip .icon { width: 16px; height: 16px; }
+.energy-row { display: flex; align-items: flex-end; gap: 8px; }
+.energy-row .field { flex: 1; }
+.small-units { margin-bottom: 10px; flex: none; }
+.form-actions { margin-top: 12px; justify-content: flex-end; }
+.form-actions button { flex: 1; padding: 12px; }

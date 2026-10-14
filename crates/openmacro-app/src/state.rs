@@ -9,6 +9,7 @@ use openmacro_core::bmr::{self, ActivityLevel, BmrEquation, BodyStats, Sex};
 use openmacro_core::expenditure::{
     self, DayRecord, DayStatus, EstimateStatus, ExpenditureConfig, ExpenditurePoint,
 };
+use openmacro_core::food::Food;
 use openmacro_core::nutrients::{Nutrient, NutrientProfile};
 use openmacro_core::targets::{self, CalorieTarget, CoachedProgram, MacroTargets};
 use openmacro_core::trend::{self, TrendPoint, TrendSmoothing, WeighIn};
@@ -211,6 +212,8 @@ pub struct AppState {
     pub persist: Signal<Persistence>,
     /// Which country's products and spellings search prefers.
     pub region: Signal<FoodRegion>,
+    /// Foods the user created, newest first.
+    pub custom_foods: Signal<Vec<Food>>,
     /// Ids for entries when nothing is saved (web preview).
     next_id: Signal<i64>,
 }
@@ -230,8 +233,10 @@ impl AppState {
             .load_region()
             .and_then(|code| FoodRegion::from_code(&code))
             .unwrap_or_default();
+        let custom_foods = persist.custom_foods();
         Self {
             region: Signal::new(region),
+            custom_foods: Signal::new(custom_foods),
             next_id: Signal::new(next_id_after(&data.log)),
             log: Signal::new(data.log),
             weigh_ins: Signal::new(data.weigh_ins),
@@ -332,6 +337,26 @@ impl AppState {
             .collect();
         self.log.write().extend(entries);
         self.selected_date.set(date);
+    }
+
+    /// Saves a food the user created and returns it with its id.
+    pub fn add_custom_food(mut self, mut food: Food) -> Food {
+        food.id = self
+            .persist
+            .read()
+            .insert_custom_food(&food)
+            .unwrap_or_else(|| {
+                let n = *self.next_id.peek();
+                self.next_id.set(n + 1);
+                format!("custom:{n}")
+            });
+        self.custom_foods.write().insert(0, food.clone());
+        food
+    }
+
+    pub fn delete_custom_food(mut self, id: &str) {
+        self.persist.read().delete_custom_food(id);
+        self.custom_foods.write().retain(|f| f.id != id);
     }
 
     pub fn delete_entry(mut self, id: i64) {

@@ -6,6 +6,7 @@
 
 use chrono::NaiveDate;
 use openmacro_core::expenditure::DayStatus;
+use openmacro_core::food::Food;
 use openmacro_core::log::{Goal, LogEntry, Profile};
 use openmacro_core::targets::CoachedProgram;
 use openmacro_core::trend::WeighIn;
@@ -129,6 +130,32 @@ mod native {
             }
         }
 
+        /// Saves a custom food; returns its id (`custom:<n>`).
+        pub fn insert_custom_food(&self, food: &Food) -> Option<String> {
+            let id = report(
+                "save a custom food",
+                self.store.as_ref()?.insert_custom_food(food),
+            )?;
+            Some(format!("custom:{id}"))
+        }
+
+        pub fn delete_custom_food(&self, id: &str) {
+            let (Some(store), Some(n)) = (
+                &self.store,
+                id.strip_prefix("custom:").and_then(|n| n.parse().ok()),
+            ) else {
+                return;
+            };
+            report("delete a custom food", store.delete_custom_food(n));
+        }
+
+        pub fn custom_foods(&self) -> Vec<Food> {
+            self.store
+                .as_ref()
+                .and_then(|s| report("load custom foods", s.custom_foods()))
+                .unwrap_or_default()
+        }
+
         pub fn save_region(&self, code: &str) {
             if let Some(store) = &self.store {
                 report("save the food region", store.set_setting(REGION, &code));
@@ -225,6 +252,16 @@ mod web {
 
         pub fn replace_history(&mut self, _data: &Data) -> Option<Vec<LogEntry>> {
             None
+        }
+
+        pub fn insert_custom_food(&self, _food: &Food) -> Option<String> {
+            None
+        }
+
+        pub fn delete_custom_food(&self, _id: &str) {}
+
+        pub fn custom_foods(&self) -> Vec<Food> {
+            Vec::new()
         }
 
         pub fn save_region(&self, _code: &str) {}

@@ -1,5 +1,6 @@
 mod barcode;
 mod components;
+mod custom_food;
 mod food_search;
 mod foods;
 mod keypad;

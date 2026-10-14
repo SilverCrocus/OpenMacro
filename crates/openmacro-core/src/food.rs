@@ -16,6 +16,7 @@ pub enum FoodSource {
 
 /// A named portion of a food, e.g. "1 slice" = 36 g.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Serving {
     pub label: String,
     pub grams: f64,

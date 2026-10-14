@@ -19,6 +19,7 @@ enum Tab {
     Search,
     Scan,
     QuickAdd,
+    Library,
 }
 
 #[component]
@@ -27,6 +28,8 @@ pub fn Logger() -> Element {
     let coach = use_context::<Memo<CoachSnapshot>>();
     let mut tab = use_signal(|| Tab::Search);
     let mut detail = use_signal(|| None::<Food>);
+    // Set when a scanned barcode isn't found, to prefill a new custom food.
+    let mut new_barcode = use_signal(|| None::<String>);
     let query = use_signal(String::new);
 
     let plate = state.plate.read().clone();
@@ -77,7 +80,13 @@ pub fn Logger() -> Element {
                     PlateView { items: plate.items.clone() }
                 }
                 nav { class: "sheet-tabs",
-                    for (value , label) in [(Tab::Search, "Search"), (Tab::Scan, "Scan"), (Tab::QuickAdd, "Quick Add")] {
+                    for (value , label) in [
+                        (Tab::Search, "Search"),
+                        (Tab::Scan, "Scan"),
+                        (Tab::QuickAdd, "Quick Add"),
+                        (Tab::Library, "Library"),
+                    ]
+                    {
                         button {
                             key: "{label}",
                             class: if tab() == value && detail().is_none() { "active" },
@@ -88,7 +97,6 @@ pub fn Logger() -> Element {
                             "{label}"
                         }
                     }
-                    button { disabled: true, title: "Coming soon", "Library" }
                 }
                 div { class: "sheet-body",
                     {
@@ -100,7 +108,16 @@ pub fn Logger() -> Element {
                                 SearchTab { query, on_select: move |food| detail.set(Some(food)) }
                             },
                             (None, Tab::Scan) => rsx! {
-                                super::scan::ScanTab { on_found: move |food| detail.set(Some(food)) }
+                                super::scan::ScanTab {
+                                    on_found: move |food| detail.set(Some(food)),
+                                    on_create: move |code| {
+                                        new_barcode.set(Some(code));
+                                        tab.set(Tab::Library);
+                                    },
+                                }
+                            },
+                            (None, Tab::Library) => rsx! {
+                                super::library::LibraryTab { on_select: move |food| detail.set(Some(food)), new_barcode }
                             },
                             (None, Tab::QuickAdd) => rsx! {
                                 QuickAdd {}
@@ -165,7 +182,7 @@ fn SearchTab(query: Signal<String>, on_select: EventHandler<Food>) -> Element {
     let results = if q.trim().is_empty() {
         food_search::Results::default()
     } else {
-        food_search::search(db, &q, region)
+        food_search::search(db, &state.custom_foods.read(), &q, region)
     };
     let hint = if has_db {
         format!(
@@ -191,6 +208,9 @@ fn SearchTab(query: Signal<String>, on_select: EventHandler<Food>) -> Element {
             p { class: "muted pad", "{hint}" }
         } else if results.is_empty() {
             p { class: "muted pad", "No matches. Try another spelling or Quick Add." }
+        }
+        if !results.yours.is_empty() {
+            ResultSection { title: "Your foods", foods: results.yours, on_select }
         }
         if !results.common.is_empty() {
             ResultSection { title: "Common", foods: results.common, on_select }

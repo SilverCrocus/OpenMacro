@@ -2,6 +2,7 @@
 
 mod dashboard;
 mod food_log;
+mod library;
 mod logger;
 mod more;
 mod plan;

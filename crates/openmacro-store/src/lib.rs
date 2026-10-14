@@ -11,6 +11,7 @@ use std::path::Path;
 
 use chrono::{NaiveDate, Utc};
 use openmacro_core::expenditure::DayStatus;
+use openmacro_core::food::{Food, FoodSource, Serving};
 use openmacro_core::log::LogEntry;
 use openmacro_core::nutrients::NutrientProfile;
 use openmacro_core::trend::WeighIn;
@@ -55,7 +56,8 @@ impl From<serde_json::Error> for Error {
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Ordered schema migrations; index + 1 is the version each one produces.
-const MIGRATIONS: &[&str] = &["
+const MIGRATIONS: &[&str] = &[
+    "
     CREATE TABLE log_entry (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         date TEXT NOT NULL,
@@ -87,7 +89,21 @@ const MIGRATIONS: &[&str] = &["
         value TEXT NOT NULL,
         updated_at TEXT NOT NULL
     );
-"];
+",
+    "
+    CREATE TABLE custom_food (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        brand TEXT,
+        barcode TEXT,
+        nutrients TEXT NOT NULL,
+        servings TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        deleted_at TEXT
+    );
+    CREATE INDEX custom_food_barcode ON custom_food (barcode) WHERE deleted_at IS NULL;
+",
+];
 
 pub struct Store {
     conn: Connection,
@@ -293,6 +309,63 @@ impl Store {
         Ok(json.map(|j| serde_json::from_str(&j)).transpose()?)
     }
 
+    /// Saves a food the user created; returns its id. Nutrients are per 100 g.
+    pub fn insert_custom_food(&self, food: &Food) -> Result<i64> {
+        self.conn.execute(
+            "INSERT INTO custom_food (name, brand, barcode, nutrients, servings, updated_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+            params![
+                food.name,
+                food.brand,
+                food.barcode,
+                serde_json::to_string(&food.per_100g)?,
+                serde_json::to_string(&food.servings)?,
+                now()
+            ],
+        )?;
+        Ok(self.conn.last_insert_rowid())
+    }
+
+    pub fn delete_custom_food(&self, id: i64) -> Result<()> {
+        let at = now();
+        self.conn.execute(
+            "UPDATE custom_food SET deleted_at = ?1, updated_at = ?1 WHERE id = ?2",
+            params![at, id],
+        )?;
+        Ok(())
+    }
+
+    /// Every live custom food, newest first, with ids of the form `custom:<id>`.
+    pub fn custom_foods(&self) -> Result<Vec<Food>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT id, name, brand, barcode, nutrients, servings FROM custom_food
+             WHERE deleted_at IS NULL ORDER BY id DESC",
+        )?;
+        let rows = stmt.query_map([], |r| {
+            Ok((
+                r.get::<_, i64>(0)?,
+                r.get::<_, String>(1)?,
+                r.get::<_, Option<String>>(2)?,
+                r.get::<_, Option<String>>(3)?,
+                r.get::<_, String>(4)?,
+                r.get::<_, String>(5)?,
+            ))
+        })?;
+        rows.map(|row| {
+            let (id, name, brand, barcode, nutrients, servings) = row?;
+            Ok(Food {
+                id: format!("custom:{id}"),
+                name,
+                brand,
+                source: FoodSource::Custom,
+                barcode,
+                per_100g: serde_json::from_str::<NutrientProfile>(&nutrients)?,
+                servings: serde_json::from_str::<Vec<Serving>>(&servings)?,
+            })
+        })
+        .collect()
+    }
+
     /// Replaces the whole food log, weigh-ins and day statuses in one
     /// transaction (used for loading demo data or clearing everything).
     /// Returns the log with its new ids.
@@ -474,6 +547,31 @@ mod tests {
             -0.25
         );
         assert!(!store.is_empty().unwrap());
+    }
+
+    #[test]
+    fn custom_foods_round_trip_and_soft_delete() {
+        let store = Store::open_in_memory().unwrap();
+        let food = Food {
+            id: String::new(),
+            name: "Mum's lasagne".into(),
+            brand: None,
+            source: FoodSource::Custom,
+            barcode: Some("9300000000017".into()),
+            per_100g: NutrientProfile::from_macros(160.0, 9.0, 7.0, 15.0),
+            servings: vec![Serving::new("slice", 250.0)],
+        };
+        let id = store.insert_custom_food(&food).unwrap();
+        let saved = store.custom_foods().unwrap();
+        assert_eq!(
+            saved,
+            vec![Food {
+                id: format!("custom:{id}"),
+                ..food
+            }]
+        );
+        store.delete_custom_food(id).unwrap();
+        assert!(store.custom_foods().unwrap().is_empty());
     }
 
     #[test]

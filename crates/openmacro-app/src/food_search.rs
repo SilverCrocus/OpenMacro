@@ -62,27 +62,54 @@ pub struct FoundFood {
 
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Results {
+    /// The user's own custom foods.
+    pub yours: Vec<FoundFood>,
     pub common: Vec<FoundFood>,
     pub branded: Vec<FoundFood>,
 }
 
 impl Results {
     pub fn is_empty(&self) -> bool {
-        self.common.is_empty() && self.branded.is_empty()
+        self.yours.is_empty() && self.common.is_empty() && self.branded.is_empty()
     }
+}
+
+/// Custom foods whose name or brand contains every word of `query`.
+pub fn search_custom(custom: &[Food], query: &str) -> Vec<FoundFood> {
+    let words: Vec<String> = query.split_whitespace().map(str::to_lowercase).collect();
+    if words.is_empty() {
+        return Vec::new();
+    }
+    custom
+        .iter()
+        .filter(|f| {
+            let text =
+                format!("{} {}", f.name, f.brand.as_deref().unwrap_or_default()).to_lowercase();
+            words.iter().all(|w| text.contains(w.as_str()))
+        })
+        .map(|f| FoundFood {
+            food: f.clone(),
+            source: "Your food",
+        })
+        .collect()
 }
 
 #[cfg(not(target_arch = "wasm32"))]
 const PER_SECTION: usize = 15;
 
-/// Searches the database if there is one, otherwise the sample foods.
-pub fn search(db: Option<&Database>, query: &str, region: FoodRegion) -> Results {
+/// Searches the user's custom foods and the database if there is one,
+/// otherwise the sample foods.
+pub fn search(db: Option<&Database>, custom: &[Food], query: &str, region: FoodRegion) -> Results {
+    let yours = search_custom(custom, query);
     #[cfg(not(target_arch = "wasm32"))]
     if let Some(db) = db {
         let hits = db
             .search(query, region.flags(), PER_SECTION * 3)
             .unwrap_or_default();
-        let mut results = Results::default();
+        let mut results = Results {
+            yours,
+            ..Results::default()
+        };
         for hit in hits {
             let found = FoundFood {
                 food: hit.food,
@@ -105,6 +132,7 @@ pub fn search(db: Option<&Database>, query: &str, region: FoodRegion) -> Results
     let _ = region;
 
     Results {
+        yours,
         common: search_samples(&FOODS, query)
             .into_iter()
             .map(|(_, food)| FoundFood {
@@ -116,12 +144,23 @@ pub fn search(db: Option<&Database>, query: &str, region: FoodRegion) -> Results
     }
 }
 
-/// A product by barcode from the database, trying both UPC and EAN forms.
-pub fn by_barcode(db: Option<&Database>, code: &str) -> Option<FoundFood> {
+/// A product by barcode: the user's custom foods first, then the database,
+/// trying both UPC and EAN forms.
+pub fn by_barcode(db: Option<&Database>, custom: &[Food], code: &str) -> Option<FoundFood> {
+    let variants = crate::barcode::lookup_variants(code);
+    if let Some(food) = custom
+        .iter()
+        .find(|f| f.barcode.as_ref().is_some_and(|b| variants.contains(b)))
+    {
+        return Some(FoundFood {
+            food: food.clone(),
+            source: "Your food",
+        });
+    }
     #[cfg(not(target_arch = "wasm32"))]
     if let Some(db) = db {
-        for variant in crate::barcode::lookup_variants(code) {
-            if let Ok(Some(hit)) = db.by_barcode(&variant) {
+        for variant in &variants {
+            if let Ok(Some(hit)) = db.by_barcode(variant) {
                 return Some(FoundFood {
                     food: hit.food,
                     source: hit.dataset.label(),
@@ -129,7 +168,7 @@ pub fn by_barcode(db: Option<&Database>, code: &str) -> Option<FoundFood> {
             }
         }
     }
-    let _ = (db, code);
+    let _ = (db, variants);
     None
 }
 
@@ -209,7 +248,8 @@ mod tests {
 
     #[test]
     fn sample_fallback_without_database() {
-        let results = search(None, "yogurt", FoodRegion::Australia);
+        let results = search(None, &[], "yogurt", FoodRegion::Australia);
+        assert!(results.yours.is_empty());
         assert_eq!(results.common.len(), 1);
         assert_eq!(results.common[0].source, "Sample");
         assert!(results.branded.is_empty());
@@ -229,12 +269,12 @@ mod tests {
         if db.count().unwrap_or(0) == 0 {
             return;
         }
-        let au = search(Some(&db), "weet bix", FoodRegion::Australia);
+        let au = search(Some(&db), &[], "weet bix", FoodRegion::Australia);
         assert!(!au.branded.is_empty(), "Australian branded cereal expected");
         assert!(au.branded.iter().all(|f| f.source == "Open Food Facts"));
         assert!(au.common.iter().any(|f| f.source == "AFCD"));
 
-        let us = search(Some(&db), "greek yoghurt", FoodRegion::UnitedStates);
+        let us = search(Some(&db), &[], "greek yoghurt", FoodRegion::UnitedStates);
         assert!(
             us.common
                 .iter()
@@ -245,6 +285,25 @@ mod tests {
                 .unwrap()
                 .contains("Food Standards Australia New Zealand")
         );
+    }
+
+    #[test]
+    fn custom_foods_match_and_win_barcode_lookups() {
+        let mine = Food {
+            id: "custom:1".into(),
+            name: "Mum's lasagne".into(),
+            brand: Some("Home".into()),
+            source: FoodSource::Custom,
+            barcode: Some("041196910759".into()),
+            per_100g: Default::default(),
+            servings: Vec::new(),
+        };
+        let custom = [mine.clone()];
+        assert_eq!(search_custom(&custom, "lasagne home").len(), 1);
+        assert!(search_custom(&custom, "pizza").is_empty());
+        let found = by_barcode(None, &custom, "0041196910759").unwrap();
+        assert_eq!(found.food, mine);
+        assert!(by_barcode(None, &custom, "9300652010053").is_none());
     }
 
     #[test]
