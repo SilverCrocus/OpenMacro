@@ -157,10 +157,10 @@ pub fn Dashboard() -> Element {
             })
     };
 
-    // Water today.
+    // Water drunk today (logged from the tile), not the water inside foods.
     let water_ml: f64 = log
         .iter()
-        .filter(|e| e.date == today)
+        .filter(|e| e.date == today && e.food_id.as_deref() == Some(crate::state::WATER_ID))
         .map(|e| e.nutrients.get_or_zero(Nutrient::Water))
         .sum();
     let water_goal = state
