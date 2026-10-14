@@ -11,7 +11,7 @@ use openmacro_core::expenditure::{
     self, DayRecord, DayStatus, EstimateStatus, ExpenditureConfig, ExpenditurePoint,
 };
 use openmacro_core::food::Food;
-use openmacro_core::nutrients::{Nutrient, NutrientProfile};
+use openmacro_core::nutrients::{Nutrient, NutrientGoal, NutrientProfile};
 use openmacro_core::recipe::Recipe;
 use openmacro_core::targets::{self, CalorieTarget, CoachedProgram, MacroTargets};
 use openmacro_core::trend::{self, TrendPoint, TrendSmoothing, WeighIn};
@@ -106,7 +106,7 @@ pub struct Data {
 }
 
 /// How the estimates behave.
-#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 #[cfg_attr(
     not(target_arch = "wasm32"),
     derive(serde::Serialize, serde::Deserialize),
@@ -117,6 +117,9 @@ pub struct CoachSettings {
     pub smoothing: TrendSmoothing,
     /// Plan with this expenditure instead of the adaptive estimate.
     pub fixed_expenditure_kcal: Option<f64>,
+    /// The user's own nutrient goals, by nutrient key, replacing the
+    /// standard ones.
+    pub nutrient_goals: BTreeMap<String, NutrientGoal>,
 }
 
 impl Data {
@@ -174,7 +177,7 @@ impl CoachSnapshot {
             prior_kcal,
             &ExpenditureConfig::default(),
         );
-        let settings = data.coach_settings;
+        let settings = &data.coach_settings;
         let trend = trend::ema_trend(&data.weigh_ins, settings.smoothing.alpha(), today);
 
         // A fixed expenditure replaces the estimate (and any check-in's) for targets.
@@ -452,7 +455,7 @@ impl AppState {
             program: self.program.read().clone(),
             check_ins: self.check_ins.read().clone(),
             manual_targets: *self.manual_targets.read(),
-            coach_settings: *self.coach_settings.read(),
+            coach_settings: self.coach_settings.read().clone(),
         }
     }
 
@@ -828,7 +831,7 @@ mod tests {
 
         data.coach_settings = CoachSettings {
             smoothing: TrendSmoothing::Faster,
-            fixed_expenditure_kcal: None,
+            ..Default::default()
         };
         let faster = CoachSnapshot::compute(&data, date());
         // The demo person is losing, so a faster trend sits lower.

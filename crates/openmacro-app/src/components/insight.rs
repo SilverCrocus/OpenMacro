@@ -876,7 +876,90 @@ pub fn user_goals(
     coach: &CoachSnapshot,
 ) -> BTreeMap<Nutrient, openmacro_core::nutrients::NutrientGoal> {
     let stats = state.profile.read().stats;
-    standard_goals(stats.sex, stats.age_years, coach.average_target.kcal)
+    let mut goals = standard_goals(stats.sex, stats.age_years, coach.average_target.kcal);
+    for (key, goal) in &state.coach_settings.read().nutrient_goals {
+        if let Some(n) = Nutrient::from_key(key) {
+            goals.insert(n, *goal);
+        }
+    }
+    goals
+}
+
+/// Edits one nutrient's floor, target and ceiling, or resets it to standard.
+#[component]
+fn NutrientGoalEditor(
+    nutrient: Nutrient,
+    goal: openmacro_core::nutrients::NutrientGoal,
+) -> Element {
+    let mut state = use_context::<AppState>();
+    let custom = state
+        .coach_settings
+        .read()
+        .nutrient_goals
+        .contains_key(nutrient.key());
+    let mut draft = use_signal(|| goal);
+    let mut error = use_signal(|| None::<&'static str>);
+    let unit = nutrient.unit().symbol();
+    let field =
+        |label: &'static str,
+         value: Option<f64>,
+         set: fn(&mut openmacro_core::nutrients::NutrientGoal, Option<f64>)| {
+            rsx! {
+                label { class: "field",
+                    span { "{label} ({unit})" }
+                    input {
+                        r#type: "text",
+                        "inputmode": "decimal",
+                        placeholder: "none",
+                        initial_value: value.map(amount).unwrap_or_default(),
+                        oninput: move |e| {
+                            let text = e.value().trim().replace(',', ".");
+                            let parsed = if text.is_empty() { Some(None) } else { text.parse::<f64>().ok().filter(|v| *v >= 0.0).map(Some) };
+                            match parsed {
+                                Some(v) => {
+                                    set(&mut draft.write(), v);
+                                    error.set(None);
+                                }
+                                None => error.set(Some("Enter a number, or leave it empty.")),
+                            }
+                        },
+                    }
+                }
+            }
+        };
+
+    rsx! {
+        div { class: "goal-editor",
+            div { class: "field-grid three",
+                {field("Floor", goal.floor, |g, v| g.floor = v)}
+                {field("Target", goal.target, |g, v| g.target = v)}
+                {field("Ceiling", goal.ceiling, |g, v| g.ceiling = v)}
+            }
+            if let Some(message) = error() {
+                p { class: "error", "{message}" }
+            } else if !draft().is_valid() {
+                p { class: "error", "The floor, target and ceiling need to be in order." }
+            }
+            div { class: "button-row",
+                button {
+                    class: "primary",
+                    disabled: error().is_some() || !draft().is_valid(),
+                    onclick: move |_| {
+                        state.coach_settings.write().nutrient_goals.insert(nutrient.key().to_string(), draft());
+                    },
+                    "Save target"
+                }
+                if custom {
+                    button {
+                        onclick: move |_| {
+                            state.coach_settings.write().nutrient_goals.remove(nutrient.key());
+                        },
+                        "Reset to standard"
+                    }
+                }
+            }
+        }
+    }
 }
 
 #[component]
@@ -980,6 +1063,7 @@ fn NutrientsInsight(range: Range) -> Element {
                                         }
                                     }
                                     if is_open {
+                                        NutrientGoalEditor { key: "{n.key()}-{row.goal.target:?}-{row.goal.ceiling:?}", nutrient: n, goal: row.goal }
                                         if let Some(list) = &sources {
                                             ul { class: "nutrient-sources",
                                                 if list.is_empty() {

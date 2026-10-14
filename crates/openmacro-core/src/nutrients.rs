@@ -257,6 +257,7 @@ impl<'a> std::iter::Sum<&'a NutrientProfile> for NutrientProfile {
 
 /// Floor / target / ceiling for one nutrient. Any bound may be absent.
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct NutrientGoal {
     pub floor: Option<f64>,
     pub target: Option<f64>,

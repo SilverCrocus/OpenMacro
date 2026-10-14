@@ -71,7 +71,7 @@ fn App() -> Element {
 
     // Save the estimate settings whenever they change.
     use_effect(move || {
-        let settings = *state.coach_settings.read();
+        let settings = state.coach_settings.read().clone();
         state.persist.peek().save_coach_settings(&settings);
     });
 
