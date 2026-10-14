@@ -9,3 +9,10 @@ rust-version.workspace = true
 
 [dependencies]
 chrono.workspace = true
+serde = { workspace = true, optional = true }
+
+[features]
+serde = ["dep:serde", "chrono/serde"]
+
+[dev-dependencies]
+serde_json.workspace = true

@@ -10,6 +10,7 @@ use std::collections::BTreeMap;
 use chrono::NaiveDate;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct WeighIn {
     pub date: NaiveDate,
     pub kg: f64,

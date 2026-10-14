@@ -11,6 +11,7 @@ use crate::KCAL_PER_KG_BODY_MASS;
 use crate::nutrients::{KCAL_PER_G_CARBS, KCAL_PER_G_FAT, KCAL_PER_G_PROTEIN};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum CalorieFloor {
     /// Never recommend below 1200 kcal.
     #[default]
@@ -64,6 +65,7 @@ pub fn average_daily_target(
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum WeeklyDistribution {
     #[default]
     Even,
@@ -111,6 +113,7 @@ pub fn weekly_calories(
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ProteinPreference {
     Low,
     #[default]
@@ -132,6 +135,7 @@ impl ProteinPreference {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum DietType {
     #[default]
     Balanced,
@@ -186,6 +190,7 @@ fn carbs_fixed(carbs_kcal: f64, remaining: f64) -> (f64, f64) {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct CoachedProgram {
     pub diet: DietType,
     pub protein: ProteinPreference,

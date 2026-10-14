@@ -1,0 +1,513 @@
+//! SQLite persistence for the user's own data: food log, weigh-ins, day
+//! status and settings (profile, goal, program).
+//!
+//! Every user row carries `updated_at`, and food log entries and weigh-ins are
+//! soft-deleted (`deleted_at`), so an optional sync server can merge per row
+//! later without a schema change. The schema version lives in SQLite's
+//! `user_version` pragma.
+
+use std::collections::BTreeMap;
+use std::path::Path;
+
+use chrono::{NaiveDate, Utc};
+use openmacro_core::expenditure::DayStatus;
+use openmacro_core::log::LogEntry;
+use openmacro_core::nutrients::NutrientProfile;
+use openmacro_core::trend::WeighIn;
+use rusqlite::{Connection, OptionalExtension, params};
+use serde::Serialize;
+use serde::de::DeserializeOwned;
+
+pub use rusqlite::Error as SqliteError;
+
+#[derive(Debug)]
+pub enum Error {
+    Sqlite(rusqlite::Error),
+    Json(serde_json::Error),
+    /// A stored value that doesn't parse, e.g. a malformed date.
+    Corrupt(String),
+}
+
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Error::Sqlite(e) => write!(f, "database error: {e}"),
+            Error::Json(e) => write!(f, "stored JSON is invalid: {e}"),
+            Error::Corrupt(what) => write!(f, "stored data is invalid: {what}"),
+        }
+    }
+}
+
+impl std::error::Error for Error {}
+
+impl From<rusqlite::Error> for Error {
+    fn from(e: rusqlite::Error) -> Self {
+        Error::Sqlite(e)
+    }
+}
+
+impl From<serde_json::Error> for Error {
+    fn from(e: serde_json::Error) -> Self {
+        Error::Json(e)
+    }
+}
+
+pub type Result<T> = std::result::Result<T, Error>;
+
+/// Ordered schema migrations; index + 1 is the version each one produces.
+const MIGRATIONS: &[&str] = &["
+    CREATE TABLE log_entry (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT NOT NULL,
+        hour INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        amount TEXT NOT NULL,
+        nutrients TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        deleted_at TEXT
+    );
+    CREATE INDEX log_entry_date ON log_entry (date) WHERE deleted_at IS NULL;
+
+    CREATE TABLE weigh_in (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT NOT NULL,
+        kg REAL NOT NULL,
+        updated_at TEXT NOT NULL,
+        deleted_at TEXT
+    );
+
+    CREATE TABLE day_status (
+        date TEXT PRIMARY KEY,
+        status TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+    );
+
+    CREATE TABLE setting (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+    );
+"];
+
+pub struct Store {
+    conn: Connection,
+}
+
+fn now() -> String {
+    Utc::now().to_rfc3339()
+}
+
+fn parse_date(text: &str) -> Result<NaiveDate> {
+    text.parse()
+        .map_err(|_| Error::Corrupt(format!("date {text:?}")))
+}
+
+fn status_name(status: DayStatus) -> &'static str {
+    match status {
+        DayStatus::Normal => "normal",
+        DayStatus::Fasted => "fasted",
+        DayStatus::Partial => "partial",
+    }
+}
+
+fn parse_status(text: &str) -> Result<DayStatus> {
+    match text {
+        "normal" => Ok(DayStatus::Normal),
+        "fasted" => Ok(DayStatus::Fasted),
+        "partial" => Ok(DayStatus::Partial),
+        other => Err(Error::Corrupt(format!("day status {other:?}"))),
+    }
+}
+
+impl Store {
+    /// Opens (creating if needed) the database at `path` and migrates it.
+    pub fn open(path: &Path) -> Result<Self> {
+        Self::init(Connection::open(path)?)
+    }
+
+    pub fn open_in_memory() -> Result<Self> {
+        Self::init(Connection::open_in_memory()?)
+    }
+
+    fn init(conn: Connection) -> Result<Self> {
+        conn.pragma_update(None, "journal_mode", "WAL")?;
+        conn.pragma_update(None, "foreign_keys", true)?;
+        let mut store = Self { conn };
+        store.migrate()?;
+        Ok(store)
+    }
+
+    pub fn schema_version(&self) -> Result<usize> {
+        let v: i64 = self
+            .conn
+            .pragma_query_value(None, "user_version", |r| r.get(0))?;
+        Ok(v as usize)
+    }
+
+    fn migrate(&mut self) -> Result<()> {
+        let current = self.schema_version()?;
+        for (i, sql) in MIGRATIONS.iter().enumerate().skip(current) {
+            let tx = self.conn.transaction()?;
+            tx.execute_batch(sql)?;
+            tx.pragma_update(None, "user_version", (i + 1) as i64)?;
+            tx.commit()?;
+        }
+        Ok(())
+    }
+
+    /// True if the user has never saved anything.
+    pub fn is_empty(&self) -> Result<bool> {
+        let rows: i64 = self.conn.query_row(
+            "SELECT (SELECT COUNT(*) FROM log_entry) + (SELECT COUNT(*) FROM weigh_in)
+                  + (SELECT COUNT(*) FROM setting)",
+            [],
+            |r| r.get(0),
+        )?;
+        Ok(rows == 0)
+    }
+
+    /// Inserts an entry and returns its new id (the entry's own `id` is ignored).
+    pub fn insert_log_entry(&self, entry: &LogEntry) -> Result<i64> {
+        self.conn.execute(
+            "INSERT INTO log_entry (date, hour, name, amount, nutrients, updated_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+            params![
+                entry.date.to_string(),
+                entry.hour,
+                entry.name,
+                entry.amount,
+                serde_json::to_string(&entry.nutrients)?,
+                now()
+            ],
+        )?;
+        Ok(self.conn.last_insert_rowid())
+    }
+
+    pub fn delete_log_entry(&self, id: i64) -> Result<()> {
+        let at = now();
+        self.conn.execute(
+            "UPDATE log_entry SET deleted_at = ?1, updated_at = ?1 WHERE id = ?2",
+            params![at, id],
+        )?;
+        Ok(())
+    }
+
+    /// Every live entry, oldest first.
+    pub fn log_entries(&self) -> Result<Vec<LogEntry>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT id, date, hour, name, amount, nutrients FROM log_entry
+             WHERE deleted_at IS NULL ORDER BY date, hour, id",
+        )?;
+        let rows = stmt.query_map([], |r| {
+            Ok((
+                r.get::<_, i64>(0)?,
+                r.get::<_, String>(1)?,
+                r.get::<_, u32>(2)?,
+                r.get::<_, String>(3)?,
+                r.get::<_, String>(4)?,
+                r.get::<_, String>(5)?,
+            ))
+        })?;
+        rows.map(|row| {
+            let (id, date, hour, name, amount, nutrients) = row?;
+            Ok(LogEntry {
+                id,
+                date: parse_date(&date)?,
+                hour,
+                name,
+                amount,
+                nutrients: serde_json::from_str::<NutrientProfile>(&nutrients)?,
+            })
+        })
+        .collect()
+    }
+
+    pub fn insert_weigh_in(&self, weigh_in: &WeighIn) -> Result<i64> {
+        self.conn.execute(
+            "INSERT INTO weigh_in (date, kg, updated_at) VALUES (?1, ?2, ?3)",
+            params![weigh_in.date.to_string(), weigh_in.kg, now()],
+        )?;
+        Ok(self.conn.last_insert_rowid())
+    }
+
+    pub fn weigh_ins(&self) -> Result<Vec<WeighIn>> {
+        let mut stmt = self
+            .conn
+            .prepare("SELECT date, kg FROM weigh_in WHERE deleted_at IS NULL ORDER BY date, id")?;
+        let rows = stmt.query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, f64>(1)?)))?;
+        rows.map(|row| {
+            let (date, kg) = row?;
+            Ok(WeighIn {
+                date: parse_date(&date)?,
+                kg,
+            })
+        })
+        .collect()
+    }
+
+    /// Records a day's status; `Normal` removes any override.
+    pub fn set_day_status(&self, date: NaiveDate, status: DayStatus) -> Result<()> {
+        if status == DayStatus::Normal {
+            self.conn.execute(
+                "DELETE FROM day_status WHERE date = ?1",
+                params![date.to_string()],
+            )?;
+        } else {
+            self.conn.execute(
+                "INSERT INTO day_status (date, status, updated_at) VALUES (?1, ?2, ?3)
+                 ON CONFLICT (date) DO UPDATE SET status = excluded.status, updated_at = excluded.updated_at",
+                params![date.to_string(), status_name(status), now()],
+            )?;
+        }
+        Ok(())
+    }
+
+    pub fn day_statuses(&self) -> Result<BTreeMap<NaiveDate, DayStatus>> {
+        let mut stmt = self.conn.prepare("SELECT date, status FROM day_status")?;
+        let rows = stmt.query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)))?;
+        rows.map(|row| {
+            let (date, status) = row?;
+            Ok((parse_date(&date)?, parse_status(&status)?))
+        })
+        .collect()
+    }
+
+    pub fn set_setting<T: Serialize>(&self, key: &str, value: &T) -> Result<()> {
+        self.conn.execute(
+            "INSERT INTO setting (key, value, updated_at) VALUES (?1, ?2, ?3)
+             ON CONFLICT (key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at",
+            params![key, serde_json::to_string(value)?, now()],
+        )?;
+        Ok(())
+    }
+
+    pub fn setting<T: DeserializeOwned>(&self, key: &str) -> Result<Option<T>> {
+        let json: Option<String> = self
+            .conn
+            .query_row(
+                "SELECT value FROM setting WHERE key = ?1",
+                params![key],
+                |r| r.get(0),
+            )
+            .optional()?;
+        Ok(json.map(|j| serde_json::from_str(&j)).transpose()?)
+    }
+
+    /// Replaces the whole food log, weigh-ins and day statuses in one
+    /// transaction (used for loading demo data or clearing everything).
+    /// Returns the log with its new ids.
+    pub fn replace_history(
+        &mut self,
+        log: &[LogEntry],
+        weigh_ins: &[WeighIn],
+        statuses: &BTreeMap<NaiveDate, DayStatus>,
+    ) -> Result<Vec<LogEntry>> {
+        let tx = self.conn.transaction()?;
+        tx.execute_batch("DELETE FROM log_entry; DELETE FROM weigh_in; DELETE FROM day_status;")?;
+        let at = now();
+        let mut stored = Vec::with_capacity(log.len());
+        {
+            let mut insert_entry = tx.prepare(
+                "INSERT INTO log_entry (date, hour, name, amount, nutrients, updated_at)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+            )?;
+            for entry in log {
+                insert_entry.execute(params![
+                    entry.date.to_string(),
+                    entry.hour,
+                    entry.name,
+                    entry.amount,
+                    serde_json::to_string(&entry.nutrients)?,
+                    at
+                ])?;
+                stored.push(LogEntry {
+                    id: tx.last_insert_rowid(),
+                    ..entry.clone()
+                });
+            }
+            let mut insert_weight =
+                tx.prepare("INSERT INTO weigh_in (date, kg, updated_at) VALUES (?1, ?2, ?3)")?;
+            for w in weigh_ins {
+                insert_weight.execute(params![w.date.to_string(), w.kg, at])?;
+            }
+            let mut insert_status = tx
+                .prepare("INSERT INTO day_status (date, status, updated_at) VALUES (?1, ?2, ?3)")?;
+            for (date, status) in statuses {
+                if *status != DayStatus::Normal {
+                    insert_status.execute(params![date.to_string(), status_name(*status), at])?;
+                }
+            }
+        }
+        tx.commit()?;
+        Ok(stored)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use openmacro_core::log::Goal;
+    use openmacro_core::nutrients::Nutrient;
+
+    fn date(day: u32) -> NaiveDate {
+        NaiveDate::from_ymd_opt(2026, 10, day).unwrap()
+    }
+
+    fn entry(day: u32, hour: u32, kcal: f64) -> LogEntry {
+        LogEntry {
+            id: 0,
+            date: date(day),
+            hour,
+            name: "Greek yogurt".into(),
+            amount: "1 container (170 g)".into(),
+            nutrients: NutrientProfile::from_macros(kcal, 17.3, 0.7, 6.1)
+                .with(Nutrient::Calcium, 189.0),
+        }
+    }
+
+    #[test]
+    fn fresh_database_is_migrated_and_empty() {
+        let store = Store::open_in_memory().unwrap();
+        assert_eq!(store.schema_version().unwrap(), MIGRATIONS.len());
+        assert!(store.is_empty().unwrap());
+    }
+
+    #[test]
+    fn reopening_keeps_data_and_does_not_remigrate() {
+        let dir = std::env::temp_dir().join(format!("openmacro-store-test-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("user.db");
+        {
+            let store = Store::open(&path).unwrap();
+            store.insert_log_entry(&entry(14, 8, 100.0)).unwrap();
+        }
+        let store = Store::open(&path).unwrap();
+        assert_eq!(store.log_entries().unwrap().len(), 1);
+        assert_eq!(store.schema_version().unwrap(), MIGRATIONS.len());
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn log_entries_round_trip_and_soft_delete() {
+        let store = Store::open_in_memory().unwrap();
+        let a = store.insert_log_entry(&entry(14, 8, 100.0)).unwrap();
+        let b = store.insert_log_entry(&entry(14, 12, 250.0)).unwrap();
+        assert_ne!(a, b);
+
+        let entries = store.log_entries().unwrap();
+        assert_eq!(entries.len(), 2);
+        assert_eq!(
+            entries[0],
+            LogEntry {
+                id: a,
+                ..entry(14, 8, 100.0)
+            }
+        );
+
+        store.delete_log_entry(a).unwrap();
+        let entries = store.log_entries().unwrap();
+        assert_eq!(entries.iter().map(|e| e.id).collect::<Vec<_>>(), [b]);
+        // Soft delete keeps the row for future sync.
+        let rows: i64 = store
+            .conn
+            .query_row("SELECT COUNT(*) FROM log_entry", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(rows, 2);
+    }
+
+    #[test]
+    fn weigh_ins_and_day_status() {
+        let store = Store::open_in_memory().unwrap();
+        store
+            .insert_weigh_in(&WeighIn {
+                date: date(13),
+                kg: 70.4,
+            })
+            .unwrap();
+        store
+            .insert_weigh_in(&WeighIn {
+                date: date(14),
+                kg: 70.1,
+            })
+            .unwrap();
+        assert_eq!(
+            store.weigh_ins().unwrap()[1],
+            WeighIn {
+                date: date(14),
+                kg: 70.1
+            }
+        );
+
+        store.set_day_status(date(13), DayStatus::Fasted).unwrap();
+        store.set_day_status(date(13), DayStatus::Partial).unwrap();
+        store.set_day_status(date(14), DayStatus::Fasted).unwrap();
+        store.set_day_status(date(14), DayStatus::Normal).unwrap();
+        let statuses = store.day_statuses().unwrap();
+        assert_eq!(statuses.len(), 1);
+        assert_eq!(statuses[&date(13)], DayStatus::Partial);
+    }
+
+    #[test]
+    fn settings_round_trip() {
+        let store = Store::open_in_memory().unwrap();
+        assert_eq!(store.setting::<Goal>("goal").unwrap(), None);
+        let goal = Goal {
+            goal_weight_kg: 68.0,
+            rate_pct_per_week: -0.5,
+        };
+        store.set_setting("goal", &goal).unwrap();
+        store
+            .set_setting(
+                "goal",
+                &Goal {
+                    rate_pct_per_week: -0.25,
+                    ..goal
+                },
+            )
+            .unwrap();
+        assert_eq!(
+            store
+                .setting::<Goal>("goal")
+                .unwrap()
+                .unwrap()
+                .rate_pct_per_week,
+            -0.25
+        );
+        assert!(!store.is_empty().unwrap());
+    }
+
+    #[test]
+    fn replace_history_swaps_everything_atomically() {
+        let mut store = Store::open_in_memory().unwrap();
+        store.insert_log_entry(&entry(1, 8, 1.0)).unwrap();
+        store
+            .insert_weigh_in(&WeighIn {
+                date: date(1),
+                kg: 80.0,
+            })
+            .unwrap();
+
+        let statuses = BTreeMap::from([(date(14), DayStatus::Fasted)]);
+        let stored = store
+            .replace_history(
+                &[entry(14, 8, 100.0), entry(14, 9, 50.0)],
+                &[WeighIn {
+                    date: date(14),
+                    kg: 70.0,
+                }],
+                &statuses,
+            )
+            .unwrap();
+
+        assert_eq!(stored.len(), 2);
+        assert_eq!(store.log_entries().unwrap(), stored);
+        assert_eq!(
+            store.weigh_ins().unwrap(),
+            [WeighIn {
+                date: date(14),
+                kg: 70.0
+            }]
+        );
+        assert_eq!(store.day_statuses().unwrap(), statuses);
+    }
+}

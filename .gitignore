@@ -16,3 +16,7 @@ research/private/
 
 # Local Claude Code config
 .claude/
+
+# Downloaded food datasets and generated databases
+data/raw/
+data/*.db

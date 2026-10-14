@@ -28,6 +28,7 @@ use chrono::{Duration, NaiveDate};
 use crate::KCAL_PER_KG_BODY_MASS;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum DayStatus {
     /// Use the logged intake if any; a day with nothing logged is ignored.
     #[default]

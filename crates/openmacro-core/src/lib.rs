@@ -7,6 +7,7 @@
 //! Module overview:
 //! - [`nutrients`]: the tracked nutrient set and per-amount nutrient profiles.
 //! - [`food`]: foods, servings and quantity parsing.
+//! - [`log`]: logged food entries, profile and goal.
 //! - [`bmr`]: BMR equations and the initial expenditure estimate.
 //! - [`trend`]: smoothed trend weight from noisy scale weigh-ins.
 //! - [`expenditure`]: adaptive daily energy expenditure from intake and weight change.
@@ -15,6 +16,7 @@
 pub mod bmr;
 pub mod expenditure;
 pub mod food;
+pub mod log;
 pub mod nutrients;
 pub mod targets;
 pub mod trend;

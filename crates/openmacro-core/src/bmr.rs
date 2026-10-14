@@ -4,12 +4,14 @@
 //! enough intake and weight data, [`crate::expenditure`] takes over.
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Sex {
     Male,
     Female,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BodyStats {
     pub sex: Sex,
     pub age_years: f64,
@@ -28,6 +30,7 @@ impl BodyStats {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum BmrEquation {
     /// Mifflin-St Jeor (1990). Needs no body-fat estimate.
     #[default]
@@ -58,6 +61,7 @@ pub fn bmr(equation: BmrEquation, stats: &BodyStats) -> Option<f64> {
 
 /// Day-to-day activity outside planned exercise, combined with training volume.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ActivityLevel {
     /// Desk job, little walking, no exercise.
     Sedentary,

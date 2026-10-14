@@ -1,0 +1,15 @@
+[package]
+name = "openmacro-store"
+version = "0.1.0"
+description = "SQLite persistence for OpenMacro user data"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+openmacro-core = { path = "../openmacro-core", features = ["serde"] }
+chrono = { workspace = true, features = ["clock"] }
+rusqlite.workspace = true
+serde.workspace = true
+serde_json.workspace = true

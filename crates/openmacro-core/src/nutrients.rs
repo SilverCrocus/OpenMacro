@@ -39,6 +39,11 @@ macro_rules! nutrients {
     ($($variant:ident => ($name:literal, $unit:ident, $group:ident)),+ $(,)?) => {
         /// A nutrient tracked by OpenMacro.
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+        #[cfg_attr(
+            feature = "serde",
+            derive(serde::Serialize, serde::Deserialize),
+            serde(rename_all = "snake_case")
+        )]
         pub enum Nutrient {
             $($variant),+
         }
@@ -144,6 +149,11 @@ pub const KCAL_PER_G_ALCOHOL: f64 = 7.0;
 /// Missing nutrients are "unknown", which is distinct from zero: food databases
 /// are often incomplete, and the UI should be able to show that.
 #[derive(Debug, Clone, Default, PartialEq)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(transparent)
+)]
 pub struct NutrientProfile {
     amounts: BTreeMap<Nutrient, f64>,
 }
