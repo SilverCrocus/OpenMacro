@@ -214,6 +214,22 @@ mod native {
             )?
         }
 
+        /// Everything saved, for a backup.
+        pub fn snapshot(&self) -> Option<openmacro_store::Snapshot> {
+            report("read data for a backup", self.store.as_ref()?.snapshot())
+        }
+
+        /// Replaces everything with a backup's contents.
+        pub fn restore(&mut self, snapshot: &openmacro_store::Snapshot) -> Result<(), String> {
+            let store = self
+                .store
+                .as_mut()
+                .ok_or("There's no database on this device to restore into.")?;
+            store
+                .restore(snapshot)
+                .map_err(|e| format!("Couldn't restore the backup: {e}"))
+        }
+
         /// Replaces all history; returns the log with the ids it was saved under.
         pub fn replace_history(&mut self, data: &Data) -> Option<Vec<LogEntry>> {
             report(

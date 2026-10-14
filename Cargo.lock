@@ -3700,6 +3700,7 @@ dependencies = [
  "openmacro-foods",
  "openmacro-store",
  "rxing",
+ "serde",
  "serde_json",
  "tokio",
 ]

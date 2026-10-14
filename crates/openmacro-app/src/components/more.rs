@@ -170,6 +170,7 @@ pub fn More() -> Element {
                     button { onclick: move |_| confirm_clear.set(true), "Clear all data" }
                 }
             }
+            BackupData {}
             ExportData {}
         }
         section { class: "card",
@@ -180,6 +181,130 @@ pub fn More() -> Element {
             }
             a { href: "https://github.com/SilverCrocus/OpenMacro", target: "_blank", "github.com/SilverCrocus/OpenMacro" }
         }
+    }
+}
+
+/// Asks for a file and returns its text, or null if none was picked. The
+/// input lives outside the Dioxus tree: Dioxus intercepts clicks on its own
+/// file inputs to open a desktop dialog, which Android doesn't have, while
+/// a plain input gets the WebView's file chooser.
+#[cfg(not(target_arch = "wasm32"))]
+const PICK_BACKUP_JS: &str = "
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    const text = await new Promise((resolve) => {
+        input.addEventListener('change', async () => {
+            const file = input.files[0];
+            resolve(file ? await file.text() : null);
+        }, { once: true });
+        input.addEventListener('cancel', () => resolve(null), { once: true });
+        input.click();
+    });
+    input.remove();
+    return text;
+";
+
+/// Saving everything to one backup file, and restoring from one.
+#[cfg(not(target_arch = "wasm32"))]
+#[component]
+fn BackupData() -> Element {
+    use crate::backup::BackupFile;
+
+    let mut state = use_context::<AppState>();
+    let mut busy = use_signal(|| false);
+    let mut outcome = use_signal(|| None::<Result<String, String>>);
+    let mut pending = use_signal(|| None::<BackupFile>);
+    let pending_summary = pending.read().as_ref().map(BackupFile::summary);
+
+    rsx! {
+        h3 { class: "section-title", "Backup" }
+        p { class: "muted small",
+            "Save everything to one file: food log, weigh-ins, check-ins, your foods and recipes, favorites and settings. Keep it somewhere safe, such as Google Drive, to restore on a new phone."
+        }
+        div { class: "button-row",
+            button {
+                disabled: busy(),
+                onclick: move |_| {
+                    busy.set(true);
+                    outcome.set(None);
+                    let snapshot = state.persist.read().snapshot();
+                    spawn(async move {
+                        let result = match snapshot {
+                            Some(data) => {
+                                let file = BackupFile::new(data, chrono::Utc::now());
+                                export::save(vec![export::ExportFile {
+                                    name: file.file_name(),
+                                    mime: "application/json",
+                                    contents: file.to_json(),
+                                }])
+                                .await
+                            }
+                            None => Err("Couldn't read your data.".into()),
+                        };
+                        outcome.set(Some(result));
+                        busy.set(false);
+                    });
+                },
+                "Save backup"
+            }
+            button {
+                onclick: move |_| {
+                    outcome.set(None);
+                    spawn(async move {
+                        let text = document::eval(PICK_BACKUP_JS).await;
+                        if let Ok(serde_json::Value::String(text)) = text {
+                            match BackupFile::parse(&text) {
+                                Ok(backup) => pending.set(Some(backup)),
+                                Err(message) => outcome.set(Some(Err(message))),
+                            }
+                        }
+                    });
+                },
+                "Restore from file"
+            }
+        }
+        if let Some(summary) = pending_summary {
+            div { class: "restore-confirm",
+                p { "{summary}" }
+                p { class: "error", "Restoring replaces everything on this device with the backup. This can't be undone." }
+                div { class: "button-row",
+                    button { onclick: move |_| pending.set(None), "Cancel" }
+                    button {
+                        class: "danger",
+                        onclick: move |_| {
+                            let Some(backup) = pending.take() else { return };
+                            let result = state.persist.write().restore(&backup.data);
+                            if result.is_ok() {
+                                state.reload();
+                            }
+                            outcome.set(Some(result.map(|_| "Backup restored.".to_string())));
+                        },
+                        "Replace everything"
+                    }
+                }
+            }
+        }
+        match outcome() {
+            Some(Ok(message)) => rsx! {
+                p { class: "muted small", "{message}" }
+            },
+            Some(Err(message)) => rsx! {
+                p { class: "error", "{message}" }
+            },
+            None => rsx! {},
+        }
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[component]
+fn BackupData() -> Element {
+    rsx! {
+        h3 { class: "section-title", "Backup" }
+        p { class: "muted small", "Backups are available in the Android app." }
     }
 }
 

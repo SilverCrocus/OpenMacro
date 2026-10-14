@@ -25,6 +25,7 @@ pub const FOLDER: &str = "OpenMacro";
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExportFile {
     pub name: String,
+    pub mime: &'static str,
     pub contents: String,
 }
 
@@ -32,6 +33,7 @@ pub struct ExportFile {
 pub fn files(data: &Data, coach: &CoachSnapshot, today: NaiveDate) -> Vec<ExportFile> {
     let file = |kind: &str, contents: String| ExportFile {
         name: format!("openmacro-{kind}-{today}.csv"),
+        mime: "text/csv",
         contents,
     };
     vec![
@@ -225,6 +227,14 @@ fn daily(data: &Data, coach: &CoachSnapshot, today: NaiveDate) -> String {
     csv.0
 }
 
+fn count(files: usize) -> String {
+    if files == 1 {
+        "1 file".into()
+    } else {
+        format!("{files} files")
+    }
+}
+
 /// Saves the files and says where they went.
 pub async fn save(files: Vec<ExportFile>) -> Result<String, String> {
     platform::save(files).await
@@ -241,15 +251,15 @@ mod platform {
         for file in &files {
             crate::android::save_to_downloads(
                 &file.name,
-                "text/csv",
+                file.mime,
                 FOLDER,
                 file.contents.as_bytes(),
             )
             .ok_or_else(|| format!("Couldn't save {}.", file.name))?;
         }
         Ok(format!(
-            "Saved {} files to Downloads/{FOLDER}.",
-            files.len()
+            "Saved {} to Downloads/{FOLDER}.",
+            super::count(files.len())
         ))
     }
 }
@@ -261,16 +271,16 @@ mod platform {
     use super::ExportFile;
 
     pub async fn save(files: Vec<ExportFile>) -> Result<String, String> {
-        let pairs: Vec<(&str, &str)> = files
+        let files_json: Vec<(&str, &str, &str)> = files
             .iter()
-            .map(|f| (f.name.as_str(), f.contents.as_str()))
+            .map(|f| (f.name.as_str(), f.mime, f.contents.as_str()))
             .collect();
-        let json = serde_json::to_string(&pairs).map_err(|e| e.to_string())?;
+        let json = serde_json::to_string(&files_json).map_err(|e| e.to_string())?;
         // The script must return a value for the eval to complete.
         document::eval(&format!(
-            "for (const [name, contents] of {json}) {{
+            "for (const [name, type, contents] of {json}) {{
                  const a = document.createElement('a');
-                 a.href = URL.createObjectURL(new Blob([contents], {{ type: 'text/csv' }}));
+                 a.href = URL.createObjectURL(new Blob([contents], {{ type }}));
                  a.download = name;
                  a.click();
                  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -279,7 +289,7 @@ mod platform {
         ))
         .await
         .map_err(|e| format!("Couldn't download the files: {e}"))?;
-        Ok(format!("Downloaded {} files.", files.len()))
+        Ok(format!("Downloaded {}.", super::count(files.len())))
     }
 }
 
@@ -299,7 +309,11 @@ mod platform {
             std::fs::write(&path, &file.contents)
                 .map_err(|e| format!("Couldn't write {}: {e}", path.display()))?;
         }
-        Ok(format!("Saved {} files to {}.", files.len(), dir.display()))
+        Ok(format!(
+            "Saved {} to {}.",
+            super::count(files.len()),
+            dir.display()
+        ))
     }
 }
 

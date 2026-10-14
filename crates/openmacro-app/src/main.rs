@@ -1,6 +1,8 @@
 #[cfg(target_os = "android")]
 mod android;
 mod back;
+#[cfg(not(target_arch = "wasm32"))]
+mod backup;
 mod barcode;
 mod components;
 mod custom_food;

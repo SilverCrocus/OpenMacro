@@ -228,6 +228,35 @@ fn day_records(data: &Data, today: NaiveDate) -> Vec<DayRecord> {
         .collect()
 }
 
+/// Everything saved on the device, read in one go.
+struct Saved {
+    data: Data,
+    region: FoodRegion,
+    custom_foods: Vec<Food>,
+    favorites: Vec<Food>,
+    check_in_day: Weekday,
+}
+
+impl Saved {
+    fn read(persist: &Persistence) -> Self {
+        Self {
+            data: persist
+                .load()
+                .unwrap_or_else(|| Data::empty(default_profile())),
+            region: persist
+                .load_region()
+                .and_then(|code| FoodRegion::from_code(&code))
+                .unwrap_or_default(),
+            custom_foods: persist.custom_foods(),
+            favorites: persist.favorites(),
+            check_in_day: persist
+                .load_check_in_day()
+                .and_then(|day| day.parse().ok())
+                .unwrap_or(Weekday::Mon),
+        }
+    }
+}
+
 /// Reactive handles to the user's data, shared through context. Changes to
 /// the log, weigh-ins and day status are written through to the device
 /// immediately; profile, goal and program are saved by an effect in `App`.
@@ -265,19 +294,13 @@ impl AppState {
     /// Opens the device database and loads saved data; a first launch starts empty.
     pub fn load() -> Self {
         let persist = Persistence::open();
-        let data = persist
-            .load()
-            .unwrap_or_else(|| Data::empty(default_profile()));
-        let region = persist
-            .load_region()
-            .and_then(|code| FoodRegion::from_code(&code))
-            .unwrap_or_default();
-        let custom_foods = persist.custom_foods();
-        let favorites = persist.favorites();
-        let check_in_day = persist
-            .load_check_in_day()
-            .and_then(|day| day.parse().ok())
-            .unwrap_or(Weekday::Mon);
+        let Saved {
+            data,
+            region,
+            custom_foods,
+            favorites,
+            check_in_day,
+        } = Saved::read(&persist);
         Self {
             region: Signal::new(region),
             custom_foods: Signal::new(custom_foods),
@@ -296,6 +319,27 @@ impl AppState {
             selected_date: Signal::new(today()),
             persist: Signal::new(persist),
         }
+    }
+
+    /// Re-reads everything from the device, e.g. after restoring a backup.
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn reload(mut self) {
+        let saved = Saved::read(&self.persist.peek());
+        self.next_id.set(next_id_after(&saved.data.log));
+        self.log.set(saved.data.log);
+        self.weigh_ins.set(saved.data.weigh_ins);
+        self.day_status.set(saved.data.day_status);
+        self.profile.set(saved.data.profile);
+        self.goal.set(saved.data.goal);
+        self.program.set(saved.data.program);
+        self.check_ins.set(saved.data.check_ins);
+        self.region.set(saved.region);
+        self.custom_foods.set(saved.custom_foods);
+        self.favorites.set(saved.favorites);
+        self.check_in_day.set(saved.check_in_day);
+        self.check_in_open.set(false);
+        self.plate.set(Plate::closed(today()));
+        self.selected_date.set(today());
     }
 
     pub fn data(&self) -> Data {

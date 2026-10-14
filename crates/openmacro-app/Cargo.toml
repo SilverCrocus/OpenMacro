@@ -15,7 +15,7 @@ path = "src/main.rs"
 [dependencies]
 openmacro-core = { path = "../openmacro-core" }
 dioxus = { version = "0.7.10", features = ["router"] }
-chrono = { workspace = true, features = ["clock", "wasmbind"] }
+chrono = { workspace = true, features = ["clock", "wasmbind", "serde"] }
 serde_json.workspace = true
 rxing = { version = "0.9", default-features = false, features = ["oned", "decoders", "encoding_rs"] }
 base64 = "0.22"
@@ -26,6 +26,7 @@ rxing = { version = "0.9", default-features = false, features = ["oned", "decode
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 openmacro-store = { path = "../openmacro-store" }
 openmacro-foods = { path = "../openmacro-foods" }
+serde.workspace = true
 
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.21"

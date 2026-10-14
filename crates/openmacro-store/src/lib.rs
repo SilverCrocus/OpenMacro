@@ -18,8 +18,8 @@ use openmacro_core::nutrients::NutrientProfile;
 use openmacro_core::recipe::Recipe;
 use openmacro_core::trend::WeighIn;
 use rusqlite::{Connection, OptionalExtension, params};
-use serde::Serialize;
 use serde::de::DeserializeOwned;
+use serde::{Deserialize, Serialize};
 
 pub use rusqlite::Error as SqliteError;
 
@@ -56,6 +56,30 @@ impl From<serde_json::Error> for Error {
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
+
+/// One of the user's own foods with its stored id (which log entries and
+/// favorites refer to as `custom:<id>`), and its ingredients if a recipe.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SavedFood {
+    pub id: i64,
+    pub food: Food,
+    #[serde(default)]
+    pub recipe: Option<Recipe>,
+}
+
+/// Everything the user has saved, for backups. Settings are kept as raw
+/// JSON by key so a backup carries settings this version doesn't know.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Snapshot {
+    pub log: Vec<LogEntry>,
+    pub weigh_ins: Vec<WeighIn>,
+    pub day_status: BTreeMap<NaiveDate, DayStatus>,
+    pub check_ins: Vec<CheckIn>,
+    pub custom_foods: Vec<SavedFood>,
+    pub favorites: Vec<Food>,
+    pub settings: BTreeMap<String, serde_json::Value>,
+}
 
 /// Ordered schema migrations; index + 1 is the version each one produces.
 const MIGRATIONS: &[&str] = &[
@@ -527,6 +551,132 @@ impl Store {
         tx.commit()?;
         Ok(stored)
     }
+
+    /// Everything the user has saved.
+    pub fn snapshot(&self) -> Result<Snapshot> {
+        let custom_foods = self
+            .custom_foods()?
+            .into_iter()
+            .rev()
+            .map(|food| {
+                let id = food
+                    .id
+                    .strip_prefix("custom:")
+                    .and_then(|n| n.parse().ok())
+                    .ok_or_else(|| Error::Corrupt(format!("custom food id {:?}", food.id)))?;
+                Ok(SavedFood {
+                    id,
+                    recipe: self.recipe(id)?,
+                    food,
+                })
+            })
+            .collect::<Result<_>>()?;
+        let mut stmt = self.conn.prepare("SELECT key, value FROM setting")?;
+        let settings = stmt
+            .query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)))?
+            .map(|row| {
+                let (key, json) = row?;
+                Ok((key, serde_json::from_str(&json)?))
+            })
+            .collect::<Result<_>>()?;
+        Ok(Snapshot {
+            log: self.log_entries()?,
+            weigh_ins: self.weigh_ins()?,
+            day_status: self.day_statuses()?,
+            check_ins: self.check_ins()?,
+            custom_foods,
+            favorites: self.favorites()?.into_iter().rev().collect(),
+            settings,
+        })
+    }
+
+    /// Replaces everything with `snapshot`, in one transaction. Log entry
+    /// and custom food ids are kept, so references between them still work.
+    pub fn restore(&mut self, snapshot: &Snapshot) -> Result<()> {
+        let tx = self.conn.transaction()?;
+        tx.execute_batch(
+            "DELETE FROM log_entry; DELETE FROM weigh_in; DELETE FROM day_status;
+             DELETE FROM check_in; DELETE FROM custom_food; DELETE FROM favorite;
+             DELETE FROM setting;",
+        )?;
+        let at = now();
+        {
+            let mut insert_entry = tx.prepare(
+                "INSERT INTO log_entry (id, date, hour, name, amount, nutrients, food_id, updated_at)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+            )?;
+            for e in &snapshot.log {
+                insert_entry.execute(params![
+                    e.id,
+                    e.date.to_string(),
+                    e.hour,
+                    e.name,
+                    e.amount,
+                    serde_json::to_string(&e.nutrients)?,
+                    e.food_id,
+                    at
+                ])?;
+            }
+            let mut insert_weight =
+                tx.prepare("INSERT INTO weigh_in (date, kg, updated_at) VALUES (?1, ?2, ?3)")?;
+            for w in &snapshot.weigh_ins {
+                insert_weight.execute(params![w.date.to_string(), w.kg, at])?;
+            }
+            let mut insert_status = tx
+                .prepare("INSERT INTO day_status (date, status, updated_at) VALUES (?1, ?2, ?3)")?;
+            for (date, status) in &snapshot.day_status {
+                if *status != DayStatus::Normal {
+                    insert_status.execute(params![date.to_string(), status_name(*status), at])?;
+                }
+            }
+            let mut insert_check_in =
+                tx.prepare("INSERT INTO check_in (date, data, updated_at) VALUES (?1, ?2, ?3)")?;
+            for c in &snapshot.check_ins {
+                insert_check_in.execute(params![
+                    c.date.to_string(),
+                    serde_json::to_string(c)?,
+                    at
+                ])?;
+            }
+            let mut insert_food = tx.prepare(
+                "INSERT INTO custom_food (id, name, brand, barcode, nutrients, servings, recipe, updated_at)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+            )?;
+            for saved in &snapshot.custom_foods {
+                let f = &saved.food;
+                insert_food.execute(params![
+                    saved.id,
+                    f.name,
+                    f.brand,
+                    f.barcode,
+                    serde_json::to_string(&f.per_100g)?,
+                    serde_json::to_string(&f.servings)?,
+                    saved
+                        .recipe
+                        .as_ref()
+                        .map(serde_json::to_string)
+                        .transpose()?,
+                    at
+                ])?;
+            }
+            // Oldest first, so the most recent favorite stays first.
+            let mut insert_favorite = tx.prepare(
+                "INSERT INTO favorite (food_id, food, updated_at) VALUES (?1, ?2, ?3)
+                 ON CONFLICT (food_id) DO NOTHING",
+            )?;
+            for (i, food) in snapshot.favorites.iter().enumerate() {
+                let stamp = format!("{at}#{i:06}");
+                insert_favorite.execute(params![food.id, serde_json::to_string(food)?, stamp])?;
+            }
+            let mut insert_setting =
+                tx.prepare("INSERT INTO setting (key, value, updated_at) VALUES (?1, ?2, ?3)")?;
+            for (key, value) in &snapshot.settings {
+                insert_setting.execute(params![key, value.to_string(), at])?;
+            }
+        }
+        tx.commit()?;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -724,6 +874,83 @@ mod tests {
         assert_eq!(store.recipe(plain).unwrap(), None);
         store.delete_custom_food(id).unwrap();
         assert_eq!(store.recipe(id).unwrap(), None);
+    }
+
+    #[test]
+    fn snapshot_restores_into_a_fresh_store() {
+        use openmacro_core::recipe::Ingredient;
+        use openmacro_core::targets::MacroTargets;
+
+        let mut source = Store::open_in_memory().unwrap();
+        let first = source.insert_log_entry(&entry(12, 8, 400.0)).unwrap();
+        source.delete_log_entry(first).unwrap();
+        let soup = Recipe {
+            name: "Soup".into(),
+            servings: 3.0,
+            cooked_grams: Some(900.0),
+            ingredients: vec![Ingredient {
+                name: "Lentils".into(),
+                amount: "200 g".into(),
+                grams: Some(200.0),
+                nutrients: NutrientProfile::from_macros(700.0, 50.0, 2.0, 100.0),
+                food_id: None,
+            }],
+        };
+        let soup_id = source.insert_recipe(&soup).unwrap();
+        let mut logged = entry(13, 12, 233.0);
+        logged.food_id = Some(format!("custom:{soup_id}"));
+        source.insert_log_entry(&logged).unwrap();
+        source
+            .insert_weigh_in(&WeighIn {
+                date: date(13),
+                kg: 71.2,
+            })
+            .unwrap();
+        source.set_day_status(date(12), DayStatus::Fasted).unwrap();
+        source
+            .insert_check_in(&CheckIn {
+                date: date(13),
+                expenditure_kcal: 2300.0,
+                trend_kg: Some(71.0),
+                week: vec![MacroTargets {
+                    kcal: 1900.0,
+                    protein_g: 120.0,
+                    fat_g: 63.0,
+                    carbs_g: 212.0,
+                }],
+            })
+            .unwrap();
+        let soup_food = source.custom_foods().unwrap().remove(0);
+        source.set_favorite(&soup_food, true).unwrap();
+        source
+            .set_setting(
+                "goal",
+                &Goal {
+                    goal_weight_kg: 68.0,
+                    rate_pct_per_week: -0.5,
+                },
+            )
+            .unwrap();
+
+        let snapshot = source.snapshot().unwrap();
+        assert_eq!(snapshot.log.len(), 1);
+        assert_eq!(snapshot.custom_foods[0].recipe, Some(soup.clone()));
+
+        // Through JSON, as in a backup file, into a store with other data.
+        let json = serde_json::to_string(&snapshot).unwrap();
+        let mut target = Store::open_in_memory().unwrap();
+        target.insert_log_entry(&entry(1, 9, 999.0)).unwrap();
+        target
+            .restore(&serde_json::from_str(&json).unwrap())
+            .unwrap();
+        assert_eq!(target.snapshot().unwrap(), snapshot);
+        // The log still points at the recipe, under the same id.
+        let restored = target.log_entries().unwrap();
+        assert_eq!(restored[0].food_id, Some(format!("custom:{soup_id}")));
+        assert_eq!(target.recipe(soup_id).unwrap(), Some(soup));
+        // New rows don't collide with restored ids.
+        let next = target.insert_log_entry(&entry(14, 8, 100.0)).unwrap();
+        assert!(next > restored[0].id);
     }
 
     #[test]
