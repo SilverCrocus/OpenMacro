@@ -19,5 +19,7 @@ research/private/
 
 # Downloaded food datasets and generated databases
 data/raw/
+# Nutrition5k photos and model answers for food-photo-eval
+data/nutrition5k/
 data/*.db
 crates/openmacro-app/assets/foods.db

@@ -1,0 +1,28 @@
+[package]
+name = "openmacro-ai"
+version = "0.1.0"
+description = "OpenMacro AI food logging: asks a vision model what's in a photo and matches its answer to real foods"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+openmacro-core = { path = "../openmacro-core" }
+serde.workspace = true
+serde_json.workspace = true
+base64 = "0.22"
+openmacro-foods = { path = "../openmacro-foods", optional = true }
+ureq = { version = "3.4", features = ["json"], optional = true }
+csv = { version = "1.4", optional = true }
+
+[features]
+# Matching the model's foods to the food database (native builds only).
+foods = ["dep:openmacro-foods"]
+# The food-photo-eval tool, which calls the providers' APIs.
+eval = ["foods", "dep:ureq", "dep:csv"]
+
+[[bin]]
+name = "food-photo-eval"
+required-features = ["eval"]
