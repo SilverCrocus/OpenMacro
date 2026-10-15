@@ -211,7 +211,7 @@ impl ModelChoice {
 
 /// What the model is asked about a photo. The JSON shape is spelled out for
 /// providers that can't be given a schema. (The comparison in
-/// docs/AI_PHOTO_EVAL.md used this exact text.)
+/// docs/AI_PHOTO_EVAL.md used this text before the meal's name was added.)
 pub const PROMPT: &str = r#"Identify each food and drink in this photo and estimate how much of it there is.
 
 - Name each item generically, the way a nutrition database would, such as "chicken breast, roasted", "white rice, cooked" or "broccoli, steamed". Name a brand only if its packaging is visible.
@@ -220,10 +220,11 @@ pub const PROMPT: &str = r#"Identify each food and drink in this photo and estim
 - Estimate the weight in grams of the edible part as served: cooked weight for cooked foods, without bones, peel or packaging. Use the plate, cutlery and the foods' own sizes for scale.
 - Also estimate each item's energy (kcal), protein, fat and carbohydrate (grams) at that weight.
 - When unsure, give your best guess rather than leaving an item out.
+- Give the whole meal a short name, such as "chicken curry with rice".
 
 Reply with only JSON in this form:
-{"items": [{"name": "white rice, cooked", "grams": 150, "kcal": 195, "protein_g": 4, "fat_g": 0.4, "carbs_g": 43}]}
-If there is no food or drink in the photo, reply {"items": []}."#;
+{"meal": "chicken curry with rice", "items": [{"name": "white rice, cooked", "grams": 150, "kcal": 195, "protein_g": 4, "fat_g": 0.4, "carbs_g": 43}]}
+If there is no food or drink in the photo, reply {"meal": "", "items": []}."#;
 
 /// What the model is asked about a meal described in words, without a photo.
 pub const DESCRIPTION_PROMPT: &str = r#"Identify each food and drink in the meal described below and estimate how much of it there is.
@@ -234,10 +235,11 @@ pub const DESCRIPTION_PROMPT: &str = r#"Identify each food and drink in the meal
 - Estimate the weight in grams of the edible part as served: cooked weight for cooked foods, without bones, peel or packaging. Use the amounts given, or a typical portion when none is.
 - Also estimate each item's energy (kcal), protein, fat and carbohydrate (grams) at that weight.
 - When unsure, give your best guess rather than leaving an item out.
+- Give the whole meal a short name, such as "chicken curry with rice".
 
 Reply with only JSON in this form:
-{"items": [{"name": "white rice, cooked", "grams": 150, "kcal": 195, "protein_g": 4, "fat_g": 0.4, "carbs_g": 43}]}
-If no food or drink is described, reply {"items": []}."#;
+{"meal": "chicken curry with rice", "items": [{"name": "white rice, cooked", "grams": 150, "kcal": 195, "protein_g": 4, "fat_g": 0.4, "carbs_g": 43}]}
+If no food or drink is described, reply {"meal": "", "items": []}."#;
 
 /// The prompt for a photo (with the user's note, if any) or, without a
 /// photo, for the user's description.
@@ -248,6 +250,26 @@ pub fn prompt(photo: bool, note: Option<&str>) -> String {
         (true, None) => PROMPT.to_string(),
         (false, note) => format!("{DESCRIPTION_PROMPT}\n\nThe meal: {}", note.unwrap_or("")),
     }
+}
+
+/// The note for asking again after the person corrected the model's
+/// answer: their original note, the earlier answer, and what they said
+/// was wrong, such as "it was a peanut curry, not chickpea".
+pub fn correction_note(note: Option<&str>, previous: &[Item], correction: &str) -> String {
+    let previous = json!({ "items": previous }).to_string();
+    let mut text = String::new();
+    if let Some(note) = note.map(str::trim).filter(|n| !n.is_empty()) {
+        text.push_str(note);
+        text.push_str("\n\n");
+    }
+    text.push_str(&format!(
+        "Your earlier answer was: {previous}\n\
+         The person corrected it: \"{}\"\n\
+         Reply with the full corrected list: keep what was right, and change what they \
+         corrected, including the weight and nutrients of anything that is a different food.",
+        correction.trim()
+    ));
+    text
 }
 
 /// One food the model saw, with its estimates for the amount shown.
@@ -268,6 +290,9 @@ pub struct Item {
 /// The model's answer for one photo.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct Estimate {
+    /// A short name for the whole meal, if the model gave one.
+    #[serde(default)]
+    pub meal: Option<String>,
     pub items: Vec<Item>,
     /// Tokens billed, for cost estimates.
     pub input_tokens: u64,
@@ -292,6 +317,7 @@ fn reply_schema() -> Value {
     json!({
         "type": "object",
         "properties": {
+            "meal": { "type": "string" },
             "items": {
                 "type": "array",
                 "items": {
@@ -309,7 +335,7 @@ fn reply_schema() -> Value {
                 },
             },
         },
-        "required": ["items"],
+        "required": ["meal", "items"],
         "additionalProperties": false,
     })
 }
@@ -544,22 +570,34 @@ fn reply_text(provider: Provider, reply: &Value) -> Result<ReplyText, String> {
     }
 }
 
-/// The items in the model's JSON text, which may be wrapped in a code
-/// fence or a sentence.
-pub fn parse_items(text: &str) -> Result<Vec<Item>, String> {
+/// The meal's name and items in the model's JSON text, which may be
+/// wrapped in a code fence or a sentence.
+pub fn parse_answer(text: &str) -> Result<(Option<String>, Vec<Item>), String> {
     let start = text.find('{').ok_or("The answer had no JSON in it.")?;
     let end = text.rfind('}').ok_or("The answer had no JSON in it.")?;
     #[derive(Deserialize)]
     struct Reply {
+        #[serde(default)]
+        meal: Option<String>,
         items: Vec<Item>,
     }
     let reply: Reply = serde_json::from_str(&text[start..=end])
         .map_err(|e| format!("The answer wasn't in the expected form: {e}"))?;
-    Ok(reply
+    let meal = reply
+        .meal
+        .map(|m| m.trim().to_string())
+        .filter(|m| !m.is_empty());
+    let items = reply
         .items
         .into_iter()
         .filter(|i| !i.name.trim().is_empty() && i.grams.is_finite() && i.grams > 0.0)
-        .collect())
+        .collect();
+    Ok((meal, items))
+}
+
+/// The items in the model's JSON text.
+pub fn parse_items(text: &str) -> Result<Vec<Item>, String> {
+    parse_answer(text).map(|(_, items)| items)
 }
 
 /// The model's own text in a successful reply, to see what it said.
@@ -573,8 +611,10 @@ pub fn parse(provider: Provider, reply: &Value) -> Result<Estimate, String> {
         return Err(message);
     }
     let reply = reply_text(provider, reply)?;
+    let (meal, items) = parse_answer(&reply.text)?;
     Ok(Estimate {
-        items: parse_items(&reply.text)?,
+        meal,
+        items,
         input_tokens: reply.input_tokens,
         output_tokens: reply.output_tokens,
         cost_usd: reply.cost_usd,
@@ -686,6 +726,25 @@ mod tests {
     }
 
     #[test]
+    fn corrections_carry_the_earlier_answer() {
+        let earlier = vec![Item {
+            name: "chickpea curry".into(),
+            grams: 300.0,
+            kcal: 420.0,
+            protein_g: 15.0,
+            fat_g: 18.0,
+            carbs_g: 50.0,
+        }];
+        let note = correction_note(Some("with rice"), &earlier, " it was a peanut curry ");
+        assert!(note.starts_with("with rice\n\nYour earlier answer was: {\"items\":[{"));
+        assert!(note.contains("\"name\":\"chickpea curry\""));
+        assert!(note.contains("The person corrected it: \"it was a peanut curry\""));
+        let text = prompt(true, Some(&note));
+        assert!(text.contains("The person who took the photo adds: with rice"));
+        assert!(correction_note(None, &earlier, "no rice").starts_with("Your earlier answer"));
+    }
+
+    #[test]
     fn descriptions_and_custom_services() {
         let choice = ModelChoice::new(
             Provider::Custom,
@@ -768,5 +827,13 @@ mod tests {
         assert_eq!(items.len(), 1);
         assert_eq!(items[0].kcal, 0.0);
         assert!(parse_items("no food here").is_err());
+        let (meal, items) =
+            parse_answer(r#"{"meal": " beef curry with rice ", "items": []}"#).unwrap();
+        assert_eq!(meal.as_deref(), Some("beef curry with rice"));
+        assert!(items.is_empty());
+        assert_eq!(
+            parse_answer(r#"{"meal": "", "items": []}"#).unwrap().0,
+            None
+        );
     }
 }

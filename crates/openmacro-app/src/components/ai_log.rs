@@ -4,7 +4,7 @@
 use base64::Engine;
 use dioxus::core::spawn_forever;
 use dioxus::prelude::*;
-use openmacro_ai::Provider;
+use openmacro_ai::{Item, Provider};
 use serde_json::Value;
 
 use crate::Route;
@@ -76,15 +76,36 @@ try {
 "#;
 
 /// Where the AI tab is up to.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq)]
 enum Phase {
+    #[default]
     Camera,
-    /// Waiting for the model, with the photo (a data URL) if there is one.
-    Asking(Option<String>),
-    /// Items added to the plate.
-    Added(usize),
+    /// Waiting for the model.
+    Asking,
+    /// The model's foods are on the plate.
+    Added,
     Failed(String),
 }
+
+/// One meal being logged with AI. Kept outside the tab, so it survives
+/// switching tabs or re-measuring an item, and the answer can still be
+/// corrected.
+#[derive(Debug, Clone, Default, PartialEq)]
+struct Round {
+    phase: Phase,
+    /// The photo as a JPEG data URL, if there is one.
+    photo: Option<String>,
+    /// The user's note or description.
+    note: String,
+    /// The model's latest answer.
+    items: Vec<Item>,
+    /// The ids of the foods that answer put on the plate.
+    plate_ids: Vec<String>,
+    /// The correction being sent, to try again after a failure.
+    correction: Option<String>,
+}
+
+static ROUND: GlobalSignal<Round> = Signal::global(Round::default);
 
 /// The JPEG bytes in a data URL.
 fn jpeg_bytes(data_url: &str) -> Option<Vec<u8>> {
@@ -104,13 +125,76 @@ fn camera_problem(name: &str) -> String {
     }
 }
 
+/// Asks the model about the round's photo and note, or, with a correction,
+/// asks again with its earlier answer. Its foods replace the ones its
+/// earlier answer put on the plate.
+fn ask(state: AppState, correction: Option<String>) {
+    let (photo, note, previous) = {
+        let mut round = ROUND.write();
+        round.phase = Phase::Asking;
+        round.correction = correction.clone();
+        (round.photo.clone(), round.note.clone(), round.items.clone())
+    };
+    let note = match &correction {
+        Some(correction) => openmacro_ai::correction_note(Some(&note), &previous, correction),
+        None => note,
+    };
+    // Not tied to the tab: switching tabs while waiting still fills the plate.
+    spawn_forever(async move {
+        let bytes = photo.as_deref().and_then(jpeg_bytes);
+        let result = ai::estimate(bytes, note).await;
+        let mut round = ROUND.write();
+        match result {
+            Ok(estimate) if estimate.items.is_empty() => {
+                round.phase =
+                    Phase::Failed("No food found. Try another photo, or describe the meal.".into());
+            }
+            Ok(estimate) => {
+                let added = ai::plate_items(&estimate.items);
+                let mut plate = state.plate;
+                let mut plate = plate.write();
+                plate.items.retain(|i| {
+                    !i.food_id
+                        .as_ref()
+                        .is_some_and(|id| round.plate_ids.contains(id))
+                });
+                round.plate_ids = added.iter().filter_map(|i| i.food_id.clone()).collect();
+                plate.items.extend(added);
+                plate.meal = Some(ai::meal_name(&estimate));
+                round.items = estimate.items;
+                round.correction = None;
+                round.phase = Phase::Added;
+            }
+            Err(message) => round.phase = Phase::Failed(message),
+        }
+    });
+}
+
+/// Starts a new meal: the camera, with nothing written yet.
+fn start_over() {
+    *ROUND.write() = Round::default();
+}
+
 #[component]
 pub fn AiTab() -> Element {
     let state = use_context::<AppState>();
-    let mut phase = use_signal(|| Phase::Camera);
-    let mut note = use_signal(String::new);
-    // The last photo, to try again after a failure.
-    let mut last_photo = use_signal(|| None::<String>);
+    let mut correction = use_signal(String::new);
+
+    // A meal that's been logged (or taken off the plate) is finished.
+    use_hook(move || {
+        let on_plate = {
+            let plate = state.plate.read();
+            let round = ROUND.peek();
+            plate.items.iter().any(|i| {
+                i.food_id
+                    .as_ref()
+                    .is_some_and(|id| round.plate_ids.contains(id))
+            })
+        };
+        if ROUND.peek().phase == Phase::Added && !on_plate {
+            start_over();
+        }
+    });
 
     if !ai::ready() {
         return rsx! {
@@ -131,77 +215,90 @@ pub fn AiTab() -> Element {
         };
     }
 
-    let mut ask = move |photo: Option<String>| {
-        last_photo.set(photo.clone());
-        phase.set(Phase::Asking(photo.clone()));
-        let text = note();
-        // Not tied to this tab: switching tabs while waiting still adds the
-        // foods to the plate.
-        spawn_forever(async move {
-            let bytes = photo.as_deref().and_then(jpeg_bytes);
-            match ai::estimate(bytes, text).await {
-                Ok(items) if items.is_empty() => phase.set(Phase::Failed(
-                    "No food found. Try another photo, or describe the meal.".into(),
-                )),
-                Ok(items) => {
-                    let added = ai::plate_items(&items);
-                    let count = added.len();
-                    for item in added {
-                        state.add_to_plate(item);
-                    }
-                    phase.set(Phase::Added(count));
-                }
-                Err(message) => phase.set(Phase::Failed(message)),
-            }
-        });
-    };
-
-    let described = !note().trim().is_empty();
+    let round = ROUND.read().clone();
+    let described = !round.note.trim().is_empty();
     let service = SETTINGS.read().provider.label();
+    let count = round.plate_ids.len();
     rsx! {
-        match phase() {
+        match round.phase.clone() {
             Phase::Camera => rsx! {
-                Camera { on_photo: move |photo| ask(Some(photo)) }
+                Camera {
+                    on_photo: move |photo| {
+                        ROUND.write().photo = Some(photo);
+                        ask(state, None);
+                    },
+                }
             },
-            Phase::Asking(photo) => rsx! {
-                div { class: "ai-view",
-                    if let Some(photo) = photo {
+            Phase::Asking => rsx! {
+                if let Some(photo) = &round.photo {
+                    div { class: "ai-view",
                         img { src: "{photo}", alt: "Your photo" }
                     }
                 }
-                p { class: "muted pad", aria_live: "polite", "Working out what's there…" }
+                p { class: "muted pad", aria_live: "polite",
+                    if round.correction.is_some() { "Updating…" } else { "Working out what's there…" }
+                }
             },
-            Phase::Added(count) => rsx! {
+            Phase::Added => rsx! {
                 p { class: "pad", aria_live: "polite",
                     if count == 1 { "Added 1 item to your plate." } else { "Added {count} items to your plate." }
-                    " These are estimates: tap an item to correct its amount, then log."
+                    " These are estimates: tap an item to change its amount."
                 }
-                div { class: "button-row pad",
+                label { class: "field ai-note",
+                    span { "Something wrong? Tell the AI and it will look again" }
+                    textarea {
+                        rows: "2",
+                        placeholder: "e.g. it was a peanut curry, not chickpea; no rice",
+                        value: "{correction}",
+                        oninput: move |e| correction.set(e.value()),
+                    }
+                }
+                div { class: "button-row",
+                    button {
+                        class: "primary",
+                        disabled: correction().trim().is_empty(),
+                        onclick: move |_| {
+                            ask(state, Some(correction().trim().to_string()));
+                            correction.set(String::new());
+                        },
+                        "Update"
+                    }
                     button {
                         onclick: move |_| {
-                            note.set(String::new());
-                            phase.set(Phase::Camera);
+                            correction.set(String::new());
+                            start_over();
                         },
-                        "Another photo"
+                        "Another meal"
                     }
                 }
             },
             Phase::Failed(message) => rsx! {
                 p { class: "error pad", role: "alert", "{message}" }
                 div { class: "button-row pad",
-                    button { class: "primary", onclick: move |_| ask(last_photo()), "Try again" }
-                    button { onclick: move |_| phase.set(Phase::Camera), "Start over" }
+                    button { class: "primary", onclick: move |_| ask(state, ROUND.peek().correction.clone()), "Try again" }
+                    button {
+                        onclick: move |_| {
+                            // A failed correction goes back to the answer it was correcting.
+                            let mut round = ROUND.write();
+                            if round.correction.take().is_some() && !round.items.is_empty() {
+                                round.phase = Phase::Added;
+                            } else {
+                                *round = Round::default();
+                            }
+                        },
+                        if round.correction.is_some() && !round.items.is_empty() { "Back" } else { "Start over" }
+                    }
                 }
             },
         }
-        if phase() == Phase::Camera {
+        if round.phase == Phase::Camera {
             label { class: "field ai-note",
                 span { "Add details (optional), or describe the meal instead of a photo" }
                 textarea {
                     rows: "2",
                     placeholder: "e.g. 2 eggs on toast with butter, or \"about 200 g of rice\"",
-                    value: "{note}",
-                    oninput: move |e| note.set(e.value()),
+                    value: "{round.note}",
+                    oninput: move |e| ROUND.write().note = e.value(),
                 }
             }
             div { class: "button-row",
@@ -209,13 +306,21 @@ pub fn AiTab() -> Element {
                     onclick: move |_| {
                         spawn(async move {
                             if let Ok(Value::String(photo)) = document::eval(PICK_PHOTO_JS).await {
-                                ask(Some(photo));
+                                ROUND.write().photo = Some(photo);
+                                ask(state, None);
                             }
                         });
                     },
                     "Choose a photo"
                 }
-                button { disabled: !described, onclick: move |_| ask(None), "Use the description only" }
+                button {
+                    disabled: !described,
+                    onclick: move |_| {
+                        ROUND.write().photo = None;
+                        ask(state, None);
+                    },
+                    "Use the description only"
+                }
             }
             p { class: "muted small",
                 "Sent to {service} to estimate the foods and amounts."
@@ -408,8 +513,9 @@ pub fn AiSettingsCard() -> Element {
                             spawn_forever(async move {
                                 let result = ai::estimate(None, "one medium banana".into())
                                     .await
-                                    .and_then(|items| {
-                                        items
+                                    .and_then(|estimate| {
+                                        estimate
+                                            .items
                                             .first()
                                             .map(|i| format!("It works: {}, {:.0} g, {:.0} kcal.", i.name, i.grams, i.kcal))
                                             .ok_or_else(|| "The service answered, but found no food in \"one medium banana\".".to_string())

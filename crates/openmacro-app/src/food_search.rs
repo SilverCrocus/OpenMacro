@@ -471,6 +471,7 @@ mod tests {
             date: chrono::NaiveDate::from_ymd_opt(2026, 10, day).unwrap(),
             hour: 8,
             name: food_id.to_string(),
+            meal: None,
             amount: amount.to_string(),
             nutrients: openmacro_core::nutrients::NutrientProfile::from_macros(
                 150.0, 10.0, 5.0, 15.0,

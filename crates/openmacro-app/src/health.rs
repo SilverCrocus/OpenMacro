@@ -817,6 +817,7 @@ mod tests {
                 .with(Nutrient::Sodium, 400.0)
                 .with(Nutrient::Leucine, 1.0),
             food_id: None,
+            meal: None,
         }
     }
 

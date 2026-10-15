@@ -337,6 +337,7 @@ mod tests {
             amount: "1 cup (240 g)".into(),
             nutrients,
             food_id: Some("usda_sr_legacy:1".into()),
+            meal: None,
         };
         let log = vec![
             entry(

@@ -40,7 +40,7 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | ✅ Android Back | Closes the open detail, form or sheet, then returns to the Dashboard, then leaves the app |
 | ✅ Body measurements | Body fat and 13 circumferences, a chart per measurement, waist-to-height and waist-to-hip ratios |
 | ✅ Water | Dashboard tile with +250/+500 ml and a daily goal |
-| ✅ AI logging | The logging sheet's AI tab: take or choose a photo, or describe the meal. The model's foods and weights go on the plate to check before logging. Bring your own key for Google Gemini (default model Gemini 3.1 Flash Lite, chosen by [comparison](AI_PHOTO_EVAL.md)), OpenRouter, OpenAI, Anthropic, or any OpenAI-compatible service (Groq, Mistral, Ollama…). The key stays on the phone, out of backups |
+| ✅ AI logging | The logging sheet's AI tab: take or choose a photo, or describe the meal. The model's foods and weights go on the plate to check before logging, and a correction in your own words ("it was a peanut curry") makes it look again. The meal logs as one named row that expands to its foods. Bring your own key for Google Gemini (default model Gemini 3.1 Flash Lite, chosen by [comparison](AI_PHOTO_EVAL.md)), OpenRouter, OpenAI, Anthropic, or any OpenAI-compatible service (Groq, Mistral, Ollama…). The key stays on the phone, out of backups |
 | ✅ Health Connect | More > Health Connect. Reads weight and body fat other apps saved (a smart scale's, say) as weigh-ins and measurements; writes the food log (calories and nutrients), water, weigh-ins and body fat. Syncs the last 30 days when the app opens, comes back on screen or its data changes, rewriting only days that changed |
 
 ## Next

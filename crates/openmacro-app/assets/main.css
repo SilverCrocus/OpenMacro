@@ -345,6 +345,20 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .entry-sub { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .entry-kcal { font-variant-numeric: tabular-nums; font-weight: 600; }
 
+/* A meal: several entries logged together, shown as one row. */
+.meal-chevron { display: grid; place-items: center; color: var(--muted); transition: transform 0.15s; }
+.meal-chevron .icon { width: 16px; height: 16px; }
+.meal.open .meal-chevron { transform: rotate(90deg); }
+.meal .discard-confirm { border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px; padding: 8px 12px; }
+.meal-items {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  margin: 6px 0 0 12px;
+  padding-left: 10px;
+  border-left: 2px solid var(--border);
+}
+
 /* Logger sheet */
 
 .sheet-backdrop {

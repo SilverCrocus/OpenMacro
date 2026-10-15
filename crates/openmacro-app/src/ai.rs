@@ -6,7 +6,7 @@
 //! they chose, with their own key. The key is kept out of backups.
 
 use dioxus::prelude::*;
-use openmacro_ai::{Item, ModelChoice, Photo, Provider, Request};
+use openmacro_ai::{Estimate, Item, ModelChoice, Photo, Provider, Request};
 use openmacro_core::food::{Amount, Food, FoodSource, Serving};
 use openmacro_core::nutrients::NutrientProfile;
 use serde_json::Value;
@@ -78,7 +78,7 @@ pub fn set_key(state: AppState, key: Option<String>) {
 }
 
 /// Asks the chosen model about a JPEG photo, a description, or both.
-pub async fn estimate(photo: Option<Vec<u8>>, note: String) -> Result<Vec<Item>, String> {
+pub async fn estimate(photo: Option<Vec<u8>>, note: String) -> Result<Estimate, String> {
     let settings = SETTINGS.peek().clone();
     let key = KEY.peek().clone().unwrap_or_default();
     let choice = ModelChoice::new(settings.provider, &settings.model, Some(&settings.base_url));
@@ -103,7 +103,26 @@ pub async fn estimate(photo: Option<Vec<u8>>, note: String) -> Result<Vec<Item>,
             &choice,
         ));
     }
-    Ok(openmacro_ai::parse(choice.provider, &reply)?.items)
+    openmacro_ai::parse(choice.provider, &reply)
+}
+
+/// The meal's name: the model's, or else its first foods'.
+pub fn meal_name(estimate: &Estimate) -> String {
+    if let Some(meal) = &estimate.meal {
+        return sentence_case(meal);
+    }
+    let names: Vec<String> = estimate
+        .items
+        .iter()
+        .map(|i| i.name.trim().to_lowercase())
+        .collect();
+    let text = match names.as_slice() {
+        [] => "meal".to_string(),
+        [one] => one.clone(),
+        [a, b] => format!("{a} and {b}"),
+        [a, b, rest @ ..] => format!("{a}, {b} and {} more", rest.len()),
+    };
+    sentence_case(&text)
 }
 
 /// A failed request in words, with what to check.
@@ -269,6 +288,31 @@ mod tests {
     use openmacro_core::nutrients::Nutrient;
 
     use super::*;
+
+    #[test]
+    fn meals_are_named_by_the_model_or_their_foods() {
+        let item = |name: &str| Item {
+            name: name.into(),
+            grams: 100.0,
+            kcal: 100.0,
+            protein_g: 0.0,
+            fat_g: 0.0,
+            carbs_g: 0.0,
+        };
+        let mut estimate = Estimate {
+            meal: Some("beef curry with rice".into()),
+            items: vec![
+                item("White rice"),
+                item("beef curry"),
+                item("dal"),
+                item("papadum"),
+            ],
+            ..Default::default()
+        };
+        assert_eq!(meal_name(&estimate), "Beef curry with rice");
+        estimate.meal = None;
+        assert_eq!(meal_name(&estimate), "White rice, beef curry and 2 more");
+    }
 
     #[test]
     fn items_become_foods_by_weight() {

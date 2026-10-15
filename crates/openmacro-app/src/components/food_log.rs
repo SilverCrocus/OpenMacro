@@ -3,7 +3,7 @@
 use chrono::{Datelike, Duration, NaiveDate};
 use dioxus::prelude::*;
 use openmacro_core::expenditure::DayStatus;
-use openmacro_core::nutrients::Nutrient;
+use openmacro_core::nutrients::{Nutrient, NutrientProfile};
 
 use super::{Icon, MacroStrip, Ring, hour_label, macro_line};
 use crate::state::{AppState, CoachSnapshot, Copying, LogEntry, day_totals, today, week_start};
@@ -193,6 +193,109 @@ fn HourRow(date: NaiveDate, hour: u32, entries: Vec<LogEntry>) -> Element {
             }
             if class != "hour-row" {
                 div { class: "hour-entries",
+                    for row in rows(entries) {
+                        match row {
+                            Row::Entry(entry) => rsx! {
+                                EntryRow { key: "{entry.id}", entry }
+                            },
+                            Row::Meal(name, entries) => rsx! {
+                                MealRow { key: "meal-{entries[0].id}", name, entries }
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// One row of an hour: an entry, or a meal of several entries logged
+/// together (an AI-logged plate).
+#[derive(Debug, Clone, PartialEq)]
+enum Row {
+    Entry(LogEntry),
+    Meal(String, Vec<LogEntry>),
+}
+
+/// An hour's entries as rows, in order, each meal where its first entry is.
+fn rows(entries: Vec<LogEntry>) -> Vec<Row> {
+    let mut out: Vec<Row> = Vec::new();
+    for entry in &entries {
+        let Some(meal) = &entry.meal else {
+            out.push(Row::Entry(entry.clone()));
+            continue;
+        };
+        if out
+            .iter()
+            .any(|r| matches!(r, Row::Meal(name, _) if name == meal))
+        {
+            continue;
+        }
+        let members: Vec<LogEntry> = entries
+            .iter()
+            .filter(|e| e.meal.as_ref() == Some(meal))
+            .cloned()
+            .collect();
+        if members.len() > 1 {
+            out.push(Row::Meal(meal.clone(), members));
+        } else {
+            out.push(Row::Entry(entry.clone()));
+        }
+    }
+    out
+}
+
+/// A meal as one row; tapping it shows its foods, each editable.
+#[component]
+fn MealRow(name: String, entries: Vec<LogEntry>) -> Element {
+    let state = use_context::<AppState>();
+    let mut open = use_signal(|| false);
+    let mut confirm_delete = use_signal(|| false);
+    let totals: NutrientProfile = entries.iter().map(|e| &e.nutrients).sum();
+    let kcal = crate::prefs::energy(totals.get_or_zero(Nutrient::Energy));
+    let count = entries.len();
+    let summary = format!("{count} items · {}", macro_line(&totals));
+    let ids: Vec<i64> = entries.iter().map(|e| e.id).collect();
+    rsx! {
+        div { class: if open() { "meal open" } else { "meal" },
+            div { class: "entry meal-head",
+                button {
+                    class: "entry-main entry-open",
+                    aria_expanded: open(),
+                    aria_label: if open() { "Hide the foods in {name}" } else { "Show the foods in {name}" },
+                    onclick: move |_| open.set(!open()),
+                    div { class: "entry-name", "{name}" }
+                    div { class: "entry-sub", "{summary}" }
+                }
+                div { class: "entry-kcal", "{kcal}" }
+                span { class: "meal-chevron", Icon { name: "right" } }
+                button {
+                    class: "icon-btn small",
+                    aria_label: "Delete {name}",
+                    onclick: move |_| confirm_delete.set(true),
+                    Icon { name: "close" }
+                }
+            }
+            if confirm_delete() {
+                div { class: "discard-confirm", role: "alert",
+                    span {
+                        if count == 1 { "Delete this item?" } else { "Delete all {count} items?" }
+                    }
+                    button { onclick: move |_| confirm_delete.set(false), "Keep" }
+                    button {
+                        class: "danger",
+                        onclick: move |_| {
+                            confirm_delete.set(false);
+                            for id in &ids {
+                                state.delete_entry(*id);
+                            }
+                        },
+                        "Delete"
+                    }
+                }
+            }
+            if open() {
+                div { class: "meal-items",
                     for entry in entries {
                         EntryRow { key: "{entry.id}", entry }
                     }
@@ -226,5 +329,48 @@ fn EntryRow(entry: LogEntry) -> Element {
                 Icon { name: "close" }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use openmacro_core::nutrients::NutrientProfile;
+
+    use super::*;
+
+    fn entry(id: i64, meal: Option<&str>) -> LogEntry {
+        LogEntry {
+            id,
+            date: today(),
+            hour: 12,
+            name: format!("Food {id}"),
+            amount: "100 g".into(),
+            nutrients: NutrientProfile::new(),
+            food_id: None,
+            meal: meal.map(str::to_string),
+        }
+    }
+
+    #[test]
+    fn meals_group_where_their_first_entry_is() {
+        let rows = rows(vec![
+            entry(1, None),
+            entry(2, Some("Curry")),
+            entry(3, None),
+            entry(4, Some("Curry")),
+            entry(5, Some("Toast")),
+        ]);
+        let shape: Vec<String> = rows
+            .iter()
+            .map(|r| match r {
+                Row::Entry(e) => e.id.to_string(),
+                Row::Meal(name, entries) => format!(
+                    "{name}{:?}",
+                    entries.iter().map(|e| e.id).collect::<Vec<_>>()
+                ),
+            })
+            .collect();
+        // A meal of one shows as a plain entry.
+        assert_eq!(shape, ["1", "Curry[2, 4]", "3", "5"]);
     }
 }

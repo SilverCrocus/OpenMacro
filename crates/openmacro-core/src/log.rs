@@ -21,6 +21,10 @@ pub struct LogEntry {
     /// `custom:3`), or `None` for quick adds.
     #[cfg_attr(feature = "serde", serde(default))]
     pub food_id: Option<String>,
+    /// The meal it was logged as part of (an AI-logged plate, named by the
+    /// model). Entries of one meal at one hour show as one row.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub meal: Option<String>,
 }
 
 /// Sum of every entry on `date`.
@@ -92,6 +96,7 @@ mod tests {
             amount: "40 g".into(),
             nutrients: NutrientProfile::from_macros(kcal, 5.0, 3.0, 27.0),
             food_id: Some("sample:oats".into()),
+            meal: None,
         }
     }
 

@@ -164,6 +164,9 @@ const MIGRATIONS: &[&str] = &[
         deleted_at TEXT
     );
 ",
+    "
+    ALTER TABLE log_entry ADD COLUMN meal TEXT;
+",
 ];
 
 pub struct Store {
@@ -246,8 +249,8 @@ impl Store {
     /// Inserts an entry and returns its new id (the entry's own `id` is ignored).
     pub fn insert_log_entry(&self, entry: &LogEntry) -> Result<i64> {
         self.conn.execute(
-            "INSERT INTO log_entry (date, hour, name, amount, nutrients, food_id, updated_at)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+            "INSERT INTO log_entry (date, hour, name, amount, nutrients, food_id, meal, updated_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
             params![
                 entry.date.to_string(),
                 entry.hour,
@@ -255,6 +258,7 @@ impl Store {
                 entry.amount,
                 serde_json::to_string(&entry.nutrients)?,
                 entry.food_id,
+                entry.meal,
                 now()
             ],
         )?;
@@ -265,7 +269,7 @@ impl Store {
     pub fn update_log_entry(&self, entry: &LogEntry) -> Result<()> {
         self.conn.execute(
             "UPDATE log_entry SET date = ?1, hour = ?2, name = ?3, amount = ?4, nutrients = ?5,
-             food_id = ?6, updated_at = ?7 WHERE id = ?8",
+             food_id = ?6, meal = ?7, updated_at = ?8 WHERE id = ?9",
             params![
                 entry.date.to_string(),
                 entry.hour,
@@ -273,6 +277,7 @@ impl Store {
                 entry.amount,
                 serde_json::to_string(&entry.nutrients)?,
                 entry.food_id,
+                entry.meal,
                 now(),
                 entry.id
             ],
@@ -292,7 +297,7 @@ impl Store {
     /// Every live entry, oldest first.
     pub fn log_entries(&self) -> Result<Vec<LogEntry>> {
         let mut stmt = self.conn.prepare(
-            "SELECT id, date, hour, name, amount, nutrients, food_id FROM log_entry
+            "SELECT id, date, hour, name, amount, nutrients, food_id, meal FROM log_entry
              WHERE deleted_at IS NULL ORDER BY date, hour, id",
         )?;
         let rows = stmt.query_map([], |r| {
@@ -304,10 +309,11 @@ impl Store {
                 r.get::<_, String>(4)?,
                 r.get::<_, String>(5)?,
                 r.get::<_, Option<String>>(6)?,
+                r.get::<_, Option<String>>(7)?,
             ))
         })?;
         rows.map(|row| {
-            let (id, date, hour, name, amount, nutrients, food_id) = row?;
+            let (id, date, hour, name, amount, nutrients, food_id, meal) = row?;
             Ok(LogEntry {
                 id,
                 date: parse_date(&date)?,
@@ -316,6 +322,7 @@ impl Store {
                 amount,
                 nutrients: serde_json::from_str::<NutrientProfile>(&nutrients)?,
                 food_id,
+                meal,
             })
         })
         .collect()
@@ -671,8 +678,8 @@ impl Store {
         let mut stored = Vec::with_capacity(log.len());
         {
             let mut insert_entry = tx.prepare(
-                "INSERT INTO log_entry (date, hour, name, amount, nutrients, food_id, updated_at)
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+                "INSERT INTO log_entry (date, hour, name, amount, nutrients, food_id, meal, updated_at)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
             )?;
             for entry in log {
                 insert_entry.execute(params![
@@ -682,6 +689,7 @@ impl Store {
                     entry.amount,
                     serde_json::to_string(&entry.nutrients)?,
                     entry.food_id,
+                    entry.meal,
                     at
                 ])?;
                 stored.push(LogEntry {
@@ -757,8 +765,8 @@ impl Store {
         let at = now();
         {
             let mut insert_entry = tx.prepare(
-                "INSERT INTO log_entry (id, date, hour, name, amount, nutrients, food_id, updated_at)
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+                "INSERT INTO log_entry (id, date, hour, name, amount, nutrients, food_id, meal, updated_at)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
             )?;
             for e in &snapshot.log {
                 insert_entry.execute(params![
@@ -769,6 +777,7 @@ impl Store {
                     e.amount,
                     serde_json::to_string(&e.nutrients)?,
                     e.food_id,
+                    e.meal,
                     at
                 ])?;
             }
@@ -865,6 +874,7 @@ mod tests {
             nutrients: NutrientProfile::from_macros(kcal, 17.3, 0.7, 6.1)
                 .with(Nutrient::Calcium, 189.0),
             food_id: Some("afcd:F009999".into()),
+            meal: None,
         }
     }
 
@@ -1082,6 +1092,7 @@ mod tests {
         };
         let soup_id = source.insert_recipe(&soup).unwrap();
         let mut logged = entry(13, 12, 233.0);
+        logged.meal = Some("Sandwich and fruit".into());
         logged.food_id = Some(format!("custom:{soup_id}"));
         source.insert_log_entry(&logged).unwrap();
         source
@@ -1233,6 +1244,7 @@ mod tests {
         changed.hour = 9;
         changed.amount = "2 serving".into();
         changed.nutrients = NutrientProfile::from_macros(800.0, 0.0, 0.0, 0.0);
+        changed.meal = Some("Beef curry with rice".into());
         store.update_log_entry(&changed).unwrap();
         assert_eq!(store.log_entries().unwrap(), vec![changed]);
         assert_eq!(store.log_entries().unwrap()[0].id, id);

@@ -57,6 +57,9 @@ pub struct Plate {
     pub date: NaiveDate,
     pub hour: u32,
     pub items: Vec<PlateItem>,
+    /// The meal's name when AI logging filled the plate; what's logged
+    /// with it shows as one row.
+    pub meal: Option<String>,
 }
 
 impl Plate {
@@ -66,6 +69,7 @@ impl Plate {
             date,
             hour: 8,
             items: Vec::new(),
+            meal: None,
         }
     }
 
@@ -299,6 +303,11 @@ fn day_records(data: &Data, today: NaiveDate) -> Vec<DayRecord> {
         .collect()
 }
 
+/// Whether a food id is one AI logging made up from a model's estimate.
+pub fn is_ai_food(food_id: Option<&str>) -> bool {
+    food_id.is_some_and(|id| id.starts_with("ai:"))
+}
+
 /// The food id of water logged from the water tile.
 pub const WATER_ID: &str = "water";
 /// The daily water goal when the user hasn't set one.
@@ -519,6 +528,7 @@ impl AppState {
         let mut plate = self.plate.write();
         plate.open = false;
         plate.items.clear();
+        plate.meal = None;
         self.recipe_edit.set(None);
     }
 
@@ -541,11 +551,19 @@ impl AppState {
 
     /// Moves everything on the plate into the log at the plate's date and hour.
     pub fn log_plate(mut self) {
-        let (date, hour, items) = {
+        let (date, hour, items, meal) = {
             let mut plate = self.plate.write();
             plate.open = false;
-            (plate.date, plate.hour, std::mem::take(&mut plate.items))
+            let meal = plate.meal.take();
+            (
+                plate.date,
+                plate.hour,
+                std::mem::take(&mut plate.items),
+                meal,
+            )
         };
+        // A meal named by AI logging, if any of its foods are still there.
+        let meal = meal.filter(|_| items.iter().any(|i| is_ai_food(i.food_id.as_deref())));
         let entries = items
             .into_iter()
             .map(|item| LogEntry {
@@ -556,6 +574,7 @@ impl AppState {
                 amount: item.amount,
                 nutrients: item.nutrients,
                 food_id: item.food_id,
+                meal: meal.clone(),
             })
             .collect();
         self.insert_entries(entries);
@@ -621,6 +640,7 @@ impl AppState {
                 .with(Nutrient::Energy, 0.0)
                 .with(Nutrient::Water, ml),
             food_id: Some(WATER_ID.into()),
+            meal: None,
         };
         self.insert_entries(vec![entry]);
     }
@@ -929,6 +949,7 @@ mod tests {
                 .with(Nutrient::Energy, 0.0)
                 .with(Nutrient::Water, 500.0),
             food_id: Some(WATER_ID.into()),
+            meal: None,
         });
         let records = day_records(&data, date());
         let day = records.iter().find(|r| r.date == yesterday).unwrap();

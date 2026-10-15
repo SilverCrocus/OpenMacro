@@ -122,6 +122,7 @@ pub fn Logger() -> Element {
                 if count > 0 {
                     PlateView {
                         items: plate.items.clone(),
+                        meal: plate.meal.clone(),
                         on_edit: move |index: usize| {
                             let plate = state.plate.read();
                             let Some(item) = plate.items.get(index) else { return };
@@ -142,6 +143,7 @@ pub fn Logger() -> Element {
                                     amount: item.amount.clone(),
                                     nutrients: item.nutrients.clone(),
                                     food_id: item.food_id.clone(),
+                                    meal: None,
                                 };
                                 item_edit.set(Some((index, found.food, entry)));
                             }
@@ -258,7 +260,7 @@ pub fn Logger() -> Element {
 }
 
 #[component]
-fn PlateView(items: Vec<PlateItem>, on_edit: EventHandler<usize>) -> Element {
+fn PlateView(items: Vec<PlateItem>, meal: Option<String>, on_edit: EventHandler<usize>) -> Element {
     let state = use_context::<AppState>();
     let totals: NutrientProfile = items.iter().map(|i| &i.nutrients).sum();
     let summary = format!(
@@ -269,8 +271,14 @@ fn PlateView(items: Vec<PlateItem>, on_edit: EventHandler<usize>) -> Element {
     rsx! {
         section { class: "plate",
             div { class: "plate-head",
-                h3 {
-                    if (state.recipe_edit)().is_some() { "Ingredients" } else { "Plate" }
+                h3 { class: "plate-title",
+                    if (state.recipe_edit)().is_some() {
+                        "Ingredients"
+                    } else if let Some(meal) = &meal {
+                        "{meal}"
+                    } else {
+                        "Plate"
+                    }
                 }
                 span { class: "muted", "{summary}" }
             }
