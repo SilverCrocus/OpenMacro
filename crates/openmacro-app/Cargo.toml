@@ -1,6 +1,6 @@
 [package]
 name = "openmacro-app"
-version = "0.5.0"
+version = "0.5.1"
 description = "OpenMacro cross-platform app (Dioxus)"
 edition.workspace = true
 license.workspace = true
