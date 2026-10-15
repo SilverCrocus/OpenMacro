@@ -5,7 +5,7 @@
 //! ```text
 //! food-photo-eval fetch <dir> [--count 100]
 //! food-photo-eval models [--keys <file>] [--filter <text>]
-//! food-photo-eval run <dir> --model provider:model[@effort]... [--keys <file>] [--jobs 4]
+//! food-photo-eval run <dir> --model provider:model[@effort]... [--keys <file>] [--jobs 4] [--limit n]
 //! food-photo-eval report <dir> --foods <foods.db> [--region au|us] [--price spec=in,out]...
 //! ```
 //!
@@ -52,6 +52,9 @@ struct Answer {
     dish: String,
     seconds: f64,
     result: std::result::Result<Estimate, String>,
+    /// What the model wrote, to check answers that didn't parse as expected.
+    #[serde(default)]
+    text: Option<String>,
 }
 
 fn main() {
@@ -394,8 +397,8 @@ fn load_answers(path: &Path) -> Vec<Answer> {
 }
 
 /// Asks one model about one photo, retrying when rate limited or the
-/// service is busy.
-fn ask(agent: &ureq::Agent, choice: &ModelChoice, key: &str, image: &[u8]) -> Result<Estimate> {
+/// service is busy. Returns the provider's successful reply.
+fn ask(agent: &ureq::Agent, choice: &ModelChoice, key: &str, image: &[u8]) -> Result<Value> {
     let request = openmacro_ai::request(choice, key, image, "image/png", None);
     let mut wait = Duration::from_secs(10);
     for attempt in 1.. {
@@ -424,7 +427,7 @@ fn ask(agent: &ureq::Agent, choice: &ModelChoice, key: &str, image: &[u8]) -> Re
                 error_message(&reply).unwrap_or_else(|| reply.to_string())
             ));
         }
-        return openmacro_ai::parse(choice.provider, &reply);
+        return Ok(reply);
     }
     unreachable!()
 }
@@ -438,6 +441,10 @@ fn run(args: &[String]) -> Result<()> {
         .and_then(|j| j.parse().ok())
         .unwrap_or(4)
         .max(1);
+    // Only the first n dishes, e.g. to try a model on a few photos first.
+    let limit: usize = option(args, "--limit")
+        .and_then(|n| n.parse().ok())
+        .unwrap_or(usize::MAX);
     let choices = options(args, "--model")
         .iter()
         .map(|s| ModelChoice::parse(s).ok_or(format!("bad model {s:?}")))
@@ -458,7 +465,11 @@ fn run(args: &[String]) -> Result<()> {
             .filter(|a| a.result.is_ok())
             .map(|a| a.dish)
             .collect();
-        let todo: Vec<&Dish> = dishes.iter().filter(|d| !done.contains(&d.id)).collect();
+        let todo: Vec<&Dish> = dishes
+            .iter()
+            .take(limit)
+            .filter(|d| !done.contains(&d.id))
+            .collect();
         println!("{}: {} to ask", choice.spec(), todo.len());
         let queue = Mutex::new(todo.into_iter());
         let file = Mutex::new(
@@ -488,11 +499,15 @@ fn run(args: &[String]) -> Result<()> {
                                 }
                             };
                         let started = Instant::now();
-                        let result = ask(&agent, choice, key, &image);
+                        let reply = ask(&agent, choice, key, &image);
                         let answer = Answer {
                             dish: dish.id.clone(),
                             seconds: started.elapsed().as_secs_f64(),
-                            result,
+                            text: reply
+                                .as_ref()
+                                .ok()
+                                .and_then(|r| openmacro_ai::answer_text(choice.provider, r)),
+                            result: reply.and_then(|r| openmacro_ai::parse(choice.provider, &r)),
                         };
                         match &answer.result {
                             Ok(estimate) => {

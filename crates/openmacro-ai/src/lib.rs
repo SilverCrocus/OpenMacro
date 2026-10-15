@@ -417,6 +417,11 @@ pub fn parse_items(text: &str) -> Result<Vec<Item>, String> {
         .collect())
 }
 
+/// The model's own text in a successful reply, to see what it said.
+pub fn answer_text(provider: Provider, reply: &Value) -> Option<String> {
+    reply_text(provider, reply).ok().map(|r| r.text)
+}
+
 /// Reads a successful reply from `provider`.
 pub fn parse(provider: Provider, reply: &Value) -> Result<Estimate, String> {
     if let Some(message) = error_message(reply) {
