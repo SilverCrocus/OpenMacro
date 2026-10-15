@@ -68,6 +68,9 @@ jobs:
           cargo run --release -p openmacro-foods --features import --bin build-food-db -- data/raw data/foods.db
           cp data/foods.db crates/openmacro-app/assets/foods.db
 
+      - name: Install the Android platform Health Connect compiles against
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" > /dev/null
+
       - name: Build APKs
         run: |
           export ANDROID_NDK_HOME="$ANDROID_NDK_LATEST_HOME"

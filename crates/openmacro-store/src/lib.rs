@@ -387,6 +387,27 @@ impl Store {
         Ok(changed > 0)
     }
 
+    /// Whether a weigh-in on this date within 5 g of this weight was ever
+    /// saved, including one since deleted. Imports use this to skip
+    /// readings they already added.
+    pub fn weigh_in_seen(&self, weigh_in: &WeighIn) -> Result<bool> {
+        Ok(self.conn.query_row(
+            "SELECT EXISTS (SELECT 1 FROM weigh_in WHERE date = ?1 AND abs(kg - ?2) < 0.005)",
+            params![weigh_in.date.to_string(), weigh_in.kg],
+            |r| r.get(0),
+        )?)
+    }
+
+    /// Like [`Store::weigh_in_seen`], for a measurement.
+    pub fn measurement_seen(&self, m: &Measurement) -> Result<bool> {
+        Ok(self.conn.query_row(
+            "SELECT EXISTS (SELECT 1 FROM measurement
+                 WHERE date = ?1 AND kind = ?2 AND abs(value - ?3) < 0.005)",
+            params![m.date.to_string(), m.kind.key(), m.value],
+            |r| r.get(0),
+        )?)
+    }
+
     pub fn weigh_ins(&self) -> Result<Vec<WeighIn>> {
         let mut stmt = self
             .conn
@@ -1172,6 +1193,35 @@ mod tests {
                 date: date(13),
                 kg: 70.1
             }]
+        );
+    }
+
+    #[test]
+    fn deleted_readings_still_count_as_seen() {
+        let store = Store::open_in_memory().unwrap();
+        let w = WeighIn {
+            date: date(12),
+            kg: 70.4,
+        };
+        assert!(!store.weigh_in_seen(&w).unwrap());
+        store.insert_weigh_in(&w).unwrap();
+        store.delete_weigh_in(&w).unwrap();
+        assert!(store.weigh_in_seen(&WeighIn { kg: 70.401, ..w }).unwrap());
+        assert!(!store.weigh_in_seen(&WeighIn { kg: 70.5, ..w }).unwrap());
+        let fat = Measurement {
+            date: date(12),
+            kind: MeasurementKind::BodyFat,
+            value: 18.5,
+        };
+        store.insert_measurement(&fat).unwrap();
+        assert!(store.measurement_seen(&fat).unwrap());
+        assert!(
+            !store
+                .measurement_seen(&Measurement {
+                    kind: MeasurementKind::Waist,
+                    ..fat
+                })
+                .unwrap()
         );
     }
 

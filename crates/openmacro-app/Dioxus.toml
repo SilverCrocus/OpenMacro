@@ -5,12 +5,21 @@ title = "OpenMacro"
 identifier = "dev.openmacro.app"
 publisher = "OpenMacro"
 
+# Android uses its own manifest (for the Health Connect activities) and an
+# activity with the Health Connect bridge. Android permissions are listed
+# in the manifest.
+[application]
+android_manifest = "android/AndroidManifest.xml"
+android_main_activity = "android/MainActivity.kt"
+
+[android]
+# Health Connect's client library needs Android 8 and compiles against 35.
+min_sdk = 26
+compile_sdk = 35
+gradle_dependencies = ["androidx.health.connect:connect-client:1.1.0-beta01"]
+
 [android.application]
 theme = "@style/Theme.AppCompat.NoActionBar"
-
-# Installing app updates downloaded from GitHub Releases.
-[android.permissions."android.permission.REQUEST_INSTALL_PACKAGES"]
-description = "Install OpenMacro updates"
 
 # Barcode scanning uses the camera through the web view.
 [permissions.camera]

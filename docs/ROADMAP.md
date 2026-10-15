@@ -38,14 +38,16 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | ✅ Edit foods and recipes | The Library's edit button reopens a custom food's form, or puts a recipe's ingredients back on the plate to change, then *Update recipe*. Log entries keep the values they were logged with |
 | ✅ Edit log entries | Tap a logged food to change its amount (with its servings and the number pad) or time; quick adds edit their calories and macros |
 | ✅ Android Back | Closes the open detail, form or sheet, then returns to the Dashboard, then leaves the app |
+| ✅ Body measurements | Body fat and 13 circumferences, a chart per measurement, waist-to-height and waist-to-hip ratios |
+| ✅ Water | Dashboard tile with +250/+500 ml and a daily goal |
+| ✅ Health Connect | More > Health Connect. Reads weight and body fat other apps saved (a smart scale's, say) as weigh-ins and measurements; writes the food log (calories and nutrients), water, weigh-ins and body fat. Syncs the last 30 days when the app opens, comes back on screen or its data changes, rewriting only days that changed |
 
 ## Next
 
 | # | Feature | Plan |
 |---|---|---|
-| 1 | ⏭ **Body measurements** | Waist, hips, chest and more, with a chart per measurement (spec P1). |
-| 2 | ⏭ **Body fat and measurements** | Optional body fat % with weigh-ins, and body measurements (spec P0/P1). |
-| 3 | ⏭ **Steps and body measurements** | Manual entry first; Health Connect later. |
+| 1 | ⏭ **Steps** | Read steps from Health Connect and show them on the dashboard. |
+| 2 | ⏭ **Background sync** | Sync with Health Connect while OpenMacro is closed (needs WorkManager and the background read permission). |
 
 ## Later
 
@@ -56,5 +58,4 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | 🕓 More recipe features | Import from a link (schema.org Recipe), split a logged recipe into ingredients, recipes inside recipes |
 | 🕓 Weight trend V2 | Kalman smoother with a noise band; calibrated expenditure uncertainty band |
 | 🕓 Body metrics and progress photos | Measurements, front/side/back photos with comparison |
-| 🕓 Health Connect | Read weight, body fat and steps; write nutrition |
 | 🕓 Google Play / F-Droid | Silent store updates for non-technical users |

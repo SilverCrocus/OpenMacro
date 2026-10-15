@@ -70,7 +70,7 @@ Platform features that need native code go behind small plugin interfaces:
 
 | Feature | Approach |
 |---|---|
-| Health Connect / Apple Health | Kotlin/Swift shims called over JNI or FFI |
+| Health Connect / Apple Health | Kotlin/Swift shims called over JNI or FFI. Android: `HealthBridge` in `crates/openmacro-app/android/MainActivity.kt`, called from `src/health.rs` |
 | Barcode scanning | Camera frames decoded with `rxing` (a pure-Rust ZXing port), or ML Kit through a Kotlin shim on Android |
 | Home-screen widgets | Native widget code reading a small shared summary file |
 

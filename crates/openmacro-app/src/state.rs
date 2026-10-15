@@ -454,6 +454,9 @@ impl AppState {
         if let Some(prefs) = self.persist.peek().load_prefs() {
             *crate::prefs::PREFS.write() = prefs;
         }
+        // Whether Health Connect is on stays as it was on this phone; the
+        // restored days are written to it again.
+        crate::health::SETTINGS.write().written.clear();
         self.recipe_edit.set(None);
         self.check_in_open.set(false);
         self.editing.set(None);
@@ -758,6 +761,29 @@ impl AppState {
         let mut list = self.measurements.write();
         list.push(m);
         list.sort_by_key(|m| m.date);
+    }
+
+    /// Adds weigh-ins and measurements other apps saved to Health Connect.
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn import_readings(mut self, weigh_ins: Vec<WeighIn>, measurements: Vec<Measurement>) {
+        let persist = self.persist.read();
+        for w in &weigh_ins {
+            persist.insert_weigh_in(w);
+        }
+        for m in &measurements {
+            persist.insert_measurement(m);
+        }
+        drop(persist);
+        if !weigh_ins.is_empty() {
+            let mut list = self.weigh_ins.write();
+            list.extend(weigh_ins);
+            list.sort_by_key(|w| w.date);
+        }
+        if !measurements.is_empty() {
+            let mut list = self.measurements.write();
+            list.extend(measurements);
+            list.sort_by_key(|m| m.date);
+        }
     }
 
     pub fn delete_measurement(mut self, m: Measurement) {

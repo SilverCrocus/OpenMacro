@@ -40,6 +40,7 @@ mod native {
     const MANUAL_TARGETS: &str = "manual_targets";
     const PREFS: &str = "display";
     const COACH_SETTINGS: &str = "coach_settings";
+    const HEALTH: &str = "health_connect";
 
     pub struct Persistence {
         store: Option<Store>,
@@ -149,6 +150,38 @@ mod native {
                 .as_ref()
                 .and_then(|s| report("load measurements", s.measurements()))
                 .unwrap_or_default()
+        }
+
+        /// Whether this weigh-in was ever saved, even if since deleted.
+        pub fn weigh_in_seen(&self, weigh_in: &WeighIn) -> bool {
+            self.store
+                .as_ref()
+                .and_then(|s| report("check a weigh-in", s.weigh_in_seen(weigh_in)))
+                .unwrap_or(false)
+        }
+
+        /// Whether this measurement was ever saved, even if since deleted.
+        pub fn measurement_seen(&self, m: &Measurement) -> bool {
+            self.store
+                .as_ref()
+                .and_then(|s| report("check a measurement", s.measurement_seen(m)))
+                .unwrap_or(false)
+        }
+
+        pub fn save_health(&self, settings: &crate::health::HealthSettings) {
+            if let Some(store) = &self.store {
+                report(
+                    "save the Health Connect settings",
+                    store.set_setting(HEALTH, settings),
+                );
+            }
+        }
+
+        pub fn load_health(&self) -> Option<crate::health::HealthSettings> {
+            report(
+                "load the Health Connect settings",
+                self.store.as_ref()?.setting(HEALTH),
+            )?
         }
 
         pub fn delete_weigh_in(&self, weigh_in: &WeighIn) {

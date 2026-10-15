@@ -6,6 +6,8 @@ mod copy;
 mod dashboard;
 mod edit_entry;
 mod food_log;
+#[cfg(not(target_arch = "wasm32"))]
+mod health;
 mod insight;
 mod library;
 mod logger;

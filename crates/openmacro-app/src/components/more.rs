@@ -3,6 +3,8 @@
 use dioxus::prelude::*;
 use openmacro_core::bmr::{self, ActivityLevel, BmrEquation, Sex};
 
+#[cfg(not(target_arch = "wasm32"))]
+use super::health::HealthConnect;
 use super::hour_label;
 use crate::export;
 use crate::food_search::{self, Database, FoodRegion};
@@ -154,6 +156,7 @@ pub fn More() -> Element {
                 }
             }
         }
+        HealthConnect {}
         section { class: "card",
             h2 { "Data" }
             p { class: "muted small",
@@ -309,6 +312,13 @@ fn BackupData() -> Element {
             None => rsx! {},
         }
     }
+}
+
+/// Health Connect is Android-only.
+#[cfg(target_arch = "wasm32")]
+#[component]
+fn HealthConnect() -> Element {
+    rsx! {}
 }
 
 #[cfg(target_arch = "wasm32")]

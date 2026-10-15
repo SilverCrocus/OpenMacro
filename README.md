@@ -13,8 +13,8 @@ Early development.
 | [`openmacro-core`](crates/openmacro-core) | Working and tested: nutrient model (55 nutrients), foods and servings, recipes, BMR equations, trend weight, adaptive expenditure (Kalman-style estimator with an uncertainty band), goal-driven targets with maintenance, weekly calorie shifting, macro splits, weekly check-ins, micronutrient reference targets, body measurements |
 | [`openmacro-store`](crates/openmacro-store) | SQLite storage on the device: food log, weigh-ins, day status, custom foods and recipes, favorites, check-ins, measurements and settings, with whole-database snapshots for backups |
 | [`openmacro-foods`](crates/openmacro-foods) | Food database: 58k foods from USDA, the Australian AFCD and Open Food Facts (AU + US), with full-text search; see [docs/FOOD_DATA.md](docs/FOOD_DATA.md) |
-| [`openmacro-app`](crates/openmacro-app) | Dioxus app (Rust; Android and web preview):<ul><li>**Logging:** food log timeline with copy and edit; logging sheet with search, barcode scanning, quick add, custom foods, recipes and favorites; water.</li><li>**Coaching:** plan with coached or manual programs and Lose/Maintain/Gain goals; weekly check-ins.</li><li>**Insights:** pages for expenditure, weight, energy balance, macros, goal progress, nutrients and body measurements.</li><li>**Data and settings:** CSV export and backups; kJ/lb units and light theme.</li></ul>Data is saved on the device, and the app updates itself from GitHub Releases. |
-| AI photo logging, progress photos, Health Connect | Planned; see [docs/ROADMAP.md](docs/ROADMAP.md) |
+| [`openmacro-app`](crates/openmacro-app) | Dioxus app (Rust; Android and web preview):<ul><li>**Logging:** food log timeline with copy and edit; logging sheet with search, barcode scanning, quick add, custom foods, recipes and favorites; water.</li><li>**Coaching:** plan with coached or manual programs and Lose/Maintain/Gain goals; weekly check-ins.</li><li>**Insights:** pages for expenditure, weight, energy balance, macros, goal progress, nutrients and body measurements.</li><li>**Data and settings:** CSV export and backups; Health Connect sync; kJ/lb units and light theme.</li></ul>Data is saved on the device, and the app updates itself from GitHub Releases. |
+| AI photo logging, progress photos | Planned; see [docs/ROADMAP.md](docs/ROADMAP.md) |
 
 ## Docs
 
@@ -41,6 +41,8 @@ scripts/android-apk.sh aarch64-linux-android
 ```
 
 It builds with `dx` (release mode, with the bundled food database, so build `foods.db` first; see [docs/FOOD_DATA.md](docs/FOOD_DATA.md)), then swaps in the OpenMacro launcher icon, which `dx` can't set itself, and prints the APK's path. Install it with `adb install -r <apk>`.
+
+The build needs Android SDK platform 35 (`sdkmanager "platforms;android-35"`), which the Health Connect library compiles against. `crates/openmacro-app/android/` holds the Android manifest and `MainActivity.kt` (with the Health Connect bridge), which replace the ones `dx` generates.
 
 The icon's source is `crates/openmacro-app/android/icon.png`. After changing it, run `python3 scripts/make-android-icons.py` (needs Pillow) to regenerate the Android icons.
 

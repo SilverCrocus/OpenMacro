@@ -9,6 +9,8 @@ mod custom_food;
 mod export;
 mod food_search;
 mod foods;
+#[cfg(not(target_arch = "wasm32"))]
+mod health;
 mod keypad;
 mod persist;
 mod prefs;
@@ -53,6 +55,10 @@ fn App() -> Element {
     // Look for a newer release once per launch (Android only).
     let update = use_context_provider(|| Signal::new(updater::UpdateState::Idle));
     use_hook(move || check_for_update(update));
+
+    // Sharing with other health apps through Health Connect (Android only).
+    #[cfg(not(target_arch = "wasm32"))]
+    health::use_health_sync(state);
 
     // The full food database, installed from the app bundle on first launch.
     let foods = use_resource(food_search::open_bundled);
