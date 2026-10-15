@@ -78,11 +78,24 @@ pub struct ModelChoice {
     /// level, OpenAI's reasoning effort), e.g. "low". `None` uses the
     /// model's default.
     pub effort: Option<String>,
+    /// Ask for JSON in the prompt only, without enforcing a schema. Some
+    /// models answer an enforced schema badly through OpenRouter (Claude
+    /// with placeholder items, Qwen by repeating the schema).
+    #[serde(default)]
+    pub free_form: bool,
 }
 
+/// Marks a free-form model in a spec.
+const FREE_FORM: &str = "+freeform";
+
 impl ModelChoice {
-    /// Parses `provider:model` or `provider:model@effort`.
+    /// Parses `provider:model`, with `@effort` and then `+freeform`
+    /// optionally after it.
     pub fn parse(spec: &str) -> Option<ModelChoice> {
+        let (spec, free_form) = match spec.strip_suffix(FREE_FORM) {
+            Some(rest) => (rest, true),
+            None => (spec, false),
+        };
         let (provider, rest) = spec.split_once(':')?;
         let (model, effort) = match rest.split_once('@') {
             Some((model, effort)) => (model, Some(effort.to_string())),
@@ -95,15 +108,21 @@ impl ModelChoice {
             provider: Provider::from_code(provider)?,
             model: model.to_string(),
             effort,
+            free_form,
         })
     }
 
-    /// Back to `provider:model[@effort]`.
+    /// Back to `provider:model[@effort][+freeform]`.
     pub fn spec(&self) -> String {
-        match &self.effort {
-            Some(effort) => format!("{}:{}@{effort}", self.provider.code(), self.model),
-            None => format!("{}:{}", self.provider.code(), self.model),
+        let mut spec = format!("{}:{}", self.provider.code(), self.model);
+        if let Some(effort) = &self.effort {
+            spec.push('@');
+            spec.push_str(effort);
         }
+        if self.free_form {
+            spec.push_str(FREE_FORM);
+        }
+        spec
     }
 }
 
@@ -225,10 +244,14 @@ pub fn request(
     let text = prompt(note);
     match choice.provider {
         Provider::Gemini => {
-            let mut config = json!({
-                "responseMimeType": "application/json",
-                "responseSchema": gemini_schema(&reply_schema()),
-            });
+            let mut config = if choice.free_form {
+                json!({})
+            } else {
+                json!({
+                    "responseMimeType": "application/json",
+                    "responseSchema": gemini_schema(&reply_schema()),
+                })
+            };
             if let Some(level) = &choice.effort {
                 config["thinkingConfig"] = json!({ "thinkingLevel": level });
             }
@@ -284,11 +307,13 @@ pub fn request(
                         },
                     ],
                 }],
-                "response_format": {
+            });
+            if !choice.free_form {
+                body["response_format"] = json!({
                     "type": "json_schema",
                     "json_schema": { "name": "foods", "strict": true, "schema": reply_schema() },
-                },
-            });
+                });
+            }
             if open_router {
                 body["max_tokens"] = json!(8000);
                 if let Some(effort) = &choice.effort {
@@ -453,6 +478,13 @@ mod tests {
                 .effort,
             None
         );
+        let free = ModelChoice::parse("openrouter:qwen/qwen3.8-flash@low+freeform").unwrap();
+        assert_eq!(free.model, "qwen/qwen3.8-flash");
+        assert_eq!(free.effort.as_deref(), Some("low"));
+        assert!(free.free_form);
+        assert_eq!(free.spec(), "openrouter:qwen/qwen3.8-flash@low+freeform");
+        let body = request(&free, "k", &[1], "image/png", None).body;
+        assert!(body.get("response_format").is_none());
         assert!(ModelChoice::parse("nobody:model").is_none());
         assert!(ModelChoice::parse("openai:").is_none());
     }
