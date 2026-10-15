@@ -54,7 +54,7 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | Feature | Notes |
 |---|---|
 | 🕓 Nutrition label scan | Photograph a label to fill in a custom food. Needs an AI vision model (see below). |
-| 🕓 AI photo logging | *Snap* a meal or *Describe* it. The model names foods and portions, and the app matches them to real foods in the database. **Bring your own API key** in settings; the first provider is still to be chosen (Claude, Gemini or OpenAI). Nothing is sent unless the user turns it on. |
+| 🕓 AI photo logging | *Snap* a meal or *Describe* it. The model names foods and portions, and the app matches them to real foods in the database. **Bring your own API key** in settings. Nothing is sent unless the user turns it on. Small models compared on 100 measured photos ([AI_PHOTO_EVAL.md](AI_PHOTO_EVAL.md)): Gemini 3.1 Flash Lite is recommended as the default. |
 | 🕓 More recipe features | Import from a link (schema.org Recipe), split a logged recipe into ingredients, recipes inside recipes |
 | 🕓 Weight trend V2 | Kalman smoother with a noise band; calibrated expenditure uncertainty band |
 | 🕓 Body metrics and progress photos | Measurements, front/side/back photos with comparison |
