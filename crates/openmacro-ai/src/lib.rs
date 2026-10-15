@@ -78,12 +78,41 @@ impl Provider {
     /// A good model to start with: small, quick and cheap. Gemini 3.1 Flash
     /// Lite did best in our comparison (docs/AI_PHOTO_EVAL.md).
     pub fn default_model(self) -> &'static str {
+        self.models().first().map_or("", |(id, _)| id)
+    }
+
+    /// Small models to choose from, as (model name, description), the
+    /// recommended one first. All did well in docs/AI_PHOTO_EVAL.md; any
+    /// other model can still be named.
+    pub fn models(self) -> &'static [(&'static str, &'static str)] {
         match self {
-            Provider::Gemini => "gemini-3.1-flash-lite",
-            Provider::OpenRouter => "google/gemini-3.1-flash-lite",
-            Provider::OpenAi => "gpt-6-luna",
-            Provider::Anthropic => "claude-haiku-5-5",
-            Provider::Custom => "",
+            Provider::Gemini => &[
+                (
+                    "gemini-3.1-flash-lite",
+                    "Gemini 3.1 Flash Lite (recommended)",
+                ),
+                ("gemini-3.8-flash", "Gemini 3.8 Flash: as accurate, slower"),
+                ("gemini-3.5-flash-lite", "Gemini 3.5 Flash Lite"),
+            ],
+            Provider::OpenRouter => &[
+                (
+                    "google/gemini-3.1-flash-lite",
+                    "Gemini 3.1 Flash Lite (recommended)",
+                ),
+                (
+                    "google/gemini-3.8-flash",
+                    "Gemini 3.8 Flash: as accurate, slower",
+                ),
+                (
+                    "google/gemma-4-26b-a4b-it",
+                    "Gemma 4 26B: cheapest, a little less accurate",
+                ),
+                ("anthropic/claude-haiku-5.5", "Claude Haiku 5.5"),
+                ("openai/gpt-6-luna", "GPT-6 Luna"),
+            ],
+            Provider::OpenAi => &[("gpt-6-luna", "GPT-6 Luna (recommended)")],
+            Provider::Anthropic => &[("claude-haiku-5-5", "Claude Haiku 5.5 (recommended)")],
+            Provider::Custom => &[],
         }
     }
 

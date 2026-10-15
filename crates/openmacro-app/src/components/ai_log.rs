@@ -263,6 +263,9 @@ fn Camera(on_photo: EventHandler<String>) -> Element {
     }
 }
 
+/// The model list's entry for naming another model.
+const OTHER_MODEL: &str = "other";
+
 /// The More screen's AI logging settings.
 #[component]
 pub fn AiSettingsCard() -> Element {
@@ -270,6 +273,13 @@ pub fn AiSettingsCard() -> Element {
     let settings = SETTINGS.read().clone();
     let key = KEY.read().clone();
     let mut new_key = use_signal(String::new);
+    // Naming a model that isn't in the list.
+    let listed = settings
+        .provider
+        .models()
+        .iter()
+        .any(|(id, _)| *id == settings.model);
+    let mut other_model = use_signal(|| !listed);
     let mut testing = use_signal(|| false);
     let mut test_result = use_signal(|| None::<Result<String, String>>);
     let custom = settings.provider == Provider::Custom;
@@ -300,6 +310,7 @@ pub fn AiSettingsCard() -> Element {
                             let mut s = SETTINGS.write();
                             s.provider = provider;
                             s.model = provider.default_model().to_string();
+                            other_model.set(false);
                             test_result.set(None);
                         }
                     },
@@ -319,23 +330,38 @@ pub fn AiSettingsCard() -> Element {
                     }
                 }
             }
-            label { class: "field",
-                span { "Model" }
-                input {
-                    r#type: "text",
-                    placeholder: if custom { "The service's model name" } else { recommended },
-                    value: "{settings.model}",
-                    onchange: move |e| SETTINGS.write().model = e.value().trim().to_string(),
+            if !custom {
+                label { class: "field",
+                    span { "Model" }
+                    select {
+                        onchange: move |e| {
+                            if e.value() == OTHER_MODEL {
+                                other_model.set(true);
+                            } else {
+                                other_model.set(false);
+                                SETTINGS.write().model = e.value();
+                                test_result.set(None);
+                            }
+                        },
+                        for (id , label) in settings.provider.models().iter().copied() {
+                            option { key: "{id}", value: id, selected: !other_model() && settings.model == id, "{label}" }
+                        }
+                        option { value: OTHER_MODEL, selected: other_model(), "Other model…" }
+                    }
                 }
             }
-            if !custom && settings.model != recommended {
-                button {
-                    class: "link-button",
-                    onclick: move |_| {
-                        let mut s = SETTINGS.write();
-                        s.model = s.provider.default_model().to_string();
-                    },
-                    "Use the recommended model ({recommended})"
+            if custom || other_model() {
+                label { class: "field",
+                    span { if custom { "Model" } else { "Model name, as the service writes it" } }
+                    input {
+                        r#type: "text",
+                        placeholder: if custom { "The service's model name" } else { recommended },
+                        value: "{settings.model}",
+                        onchange: move |e| {
+                            SETTINGS.write().model = e.value().trim().to_string();
+                            test_result.set(None);
+                        },
+                    }
                 }
             }
             if let Some(hint) = key_hint {
