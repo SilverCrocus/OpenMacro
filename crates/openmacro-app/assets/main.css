@@ -73,6 +73,10 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* An app screen, not a document: content wider than the screen is cut
+   off rather than letting the page pan or zoom out. */
+html { overflow-x: hidden; }
+
 button, input, select {
   font: inherit;
   color: inherit;
@@ -323,7 +327,8 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .hour-add { width: 28px; height: 28px; padding: 0; display: grid; place-items: center; margin-left: 8px; }
 .hour-add .icon { width: 14px; height: 14px; }
 .hour-row:not(.filled) .hour-add { opacity: 0.55; }
-.hour-entries { margin-top: 6px; display: grid; gap: 6px; }
+/* minmax(0, 1fr): long food names shorten with an ellipsis instead of widening the column. */
+.hour-entries { margin-top: 6px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
 
 .entry, .plate-item {
   display: flex;
@@ -370,7 +375,7 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .sheet-when select { width: auto; border-radius: 999px; padding: 6px 10px; }
 .sheet-total { margin-left: auto; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--muted); }
 
-.plate { padding: 12px 16px 4px; border-bottom: 1px solid var(--border); max-height: 34%; overflow-y: auto; display: grid; gap: 6px; }
+.plate { padding: 12px 16px 4px; border-bottom: 1px solid var(--border); max-height: 34%; overflow-y: auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
 .plate-head { display: flex; justify-content: space-between; align-items: baseline; }
 .plate-head h3 { margin: 0; color: var(--text); }
 

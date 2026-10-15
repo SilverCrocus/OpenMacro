@@ -115,7 +115,7 @@ fn App() -> Element {
 
     rsx! {
         document::Title { "OpenMacro" }
-        document::Meta { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" }
+        document::Meta { name: "viewport", content: "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" }
         document::Meta { name: "theme-color", content: "#0f1115" }
         document::Stylesheet { href: MAIN_CSS }
         document::Link { rel: "icon", href: ICON }
