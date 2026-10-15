@@ -221,10 +221,14 @@ pub fn Dashboard() -> Element {
                     "Log what you eat with the + button and weigh in when you can. After a few days your expenditure estimate starts adapting to you."
                 }
                 p { class: "muted", "Set your age, height and weight under More so the starting estimate fits you." }
-                button {
-                    class: "primary",
-                    onclick: move |_| state.replace_data(crate::seed::demo(today)),
-                    "Explore with demo data"
+                // Only in the web preview: on a phone, demo data would mix
+                // into real history and be sent to Health Connect.
+                if cfg!(target_arch = "wasm32") {
+                    button {
+                        class: "primary",
+                        onclick: move |_| state.replace_data(crate::seed::demo(today)),
+                        "Explore with demo data"
+                    }
                 }
             }
         }

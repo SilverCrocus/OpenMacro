@@ -166,7 +166,10 @@ pub fn More() -> Element {
                 }
             }
             div { class: "button-row",
-                button { onclick: move |_| state.replace_data(crate::seed::demo(today())), "Replace with demo data" }
+                // Web preview only, as on the dashboard.
+                if cfg!(target_arch = "wasm32") {
+                    button { onclick: move |_| state.replace_data(crate::seed::demo(today())), "Replace with demo data" }
+                }
                 if confirm_clear() {
                     button {
                         class: "danger",
