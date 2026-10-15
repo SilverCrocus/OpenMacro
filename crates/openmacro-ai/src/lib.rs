@@ -23,16 +23,24 @@ pub enum Provider {
     Gemini,
     Anthropic,
     OpenAi,
+    /// One key for many providers' models, billed in one place.
+    OpenRouter,
 }
 
 impl Provider {
-    pub const ALL: [Provider; 3] = [Provider::Gemini, Provider::Anthropic, Provider::OpenAi];
+    pub const ALL: [Provider; 4] = [
+        Provider::Gemini,
+        Provider::Anthropic,
+        Provider::OpenAi,
+        Provider::OpenRouter,
+    ];
 
     pub fn code(self) -> &'static str {
         match self {
             Provider::Gemini => "gemini",
             Provider::Anthropic => "anthropic",
             Provider::OpenAi => "openai",
+            Provider::OpenRouter => "openrouter",
         }
     }
 
@@ -45,6 +53,7 @@ impl Provider {
             Provider::Gemini => "Google Gemini",
             Provider::Anthropic => "Anthropic Claude",
             Provider::OpenAi => "OpenAI",
+            Provider::OpenRouter => "OpenRouter",
         }
     }
 
@@ -54,6 +63,7 @@ impl Provider {
             Provider::Gemini => "GEMINI_API_KEY",
             Provider::Anthropic => "ANTHROPIC_API_KEY",
             Provider::OpenAi => "OPENAI_API_KEY",
+            Provider::OpenRouter => "OPENROUTER_API_KEY",
         }
     }
 }
@@ -142,6 +152,10 @@ pub struct Estimate {
     /// Tokens billed, for cost estimates.
     pub input_tokens: u64,
     pub output_tokens: u64,
+    /// What the request cost in US dollars, when the provider says
+    /// (OpenRouter does).
+    #[serde(default)]
+    pub cost_usd: Option<f64>,
 }
 
 /// An HTTP POST to send: URL, headers (including the API key) and JSON body.
@@ -256,10 +270,10 @@ pub fn request(
                 }],
             }),
         },
-        Provider::OpenAi => {
+        Provider::OpenAi | Provider::OpenRouter => {
+            let open_router = choice.provider == Provider::OpenRouter;
             let mut body = json!({
                 "model": choice.model,
-                "max_completion_tokens": 8000,
                 "messages": [{
                     "role": "user",
                     "content": [
@@ -275,12 +289,28 @@ pub fn request(
                     "json_schema": { "name": "foods", "strict": true, "schema": reply_schema() },
                 },
             });
-            if let Some(effort) = &choice.effort {
-                body["reasoning_effort"] = json!(effort);
+            if open_router {
+                body["max_tokens"] = json!(8000);
+                if let Some(effort) = &choice.effort {
+                    body["reasoning"] = json!({ "effort": effort });
+                }
+            } else {
+                body["max_completion_tokens"] = json!(8000);
+                if let Some(effort) = &choice.effort {
+                    body["reasoning_effort"] = json!(effort);
+                }
             }
+            let mut headers = vec![("authorization".into(), format!("Bearer {api_key}"))];
+            let url = if open_router {
+                // Names the app on OpenRouter's activity page.
+                headers.push(("x-title".into(), "OpenMacro".into()));
+                "https://openrouter.ai/api/v1/chat/completions"
+            } else {
+                "https://api.openai.com/v1/chat/completions"
+            };
             Request {
-                url: "https://api.openai.com/v1/chat/completions".into(),
-                headers: vec![("authorization".into(), format!("Bearer {api_key}"))],
+                url: url.into(),
+                headers,
                 body,
             }
         }
@@ -299,8 +329,15 @@ pub fn error_message(reply: &Value) -> Option<String> {
     )
 }
 
-/// The model's text and the tokens billed, from a successful reply.
-fn reply_text(provider: Provider, reply: &Value) -> Result<(String, u64, u64), String> {
+/// The model's text from a successful reply, and what it cost.
+struct ReplyText {
+    text: String,
+    input_tokens: u64,
+    output_tokens: u64,
+    cost_usd: Option<f64>,
+}
+
+fn reply_text(provider: Provider, reply: &Value) -> Result<ReplyText, String> {
     let n = |v: &Value| v.as_u64().unwrap_or(0);
     match provider {
         Provider::Gemini => {
@@ -319,11 +356,12 @@ fn reply_text(provider: Provider, reply: &Value) -> Result<(String, u64, u64), S
                 .filter_map(|p| p["text"].as_str())
                 .collect::<String>();
             let usage = &reply["usageMetadata"];
-            Ok((
+            Ok(ReplyText {
                 text,
-                n(&usage["promptTokenCount"]),
-                n(&usage["candidatesTokenCount"]) + n(&usage["thoughtsTokenCount"]),
-            ))
+                input_tokens: n(&usage["promptTokenCount"]),
+                output_tokens: n(&usage["candidatesTokenCount"]) + n(&usage["thoughtsTokenCount"]),
+                cost_usd: None,
+            })
         }
         Provider::Anthropic => {
             let text = reply["content"]
@@ -334,23 +372,29 @@ fn reply_text(provider: Provider, reply: &Value) -> Result<(String, u64, u64), S
                 .filter_map(|b| b["text"].as_str())
                 .collect::<String>();
             let usage = &reply["usage"];
-            Ok((text, n(&usage["input_tokens"]), n(&usage["output_tokens"])))
+            Ok(ReplyText {
+                text,
+                input_tokens: n(&usage["input_tokens"]),
+                output_tokens: n(&usage["output_tokens"]),
+                cost_usd: None,
+            })
         }
-        Provider::OpenAi => {
+        Provider::OpenAi | Provider::OpenRouter => {
             let message = &reply["choices"][0]["message"];
             if let Some(refusal) = message["refusal"].as_str() {
                 return Err(format!("The model refused: {refusal}"));
             }
             let text = message["content"]
                 .as_str()
-                .ok_or("OpenAI gave no answer.")?
+                .ok_or(format!("{} gave no answer.", provider.label()))?
                 .to_string();
             let usage = &reply["usage"];
-            Ok((
+            Ok(ReplyText {
                 text,
-                n(&usage["prompt_tokens"]),
-                n(&usage["completion_tokens"]),
-            ))
+                input_tokens: n(&usage["prompt_tokens"]),
+                output_tokens: n(&usage["completion_tokens"]),
+                cost_usd: usage["cost"].as_f64(),
+            })
         }
     }
 }
@@ -378,11 +422,12 @@ pub fn parse(provider: Provider, reply: &Value) -> Result<Estimate, String> {
     if let Some(message) = error_message(reply) {
         return Err(message);
     }
-    let (text, input_tokens, output_tokens) = reply_text(provider, reply)?;
+    let reply = reply_text(provider, reply)?;
     Ok(Estimate {
-        items: parse_items(&text)?,
-        input_tokens,
-        output_tokens,
+        items: parse_items(&reply.text)?,
+        input_tokens: reply.input_tokens,
+        output_tokens: reply.output_tokens,
+        cost_usd: reply.cost_usd,
     })
 }
 
@@ -461,6 +506,18 @@ mod tests {
             claude.body["messages"][0]["content"][0]["source"]["data"],
             "AQID"
         );
+
+        let routed = request(
+            &ModelChoice::parse("openrouter:google/gemini-3.8-flash@low").unwrap(),
+            "k",
+            &image,
+            "image/png",
+            None,
+        );
+        assert_eq!(routed.url, "https://openrouter.ai/api/v1/chat/completions");
+        assert_eq!(routed.body["model"], "google/gemini-3.8-flash");
+        assert_eq!(routed.body["reasoning"]["effort"], "low");
+        assert!(routed.body.get("max_completion_tokens").is_none());
     }
 
     #[test]
@@ -491,6 +548,15 @@ mod tests {
             "usage": { "prompt_tokens": 400, "completion_tokens": 30 },
         });
         assert_eq!(parse(Provider::OpenAi, &openai).unwrap().items.len(), 1);
+
+        let open_router = json!({
+            "choices": [{ "message": { "content": items } }],
+            "usage": { "prompt_tokens": 400, "completion_tokens": 30, "cost": 0.00042 },
+        });
+        assert_eq!(
+            parse(Provider::OpenRouter, &open_router).unwrap().cost_usd,
+            Some(0.00042)
+        );
 
         let error = json!({ "error": { "message": "API key not valid" } });
         assert_eq!(

@@ -4,13 +4,13 @@
 //!
 //! ```text
 //! food-photo-eval fetch <dir> [--count 100]
-//! food-photo-eval models [--keys <file>]
+//! food-photo-eval models [--keys <file>] [--filter <text>]
 //! food-photo-eval run <dir> --model provider:model[@effort]... [--keys <file>] [--jobs 4]
 //! food-photo-eval report <dir> --foods <foods.db> [--region au|us] [--price spec=in,out]...
 //! ```
 //!
 //! API keys come from the environment or a file of `KEY=value` lines
-//! (GEMINI_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY). Answers are saved
+//! (GEMINI_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY, OPENROUTER_API_KEY). Answers are saved
 //! in `<dir>/runs`, so a rerun only asks about photos not yet answered,
 //! and reports (say, after improving the matching) cost nothing.
 
@@ -271,9 +271,11 @@ fn keys(args: &[String]) -> Result<HashMap<Provider, String>> {
     Ok(found)
 }
 
-/// Lists the models each key can use.
+/// Lists the models each key can use (for OpenRouter, the ones that take
+/// images, with their prices), optionally only names containing `--filter`.
 fn models(args: &[String]) -> Result<()> {
     let keys = keys(args)?;
+    let filter = option(args, "--filter").unwrap_or_default().to_lowercase();
     let agent = agent();
     for provider in Provider::ALL {
         let Some(key) = keys.get(&provider) else {
@@ -292,6 +294,9 @@ fn models(args: &[String]) -> Result<()> {
                 .header("anthropic-version", "2023-06-01"),
             Provider::OpenAi => agent
                 .get("https://api.openai.com/v1/models")
+                .header("authorization", format!("Bearer {key}")),
+            Provider::OpenRouter => agent
+                .get("https://openrouter.ai/api/v1/models")
                 .header("authorization", format!("Bearer {key}")),
         };
         let reply: Value = request
@@ -317,6 +322,31 @@ fn models(args: &[String]) -> Result<()> {
                 .filter_map(|m| m["name"].as_str())
                 .map(|n| n.trim_start_matches("models/").to_string())
                 .collect(),
+            Provider::OpenRouter => reply["data"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter(|m| {
+                    m["architecture"]["input_modalities"]
+                        .as_array()
+                        .is_some_and(|a| a.iter().any(|x| x == "image"))
+                })
+                .filter_map(|m| {
+                    // Prices are in dollars per token, as text.
+                    let per_million = |v: &Value| {
+                        v.as_str()
+                            .and_then(|p| p.parse::<f64>().ok())
+                            .unwrap_or(0.0)
+                            * 1e6
+                    };
+                    Some(format!(
+                        "{}  (${:.2} in / ${:.2} out per 1M tokens)",
+                        m["id"].as_str()?,
+                        per_million(&m["pricing"]["prompt"]),
+                        per_million(&m["pricing"]["completion"])
+                    ))
+                })
+                .collect(),
             _ => reply["data"]
                 .as_array()
                 .into_iter()
@@ -324,6 +354,7 @@ fn models(args: &[String]) -> Result<()> {
                 .filter_map(|m| m["id"].as_str().map(str::to_string))
                 .collect(),
         };
+        names.retain(|n| n.to_lowercase().contains(&filter));
         names.sort();
         println!("{} ({}):", provider.label(), provider.code());
         for name in names {
@@ -695,15 +726,27 @@ fn report(args: &[String]) -> Result<()> {
                 .map(|(_, _, e)| e.output_tokens as f64)
                 .collect::<Vec<_>>(),
         );
-        let cost = prices
-            .iter()
-            .filter_map(|(spec, rates)| Some((run_file(&dir, &ModelChoice::parse(spec)?), rates)))
-            .find(|(file, _)| file == path)
-            .map(|(_, (input, output))| {
-                format!(
-                    "${:.2}",
-                    (tokens_in * input + tokens_out * output) / 1e6 * 1000.0
-                )
+        let costs: Vec<f64> = ok.iter().filter_map(|(_, _, e)| e.cost_usd).collect();
+        let cost = if costs.len() == ok.len() {
+            // What the provider billed.
+            Some(format!("${:.2}", mean(&costs) * 1000.0))
+        } else {
+            None
+        };
+        let cost = cost
+            .or_else(|| {
+                prices
+                    .iter()
+                    .filter_map(|(spec, rates)| {
+                        Some((run_file(&dir, &ModelChoice::parse(spec)?), rates))
+                    })
+                    .find(|(file, _)| file == path)
+                    .map(|(_, (input, output))| {
+                        format!(
+                            "${:.2}",
+                            (tokens_in * input + tokens_out * output) / 1e6 * 1000.0
+                        )
+                    })
             })
             .unwrap_or_default();
         out.push_str(&format!(
