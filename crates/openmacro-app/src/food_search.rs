@@ -6,6 +6,7 @@ use std::collections::{HashMap, HashSet};
 
 use openmacro_core::food::{Food, FoodSource, Serving};
 use openmacro_core::log::LogEntry;
+use openmacro_core::nutrients::NutrientProfile;
 
 use crate::foods::{FOODS, search as search_samples};
 
@@ -220,22 +221,46 @@ fn grams_in(amount: &str) -> Option<f64> {
     inner.trim().parse().ok().filter(|g: &f64| *g > 0.0)
 }
 
-/// Rebuilds a food from a log entry when the original can't be found
-/// (e.g. an online-only product while offline).
-fn from_entry(entry: &LogEntry) -> Option<FoundFood> {
-    let grams = grams_in(&entry.amount)?;
+/// Rebuilds a food from something logged or on the plate when the original
+/// can't be found (an online-only product while offline, or an AI
+/// estimate), if its amount says how many grams it was.
+pub fn rebuild(
+    id: &str,
+    name: &str,
+    amount: &str,
+    nutrients: &NutrientProfile,
+) -> Option<FoundFood> {
+    let grams = grams_in(amount)?;
     Some(FoundFood {
         food: Food {
-            id: entry.food_id.clone()?,
-            name: entry.name.clone(),
+            id: id.to_string(),
+            name: name.to_string(),
             brand: None,
             source: FoodSource::Common,
             barcode: None,
-            per_100g: entry.nutrients.scaled(100.0 / grams),
+            per_100g: nutrients.scaled(100.0 / grams),
             servings: vec![Serving::new("portion", grams)],
         },
         source: "Logged",
     })
+}
+
+fn from_entry(entry: &LogEntry) -> Option<FoundFood> {
+    rebuild(
+        entry.food_id.as_deref()?,
+        &entry.name,
+        &entry.amount,
+        &entry.nutrients,
+    )
+}
+
+/// The food a log entry came from, or one rebuilt from the entry.
+pub fn resolve_entry(
+    db: Option<&Database>,
+    custom: &[Food],
+    entry: &LogEntry,
+) -> Option<FoundFood> {
+    resolve(db, custom, entry.food_id.as_deref()?).or_else(|| from_entry(entry))
 }
 
 /// Foods logged most recently, newest first, without repeats.

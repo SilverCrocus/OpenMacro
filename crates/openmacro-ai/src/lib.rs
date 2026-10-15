@@ -25,14 +25,19 @@ pub enum Provider {
     OpenAi,
     /// One key for many providers' models, billed in one place.
     OpenRouter,
+    /// Any service with an OpenAI-compatible API at a given address: Groq,
+    /// Mistral, DeepSeek, Together, or Ollama or LM Studio on your own
+    /// computer.
+    Custom,
 }
 
 impl Provider {
-    pub const ALL: [Provider; 4] = [
+    pub const ALL: [Provider; 5] = [
         Provider::Gemini,
-        Provider::Anthropic,
-        Provider::OpenAi,
         Provider::OpenRouter,
+        Provider::OpenAi,
+        Provider::Anthropic,
+        Provider::Custom,
     ];
 
     pub fn code(self) -> &'static str {
@@ -41,6 +46,7 @@ impl Provider {
             Provider::Anthropic => "anthropic",
             Provider::OpenAi => "openai",
             Provider::OpenRouter => "openrouter",
+            Provider::Custom => "custom",
         }
     }
 
@@ -54,6 +60,7 @@ impl Provider {
             Provider::Anthropic => "Anthropic Claude",
             Provider::OpenAi => "OpenAI",
             Provider::OpenRouter => "OpenRouter",
+            Provider::Custom => "Other (OpenAI-compatible)",
         }
     }
 
@@ -64,6 +71,37 @@ impl Provider {
             Provider::Anthropic => "ANTHROPIC_API_KEY",
             Provider::OpenAi => "OPENAI_API_KEY",
             Provider::OpenRouter => "OPENROUTER_API_KEY",
+            Provider::Custom => "CUSTOM_API_KEY",
+        }
+    }
+
+    /// A good model to start with: small, quick and cheap. Gemini 3.1 Flash
+    /// Lite did best in our comparison (docs/AI_PHOTO_EVAL.md).
+    pub fn default_model(self) -> &'static str {
+        match self {
+            Provider::Gemini => "gemini-3.1-flash-lite",
+            Provider::OpenRouter => "google/gemini-3.1-flash-lite",
+            Provider::OpenAi => "gpt-6-luna",
+            Provider::Anthropic => "claude-haiku-5-5",
+            Provider::Custom => "",
+        }
+    }
+
+    /// Whether replies reliably follow an enforced JSON schema. Through
+    /// OpenRouter and other OpenAI-compatible services that depends on the
+    /// model, so there the prompt alone asks for JSON.
+    pub fn enforces_schema(self) -> bool {
+        matches!(self, Provider::Gemini | Provider::OpenAi)
+    }
+
+    /// Where to create an API key.
+    pub fn key_page(self) -> Option<&'static str> {
+        match self {
+            Provider::Gemini => Some("https://aistudio.google.com/apikey"),
+            Provider::OpenRouter => Some("https://openrouter.ai/keys"),
+            Provider::OpenAi => Some("https://platform.openai.com/api-keys"),
+            Provider::Anthropic => Some("https://console.anthropic.com/settings/keys"),
+            Provider::Custom => None,
         }
     }
 }
@@ -83,12 +121,27 @@ pub struct ModelChoice {
     /// with placeholder items, Qwen by repeating the schema).
     #[serde(default)]
     pub free_form: bool,
+    /// The API's address for [`Provider::Custom`], e.g.
+    /// `https://api.groq.com/openai/v1`.
+    #[serde(default)]
+    pub base_url: Option<String>,
 }
 
 /// Marks a free-form model in a spec.
 const FREE_FORM: &str = "+freeform";
 
 impl ModelChoice {
+    /// A model as the app uses it: free-form where schemas aren't reliable.
+    pub fn new(provider: Provider, model: &str, base_url: Option<&str>) -> ModelChoice {
+        ModelChoice {
+            provider,
+            model: model.trim().to_string(),
+            effort: None,
+            free_form: !provider.enforces_schema(),
+            base_url: base_url.map(|u| u.trim().to_string()),
+        }
+    }
+
     /// Parses `provider:model`, with `@effort` and then `+freeform`
     /// optionally after it.
     pub fn parse(spec: &str) -> Option<ModelChoice> {
@@ -109,6 +162,7 @@ impl ModelChoice {
             model: model.to_string(),
             effort,
             free_form,
+            base_url: None,
         })
     }
 
@@ -126,8 +180,9 @@ impl ModelChoice {
     }
 }
 
-/// What the model is asked. The JSON shape is spelled out for providers
-/// that can't be given a schema.
+/// What the model is asked about a photo. The JSON shape is spelled out for
+/// providers that can't be given a schema. (The comparison in
+/// docs/AI_PHOTO_EVAL.md used this exact text.)
 pub const PROMPT: &str = r#"Identify each food and drink in this photo and estimate how much of it there is.
 
 - Name each item generically, the way a nutrition database would, such as "chicken breast, roasted", "white rice, cooked" or "broccoli, steamed". Name a brand only if its packaging is visible.
@@ -141,11 +196,28 @@ Reply with only JSON in this form:
 {"items": [{"name": "white rice, cooked", "grams": 150, "kcal": 195, "protein_g": 4, "fat_g": 0.4, "carbs_g": 43}]}
 If there is no food or drink in the photo, reply {"items": []}."#;
 
-/// The prompt, with the user's note about the meal if they wrote one.
-pub fn prompt(note: Option<&str>) -> String {
-    match note.map(str::trim).filter(|n| !n.is_empty()) {
-        Some(note) => format!("{PROMPT}\n\nThe person who took the photo adds: {note}"),
-        None => PROMPT.to_string(),
+/// What the model is asked about a meal described in words, without a photo.
+pub const DESCRIPTION_PROMPT: &str = r#"Identify each food and drink in the meal described below and estimate how much of it there is.
+
+- Name each item generically, the way a nutrition database would, such as "chicken breast, roasted", "white rice, cooked" or "broccoli, steamed". Name a brand only if the description does.
+- List separate foods as separate items. Name a mixed dish, such as lasagna or a burrito, as one item unless its parts are listed separately.
+- Include sauces, dressings, oils, spreads and toppings that are mentioned, as items of their own.
+- Estimate the weight in grams of the edible part as served: cooked weight for cooked foods, without bones, peel or packaging. Use the amounts given, or a typical portion when none is.
+- Also estimate each item's energy (kcal), protein, fat and carbohydrate (grams) at that weight.
+- When unsure, give your best guess rather than leaving an item out.
+
+Reply with only JSON in this form:
+{"items": [{"name": "white rice, cooked", "grams": 150, "kcal": 195, "protein_g": 4, "fat_g": 0.4, "carbs_g": 43}]}
+If no food or drink is described, reply {"items": []}."#;
+
+/// The prompt for a photo (with the user's note, if any) or, without a
+/// photo, for the user's description.
+pub fn prompt(photo: bool, note: Option<&str>) -> String {
+    let note = note.map(str::trim).filter(|n| !n.is_empty());
+    match (photo, note) {
+        (true, Some(note)) => format!("{PROMPT}\n\nThe person who took the photo adds: {note}"),
+        (true, None) => PROMPT.to_string(),
+        (false, note) => format!("{DESCRIPTION_PROMPT}\n\nThe meal: {}", note.unwrap_or("")),
     }
 }
 
@@ -232,16 +304,28 @@ fn gemini_schema(schema: &Value) -> Value {
     }
 }
 
-/// The request asking `choice`'s model about one photo.
+/// A photo to send: its bytes and media type, e.g. `image/jpeg`.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Photo<'a> {
+    pub bytes: &'a [u8],
+    pub mime: &'a str,
+}
+
+/// The request asking `choice`'s model about a photo, a description
+/// (`note` without a photo), or both.
 pub fn request(
     choice: &ModelChoice,
     api_key: &str,
-    image: &[u8],
-    mime: &str,
+    photo: Option<Photo>,
     note: Option<&str>,
 ) -> Request {
-    let data = base64::engine::general_purpose::STANDARD.encode(image);
-    let text = prompt(note);
+    let image = photo.map(|p| {
+        (
+            p.mime,
+            base64::engine::general_purpose::STANDARD.encode(p.bytes),
+        )
+    });
+    let text = prompt(photo.is_some(), note);
     match choice.provider {
         Provider::Gemini => {
             let mut config = if choice.free_form {
@@ -255,6 +339,11 @@ pub fn request(
             if let Some(level) = &choice.effort {
                 config["thinkingConfig"] = json!({ "thinkingLevel": level });
             }
+            let mut parts = Vec::new();
+            if let Some((mime, data)) = &image {
+                parts.push(json!({ "inline_data": { "mime_type": mime, "data": data } }));
+            }
+            parts.push(json!({ "text": text }));
             Request {
                 url: format!(
                     "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent",
@@ -262,51 +351,49 @@ pub fn request(
                 ),
                 headers: vec![("x-goog-api-key".into(), api_key.into())],
                 body: json!({
-                    "contents": [{
-                        "parts": [
-                            { "inline_data": { "mime_type": mime, "data": data } },
-                            { "text": text },
-                        ],
-                    }],
+                    "contents": [{ "parts": parts }],
                     "generationConfig": config,
                 }),
             }
         }
-        Provider::Anthropic => Request {
-            url: "https://api.anthropic.com/v1/messages".into(),
-            headers: vec![
-                ("x-api-key".into(), api_key.into()),
-                ("anthropic-version".into(), "2023-06-01".into()),
-            ],
-            body: json!({
-                "model": choice.model,
-                "max_tokens": 4096,
-                "messages": [{
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "image",
-                            "source": { "type": "base64", "media_type": mime, "data": data },
-                        },
-                        { "type": "text", "text": text },
-                    ],
-                }],
-            }),
-        },
-        Provider::OpenAi | Provider::OpenRouter => {
-            let open_router = choice.provider == Provider::OpenRouter;
+        Provider::Anthropic => {
+            let mut content = Vec::new();
+            if let Some((mime, data)) = &image {
+                content.push(json!({
+                    "type": "image",
+                    "source": { "type": "base64", "media_type": mime, "data": data },
+                }));
+            }
+            content.push(json!({ "type": "text", "text": text }));
+            Request {
+                url: "https://api.anthropic.com/v1/messages".into(),
+                headers: vec![
+                    ("x-api-key".into(), api_key.into()),
+                    ("anthropic-version".into(), "2023-06-01".into()),
+                    // Allows the call from a web page (the web preview).
+                    (
+                        "anthropic-dangerous-direct-browser-access".into(),
+                        "true".into(),
+                    ),
+                ],
+                body: json!({
+                    "model": choice.model,
+                    "max_tokens": 4096,
+                    "messages": [{ "role": "user", "content": content }],
+                }),
+            }
+        }
+        Provider::OpenAi | Provider::OpenRouter | Provider::Custom => {
+            let mut content = vec![json!({ "type": "text", "text": text })];
+            if let Some((mime, data)) = &image {
+                content.push(json!({
+                    "type": "image_url",
+                    "image_url": { "url": format!("data:{mime};base64,{data}") },
+                }));
+            }
             let mut body = json!({
                 "model": choice.model,
-                "messages": [{
-                    "role": "user",
-                    "content": [
-                        { "type": "text", "text": text },
-                        {
-                            "type": "image_url",
-                            "image_url": { "url": format!("data:{mime};base64,{data}") },
-                        },
-                    ],
-                }],
+                "messages": [{ "role": "user", "content": content }],
             });
             if !choice.free_form {
                 body["response_format"] = json!({
@@ -314,30 +401,34 @@ pub fn request(
                     "json_schema": { "name": "foods", "strict": true, "schema": reply_schema() },
                 });
             }
-            if open_router {
-                body["max_tokens"] = json!(8000);
-                if let Some(effort) = &choice.effort {
-                    body["reasoning"] = json!({ "effort": effort });
-                }
-            } else {
-                body["max_completion_tokens"] = json!(8000);
-                if let Some(effort) = &choice.effort {
-                    body["reasoning_effort"] = json!(effort);
-                }
+            let mut headers = Vec::new();
+            if !api_key.is_empty() {
+                headers.push(("authorization".into(), format!("Bearer {api_key}")));
             }
-            let mut headers = vec![("authorization".into(), format!("Bearer {api_key}"))];
-            let url = if open_router {
-                // Names the app on OpenRouter's activity page.
-                headers.push(("x-title".into(), "OpenMacro".into()));
-                "https://openrouter.ai/api/v1/chat/completions"
-            } else {
-                "https://api.openai.com/v1/chat/completions"
+            let url = match choice.provider {
+                Provider::OpenAi => {
+                    body["max_completion_tokens"] = json!(8000);
+                    if let Some(effort) = &choice.effort {
+                        body["reasoning_effort"] = json!(effort);
+                    }
+                    "https://api.openai.com/v1/chat/completions".to_string()
+                }
+                Provider::OpenRouter => {
+                    body["max_tokens"] = json!(8000);
+                    if let Some(effort) = &choice.effort {
+                        body["reasoning"] = json!({ "effort": effort });
+                    }
+                    // Names the app on OpenRouter's activity page.
+                    headers.push(("x-title".into(), "OpenMacro".into()));
+                    "https://openrouter.ai/api/v1/chat/completions".to_string()
+                }
+                _ => {
+                    body["max_tokens"] = json!(8000);
+                    let base = choice.base_url.as_deref().unwrap_or_default();
+                    format!("{}/chat/completions", base.trim_end_matches('/'))
+                }
             };
-            Request {
-                url: url.into(),
-                headers,
-                body,
-            }
+            Request { url, headers, body }
         }
     }
 }
@@ -404,7 +495,7 @@ fn reply_text(provider: Provider, reply: &Value) -> Result<ReplyText, String> {
                 cost_usd: None,
             })
         }
-        Provider::OpenAi | Provider::OpenRouter => {
+        Provider::OpenAi | Provider::OpenRouter | Provider::Custom => {
             let message = &reply["choices"][0]["message"];
             if let Some(refusal) = message["refusal"].as_str() {
                 return Err(format!("The model refused: {refusal}"));
@@ -483,7 +574,7 @@ mod tests {
         assert_eq!(free.effort.as_deref(), Some("low"));
         assert!(free.free_form);
         assert_eq!(free.spec(), "openrouter:qwen/qwen3.8-flash@low+freeform");
-        let body = request(&free, "k", &[1], "image/png", None).body;
+        let body = request(&free, "k", None, Some("a banana")).body;
         assert!(body.get("response_format").is_none());
         assert!(ModelChoice::parse("nobody:model").is_none());
         assert!(ModelChoice::parse("openai:").is_none());
@@ -495,8 +586,10 @@ mod tests {
         let gemini = request(
             &ModelChoice::parse("gemini:gemini-3.8-flash@low").unwrap(),
             "k",
-            &image,
-            "image/png",
+            Some(Photo {
+                bytes: &image,
+                mime: "image/png",
+            }),
             Some("about 200 g of rice"),
         );
         assert!(gemini.url.ends_with("/gemini-3.8-flash:generateContent"));
@@ -521,8 +614,10 @@ mod tests {
         let openai = request(
             &ModelChoice::parse("openai:gpt-mini").unwrap(),
             "k",
-            &image,
-            "image/png",
+            Some(Photo {
+                bytes: &image,
+                mime: "image/png",
+            }),
             None,
         );
         assert_eq!(openai.headers[0].1, "Bearer k");
@@ -535,8 +630,10 @@ mod tests {
         let claude = request(
             &ModelChoice::parse("anthropic:claude-haiku-5-5").unwrap(),
             "k",
-            &image,
-            "image/png",
+            Some(Photo {
+                bytes: &image,
+                mime: "image/png",
+            }),
             None,
         );
         assert_eq!(
@@ -547,14 +644,45 @@ mod tests {
         let routed = request(
             &ModelChoice::parse("openrouter:google/gemini-3.8-flash@low").unwrap(),
             "k",
-            &image,
-            "image/png",
+            Some(Photo {
+                bytes: &image,
+                mime: "image/png",
+            }),
             None,
         );
         assert_eq!(routed.url, "https://openrouter.ai/api/v1/chat/completions");
         assert_eq!(routed.body["model"], "google/gemini-3.8-flash");
         assert_eq!(routed.body["reasoning"]["effort"], "low");
         assert!(routed.body.get("max_completion_tokens").is_none());
+    }
+
+    #[test]
+    fn descriptions_and_custom_services() {
+        let choice = ModelChoice::new(
+            Provider::Custom,
+            " llama-vision ",
+            Some("http://127.0.0.1:11434/v1/"),
+        );
+        assert!(choice.free_form);
+        assert_eq!(choice.model, "llama-vision");
+        let described = request(&choice, "", None, Some("two eggs on toast"));
+        assert_eq!(described.url, "http://127.0.0.1:11434/v1/chat/completions");
+        assert!(described.headers.is_empty());
+        let content = described.body["messages"][0]["content"].as_array().unwrap();
+        assert_eq!(content.len(), 1);
+        let text = content[0]["text"].as_str().unwrap();
+        assert!(text.starts_with("Identify each food and drink in the meal described below"));
+        assert!(text.ends_with("The meal: two eggs on toast"));
+
+        assert!(!ModelChoice::new(Provider::Gemini, "gemini-3.1-flash-lite", None).free_form);
+        let gemini = request(
+            &ModelChoice::new(Provider::Gemini, "gemini-3.1-flash-lite", None),
+            "k",
+            None,
+            Some("an apple"),
+        );
+        let parts = gemini.body["contents"][0]["parts"].as_array().unwrap();
+        assert_eq!(parts.len(), 1);
     }
 
     #[test]

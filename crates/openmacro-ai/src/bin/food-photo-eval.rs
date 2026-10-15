@@ -280,7 +280,8 @@ fn models(args: &[String]) -> Result<()> {
     let keys = keys(args)?;
     let filter = option(args, "--filter").unwrap_or_default().to_lowercase();
     let agent = agent();
-    for provider in Provider::ALL {
+    // A custom service has no fixed address to list models from.
+    for provider in Provider::ALL.into_iter().filter(|p| *p != Provider::Custom) {
         let Some(key) = keys.get(&provider) else {
             println!("{}: no key", provider.label());
             continue;
@@ -298,7 +299,7 @@ fn models(args: &[String]) -> Result<()> {
             Provider::OpenAi => agent
                 .get("https://api.openai.com/v1/models")
                 .header("authorization", format!("Bearer {key}")),
-            Provider::OpenRouter => agent
+            Provider::OpenRouter | Provider::Custom => agent
                 .get("https://openrouter.ai/api/v1/models")
                 .header("authorization", format!("Bearer {key}")),
         };
@@ -399,7 +400,11 @@ fn load_answers(path: &Path) -> Vec<Answer> {
 /// Asks one model about one photo, retrying when rate limited or the
 /// service is busy. Returns the provider's successful reply.
 fn ask(agent: &ureq::Agent, choice: &ModelChoice, key: &str, image: &[u8]) -> Result<Value> {
-    let request = openmacro_ai::request(choice, key, image, "image/png", None);
+    let photo = openmacro_ai::Photo {
+        bytes: image,
+        mime: "image/png",
+    };
+    let request = openmacro_ai::request(choice, key, Some(photo), None);
     let mut wait = Duration::from_secs(10);
     for attempt in 1.. {
         let mut builder = agent.post(&request.url);

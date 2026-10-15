@@ -20,6 +20,7 @@ use crate::state::{AppState, CoachSnapshot, LogEntry, PlateItem, day_totals};
 enum Tab {
     Search,
     Scan,
+    Ai,
     QuickAdd,
     Library,
 }
@@ -124,10 +125,13 @@ pub fn Logger() -> Element {
                         on_edit: move |index: usize| {
                             let plate = state.plate.read();
                             let Some(item) = plate.items.get(index) else { return };
+                            // Foods made up on the spot (AI estimates) are rebuilt
+                            // from the item itself.
                             let found = item.food_id.as_deref().and_then(|id| {
                                 let guard = foods_db.read();
                                 let db = guard.as_ref().and_then(Option::as_ref);
                                 food_search::resolve(db, &state.custom_foods.read(), id)
+                                    .or_else(|| food_search::rebuild(id, &item.name, &item.amount, &item.nutrients))
                             });
                             if let Some(found) = found {
                                 let entry = LogEntry {
@@ -149,6 +153,7 @@ pub fn Logger() -> Element {
                         for (value , label) in [
                             (Tab::Search, "Search"),
                             (Tab::Scan, "Scan"),
+                            (Tab::Ai, "AI"),
                             (Tab::QuickAdd, "Quick Add"),
                             (Tab::Library, "Library"),
                         ]
@@ -218,6 +223,9 @@ pub fn Logger() -> Element {
                             },
                             (None, None, Tab::Library) => rsx! {
                                 super::library::LibraryTab { on_select: move |food| detail.set(Some(food)), new_barcode }
+                            },
+                            (None, None, Tab::Ai) => rsx! {
+                                super::ai_log::AiTab {}
                             },
                             (None, None, Tab::QuickAdd) => rsx! {
                                 QuickAdd {}

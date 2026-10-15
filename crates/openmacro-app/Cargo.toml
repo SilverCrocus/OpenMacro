@@ -14,6 +14,7 @@ path = "src/main.rs"
 
 [dependencies]
 openmacro-core = { path = "../openmacro-core" }
+openmacro-ai = { path = "../openmacro-ai" }
 dioxus = { version = "0.7.10", features = ["router"] }
 chrono = { workspace = true, features = ["clock", "wasmbind", "serde"] }
 serde_json.workspace = true

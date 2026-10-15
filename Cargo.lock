@@ -3710,6 +3710,7 @@ dependencies = [
  "dioxus",
  "jni 0.21.1",
  "ndk-context",
+ "openmacro-ai",
  "openmacro-core",
  "openmacro-foods",
  "openmacro-store",

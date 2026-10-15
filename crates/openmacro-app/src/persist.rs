@@ -41,6 +41,10 @@ mod native {
     const PREFS: &str = "display";
     const COACH_SETTINGS: &str = "coach_settings";
     const HEALTH: &str = "health_connect";
+    const AI: &str = "ai_logging";
+    /// The AI service's API key, kept out of the database (and so out of
+    /// backup files) in a folder Android's automatic backup skips.
+    const AI_KEY_FILE: &str = "ai-api-key";
 
     pub struct Persistence {
         store: Option<Store>,
@@ -175,6 +179,40 @@ mod native {
                     store.set_setting(HEALTH, settings),
                 );
             }
+        }
+
+        pub fn save_ai_settings(&self, settings: &crate::ai::AiSettings) {
+            if let Some(store) = &self.store {
+                report("save the AI settings", store.set_setting(AI, settings));
+            }
+        }
+
+        pub fn load_ai_settings(&self) -> Option<crate::ai::AiSettings> {
+            report("load the AI settings", self.store.as_ref()?.setting(AI))?
+        }
+
+        /// Saves the AI service's key, or removes it when `None`.
+        pub fn save_ai_key(&self, key: Option<&str>) {
+            let Some(path) = secrets_dir().map(|d| d.join(AI_KEY_FILE)) else {
+                return;
+            };
+            let result = match key {
+                Some(key) => path
+                    .parent()
+                    .map_or(Ok(()), std::fs::create_dir_all)
+                    .and_then(|_| std::fs::write(&path, key)),
+                None if path.exists() => std::fs::remove_file(&path),
+                None => Ok(()),
+            };
+            if let Err(e) = result {
+                warn!("could not save the AI key: {e}");
+            }
+        }
+
+        pub fn load_ai_key(&self) -> Option<String> {
+            let path = secrets_dir()?.join(AI_KEY_FILE);
+            let key = std::fs::read_to_string(path).ok()?;
+            Some(key.trim().to_string()).filter(|k| !k.is_empty())
         }
 
         pub fn load_health(&self) -> Option<crate::health::HealthSettings> {
@@ -385,6 +423,18 @@ mod native {
         data_dir()
     }
 
+    /// Where secrets live: on Android, a private folder its automatic backup
+    /// skips.
+    #[cfg(target_os = "android")]
+    fn secrets_dir() -> Option<PathBuf> {
+        context_dir("getNoBackupFilesDir")
+    }
+
+    #[cfg(not(target_os = "android"))]
+    fn secrets_dir() -> Option<PathBuf> {
+        data_dir()
+    }
+
     /// A folder from one of the Context's `File`-returning getters.
     #[cfg(target_os = "android")]
     fn context_dir(getter: &str) -> Option<PathBuf> {
@@ -495,6 +545,19 @@ mod web {
         pub fn insert_check_in(&self, _check_in: &CheckIn) {}
 
         pub fn save_prefs(&self, _prefs: &crate::prefs::Prefs) {}
+
+        pub fn save_ai_settings(&self, _settings: &crate::ai::AiSettings) {}
+
+        pub fn load_ai_settings(&self) -> Option<crate::ai::AiSettings> {
+            None
+        }
+
+        /// The web preview keeps the key in memory only.
+        pub fn save_ai_key(&self, _key: Option<&str>) {}
+
+        pub fn load_ai_key(&self) -> Option<String> {
+            None
+        }
 
         pub fn load_prefs(&self) -> Option<crate::prefs::Prefs> {
             None

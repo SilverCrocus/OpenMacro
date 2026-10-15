@@ -1,6 +1,9 @@
 //! Android platform calls over JNI, shared by the updater and export.
 
-use jni::objects::{JObject, JValue};
+use std::sync::mpsc::{self, TryRecvError};
+use std::time::Duration;
+
+use jni::objects::{JClass, JObject, JValue};
 use jni::{JNIEnv, JavaVM};
 
 /// Runs `f` with the JNI environment and the activity, freeing local
@@ -21,6 +24,45 @@ pub fn with_activity<T>(
         return None;
     }
     result.ok()
+}
+
+/// One of the app's own classes (from android/MainActivity.kt), through
+/// the app's class loader: JNI's own lookup only sees system classes from
+/// threads Rust started.
+pub fn app_class<'a>(
+    env: &mut JNIEnv<'a>,
+    activity: &JObject,
+    name: &str,
+) -> jni::errors::Result<JClass<'a>> {
+    let loader = env
+        .call_method(activity, "getClassLoader", "()Ljava/lang/ClassLoader;", &[])?
+        .l()?;
+    let name = env.new_string(name)?;
+    let class = env
+        .call_method(
+            &loader,
+            "loadClass",
+            "(Ljava/lang/String;)Ljava/lang/Class;",
+            &[JValue::Object(&name)],
+        )?
+        .l()?;
+    Ok(JClass::from(class))
+}
+
+/// Runs blocking `f` on a thread of its own and waits for it without
+/// blocking the UI. `None` if it panicked.
+pub async fn off_thread<T: Send + 'static>(f: impl FnOnce() -> T + Send + 'static) -> Option<T> {
+    let (tx, rx) = mpsc::channel();
+    std::thread::spawn(move || {
+        let _ = tx.send(f());
+    });
+    loop {
+        match rx.try_recv() {
+            Ok(value) => return Some(value),
+            Err(TryRecvError::Empty) => tokio::time::sleep(Duration::from_millis(50)).await,
+            Err(TryRecvError::Disconnected) => return None,
+        }
+    }
 }
 
 /// The device's API level (`Build.VERSION.SDK_INT`).

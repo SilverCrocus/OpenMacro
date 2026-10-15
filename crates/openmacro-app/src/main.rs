@@ -1,3 +1,4 @@
+mod ai;
 #[cfg(target_os = "android")]
 mod android;
 mod back;
@@ -55,6 +56,9 @@ fn App() -> Element {
     // Look for a newer release once per launch (Android only).
     let update = use_context_provider(|| Signal::new(updater::UpdateState::Idle));
     use_hook(move || check_for_update(update));
+
+    // The AI service and key for logging from photos.
+    ai::use_ai_settings(state);
 
     // Sharing with other health apps through Health Connect (Android only).
     #[cfg(not(target_arch = "wasm32"))]

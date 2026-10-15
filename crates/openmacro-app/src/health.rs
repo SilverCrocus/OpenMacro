@@ -597,7 +597,6 @@ pub fn use_health_sync(state: AppState) {
 /// android/MainActivity.kt.
 #[cfg(target_os = "android")]
 mod bridge {
-    use std::sync::mpsc::{self, TryRecvError};
     use std::time::Duration;
 
     use chrono::NaiveDate;
@@ -606,39 +605,11 @@ mod bridge {
     use serde_json::Value;
 
     use super::{Availability, Reading};
-    use crate::android::with_activity;
+    use crate::android::{app_class, off_thread, with_activity};
 
-    /// Runs `f` on a thread of its own, since bridge calls block.
-    async fn off_thread<T: Send + 'static>(f: impl FnOnce() -> T + Send + 'static) -> Option<T> {
-        let (tx, rx) = mpsc::channel();
-        std::thread::spawn(move || {
-            let _ = tx.send(f());
-        });
-        loop {
-            match rx.try_recv() {
-                Ok(value) => return Some(value),
-                Err(TryRecvError::Empty) => tokio::time::sleep(Duration::from_millis(50)).await,
-                Err(TryRecvError::Disconnected) => return None,
-            }
-        }
-    }
-
-    /// The bridge class, through the app's class loader: JNI's own lookup
-    /// only sees system classes from threads Rust started.
+    /// The bridge class.
     fn class<'a>(env: &mut JNIEnv<'a>, activity: &JObject) -> jni::errors::Result<JClass<'a>> {
-        let loader = env
-            .call_method(activity, "getClassLoader", "()Ljava/lang/ClassLoader;", &[])?
-            .l()?;
-        let name = env.new_string("dev.dioxus.main.HealthBridge")?;
-        let class = env
-            .call_method(
-                &loader,
-                "loadClass",
-                "(Ljava/lang/String;)Ljava/lang/Class;",
-                &[JValue::Object(&name)],
-            )?
-            .l()?;
-        Ok(JClass::from(class))
+        app_class(env, activity, "dev.dioxus.main.HealthBridge")
     }
 
     /// Calls a bridge method taking the context and `args`, and unwraps

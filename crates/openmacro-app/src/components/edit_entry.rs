@@ -21,11 +21,11 @@ pub fn EditEntrySheet(entry: LogEntry) -> Element {
 
     // The food it came from, to change the amount with its servings. Quick
     // adds, and foods no longer available, get their numbers edited instead.
-    let food = entry.food_id.as_deref().and_then(|id| {
+    let food = {
         let guard = foods.read();
         let db = guard.as_ref().and_then(Option::as_ref);
-        food_search::resolve(db, &state.custom_foods.read(), id).map(|found| found.food)
-    });
+        food_search::resolve_entry(db, &state.custom_foods.read(), &entry).map(|found| found.food)
+    };
     let id = entry.id;
     let date_text = entry.date.format("%a %-d %b").to_string();
 

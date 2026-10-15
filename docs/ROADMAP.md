@@ -40,6 +40,7 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | ✅ Android Back | Closes the open detail, form or sheet, then returns to the Dashboard, then leaves the app |
 | ✅ Body measurements | Body fat and 13 circumferences, a chart per measurement, waist-to-height and waist-to-hip ratios |
 | ✅ Water | Dashboard tile with +250/+500 ml and a daily goal |
+| ✅ AI logging | The logging sheet's AI tab: take or choose a photo, or describe the meal. The model's foods and weights go on the plate to check before logging. Bring your own key for Google Gemini (default model Gemini 3.1 Flash Lite, chosen by [comparison](AI_PHOTO_EVAL.md)), OpenRouter, OpenAI, Anthropic, or any OpenAI-compatible service (Groq, Mistral, Ollama…). The key stays on the phone, out of backups |
 | ✅ Health Connect | More > Health Connect. Reads weight and body fat other apps saved (a smart scale's, say) as weigh-ins and measurements; writes the food log (calories and nutrients), water, weigh-ins and body fat. Syncs the last 30 days when the app opens, comes back on screen or its data changes, rewriting only days that changed |
 
 ## Next
@@ -54,7 +55,7 @@ Status of the features in [FEATURES.md](FEATURES.md), in the order we plan to bu
 | Feature | Notes |
 |---|---|
 | 🕓 Nutrition label scan | Photograph a label to fill in a custom food. Needs an AI vision model (see below). |
-| 🕓 AI photo logging | *Snap* a meal or *Describe* it. The model names foods and portions, and the app matches them to real foods in the database. **Bring your own API key** in settings. Nothing is sent unless the user turns it on. Small models compared on 100 measured photos ([AI_PHOTO_EVAL.md](AI_PHOTO_EVAL.md)): Gemini 3.1 Flash Lite is recommended as the default. |
+| 🕓 AI logging V2 | Offer each AI item's matching database food, with its vitamins and minerals, when it is clearly the same food (the [comparison](AI_PHOTO_EVAL.md) found name matching alone adds error); remember corrections |
 | 🕓 More recipe features | Import from a link (schema.org Recipe), split a logged recipe into ingredients, recipes inside recipes |
 | 🕓 Weight trend V2 | Kalman smoother with a noise band; calibrated expenditure uncertainty band |
 | 🕓 Body metrics and progress photos | Measurements, front/side/back photos with comparison |

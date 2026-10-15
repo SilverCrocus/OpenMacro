@@ -32,6 +32,8 @@ import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Mass
 import androidx.health.connect.client.units.Percentage
 import androidx.health.connect.client.units.Volume
+import java.net.HttpURLConnection
+import java.net.URL
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -337,6 +339,42 @@ object HealthBridge {
             "Health Connect: ${e.message ?: e.javaClass.simpleName}"
         }
         JSONObject().put("error", message).toString()
+    }
+}
+
+/**
+ * Web requests for the Rust side (AI logging), made from the app rather
+ * than the web view, so services that don't allow cross-site calls still
+ * work. Blocks, so Rust calls it from a worker thread.
+ */
+object HttpBridge {
+    /**
+     * POSTs JSON `body` to `url` with `headers` (a JSON object of names to
+     * values). Returns {"status": code, "body": text} or {"error": message}.
+     */
+    @JvmStatic
+    fun post(url: String, headers: String, body: String): String = try {
+        val connection = URL(url).openConnection() as HttpURLConnection
+        try {
+            connection.requestMethod = "POST"
+            connection.connectTimeout = 30_000
+            connection.readTimeout = 120_000
+            connection.doOutput = true
+            connection.setRequestProperty("content-type", "application/json")
+            val names = JSONObject(headers)
+            for (name in names.keys()) {
+                connection.setRequestProperty(name, names.getString(name))
+            }
+            connection.outputStream.use { it.write(body.toByteArray()) }
+            val status = connection.responseCode
+            val stream = if (status >= 400) connection.errorStream else connection.inputStream
+            val text = stream?.bufferedReader()?.use { it.readText() } ?: ""
+            JSONObject().put("status", status).put("body", text).toString()
+        } finally {
+            connection.disconnect()
+        }
+    } catch (e: Exception) {
+        JSONObject().put("error", e.message ?: e.javaClass.simpleName).toString()
     }
 }
 

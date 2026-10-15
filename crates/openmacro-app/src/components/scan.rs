@@ -185,7 +185,7 @@ pub fn ScanTab(on_found: EventHandler<Food>, on_create: EventHandler<String>) ->
         Status::Scanning => "Point the camera at a barcode.".to_string(),
         Status::LookingUp(code) => format!("Looking up {code}…"),
         Status::NotFound(code) => format!(
-            "No product found for {code}. Use Quick Add for now; custom foods are coming next."
+            "No product found for {code}. Create it as your own food below, or use Quick Add."
         ),
         Status::Problem(message) => message,
     };

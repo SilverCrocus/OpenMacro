@@ -1,5 +1,6 @@
 //! Screens and shared UI pieces.
 
+mod ai_log;
 mod chart;
 mod checkin;
 mod copy;

@@ -156,6 +156,7 @@ pub fn More() -> Element {
                 }
             }
         }
+        super::ai_log::AiSettingsCard {}
         HealthConnect {}
         section { class: "card",
             h2 { "Data" }
