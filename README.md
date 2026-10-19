@@ -44,7 +44,11 @@ Most calorie apps give you a target from a formula and leave it there. OpenMacro
 
 ## See it in 40 seconds
 
-https://github.com/user-attachments/assets/b2c07aa3-4120-4e1e-ad2e-5789be6abe0e
+<p align="center">
+  <a href="https://github.com/SilverCrocus/OpenMacro/raw/main/docs/media/openmacro-tour.mp4"><img src="docs/images/tour-preview.gif" width="720" alt="A clip from the OpenMacro tour: logging a meal, with AI filling the plate and a correction in plain words"></a>
+  <br>
+  <a href="https://github.com/SilverCrocus/OpenMacro/raw/main/docs/media/openmacro-tour.mp4">▶ Watch the full tour with sound (MP4, 5 MB)</a>
+</p>
 
 ## Features
 

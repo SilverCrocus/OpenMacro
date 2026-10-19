@@ -19,7 +19,7 @@ You need Node.js 22+ and FFmpeg.
 3. **Check:** `npm run check`.
 4. **Render:** `npx hyperframes render --quality high --output renders/openmacro-tour.mp4`.
 
-The copy in `docs/media` is re-encoded smaller, with the loudness normalised. The README plays that copy through GitHub's attachment uploader, the only way a README can play video inline: drag the file into any GitHub comment box, and use the link it inserts.
+The copy in `docs/media` is re-encoded smaller, with the loudness normalised:
 
 ```bash
 ffmpeg -i renders/openmacro-tour.mp4 -c:v libx264 -preset slow -crf 24 -pix_fmt yuv420p \
@@ -28,3 +28,9 @@ ffmpeg -i renders/openmacro-tour.mp4 -c:v libx264 -preset slow -crf 24 -pix_fmt 
 ```
 
 New screenshots go in `assets/`, with the same names, at 720 pixels wide.
+
+The front page shows `docs/images/tour-preview.gif`, a silent 12-second loop of the logging scene, because images display everywhere: on the website, in the GitHub app, and for visitors who aren't signed in. It links to the full video.
+
+```bash
+ffmpeg -ss 11.8 -t 11.9 -i renders/openmacro-tour.mp4 -vf "fps=10,scale=720:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64:stats_mode=full[p];[b][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" ../../docs/images/tour-preview.gif
+```
