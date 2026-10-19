@@ -1,73 +1,130 @@
-<img src="crates/openmacro-app/android/icon.png" alt="" width="96" align="right">
+<p align="center">
+  <img src="crates/openmacro-app/android/icon.png" width="128" alt="OpenMacro's icon: a smiling blue bowl of broccoli, rice and salmon">
+</p>
 
-# OpenMacro
+<h1 align="center">OpenMacro</h1>
 
-An open-source, local-first nutrition and macro tracker written in Rust, with an adaptive expenditure (TDEE) coach. It is inspired by apps such as MacroFactor.
+<p align="center">
+  <b>The open-source nutrition coach.</b><br>
+  Calorie and macro targets that adapt to your body, logging in seconds (even from a photo),<br>
+  and your data stays on your phone.
+</p>
 
-## Status
+<p align="center">
+  <a href="https://github.com/SilverCrocus/OpenMacro/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/SilverCrocus/OpenMacro?label=release&color=4fd1a5"></a>
+  <a href="https://github.com/SilverCrocus/OpenMacro/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/SilverCrocus/OpenMacro/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue"></a>
+  <img alt="Android 8+" src="https://img.shields.io/badge/Android-8%2B-3ddc84?logo=android&logoColor=white">
+  <img alt="Made with Rust" src="https://img.shields.io/badge/made%20with-Rust-dea584?logo=rust&logoColor=white">
+  <a href="https://github.com/SilverCrocus/OpenMacro/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/SilverCrocus/OpenMacro?style=flat&color=f2c14e"></a>
+</p>
 
-Early development.
+<p align="center">
+  <a href="https://github.com/SilverCrocus/OpenMacro/releases/latest"><b>Download for Android</b></a>
+  &nbsp;·&nbsp;
+  <a href="#features">Features</a>
+  &nbsp;·&nbsp;
+  <a href="#ai-logging">AI logging</a>
+  &nbsp;·&nbsp;
+  <a href="CONTRIBUTING.md">Contribute</a>
+</p>
 
-| Component | State |
-|---|---|
-| [`openmacro-core`](crates/openmacro-core) | Working and tested: nutrient model (55 nutrients), foods and servings, recipes, BMR equations, trend weight, adaptive expenditure (Kalman-style estimator with an uncertainty band), goal-driven targets with maintenance, weekly calorie shifting, macro splits, weekly check-ins, micronutrient reference targets, body measurements |
-| [`openmacro-store`](crates/openmacro-store) | SQLite storage on the device: food log, weigh-ins, day status, custom foods and recipes, favorites, check-ins, measurements and settings, with whole-database snapshots for backups |
-| [`openmacro-foods`](crates/openmacro-foods) | Food database: 58k foods from USDA, the Australian AFCD and Open Food Facts (AU + US), with full-text search; see [docs/FOOD_DATA.md](docs/FOOD_DATA.md) |
-| [`openmacro-app`](crates/openmacro-app) | Dioxus app (Rust; Android and web preview):<ul><li>**Logging:** food log timeline with copy and edit; logging sheet with search, barcode scanning, AI photo and description logging (bring your own key), quick add, custom foods, recipes and favorites; water.</li><li>**Coaching:** plan with coached or manual programs and Lose/Maintain/Gain goals; weekly check-ins.</li><li>**Insights:** pages for expenditure, weight, energy balance, macros, goal progress, nutrients and body measurements.</li><li>**Data and settings:** CSV export and backups; Health Connect sync; kJ/lb units and light theme.</li></ul>Data is saved on the device, and the app updates itself from GitHub Releases. |
-| Progress photos | Planned; see [docs/ROADMAP.md](docs/ROADMAP.md) |
+<p align="center">
+  <img src="docs/images/hero.png" width="100%" alt="Five OpenMacro screens: the dashboard, the food log, an AI-logged salmon poke bowl, the weight trend and the plan">
+</p>
 
-## Docs
+## Why OpenMacro?
 
-- [Feature specification](docs/FEATURES.md): what the app does, with priorities
-- [Algorithms](docs/ALGORITHMS.md): trend weight, expenditure, targets and macros
-- [Architecture](docs/ARCHITECTURE.md): crates, storage, food data, UI plan
-- [Food data](docs/FOOD_DATA.md): sources, licences and how to build `foods.db`
-- [Roadmap](docs/ROADMAP.md): what's done and what's next
+Most calorie apps give you a target from a formula and leave it there. OpenMacro **works out what you actually burn** from what you eat and how your weight changes, and updates your targets every week. It's the same evidence-based approach as the best paid coaching apps, but free and open.
 
-## Development
+- 🎯 **Coaching that adapts.** Your expenditure is estimated from your own data, with a weekly check-in that adjusts calories and macros to your goal: lose, maintain or gain.
+- ⚡ **Fast logging.** Search 58,000 foods, scan barcodes, reuse recipes and recent foods, copy whole meals, or snap a photo and let AI fill in the plate.
+- 🔒 **Yours.** No account, no subscription, no ads, no tracking. Your data lives on your phone and works offline, with backups, CSV export and Health Connect sync.
+- 🛠️ **Open.** MIT licensed and written in Rust. Read how every number is calculated in [the algorithms doc](docs/ALGORITHMS.md).
 
-Requires Rust (stable) and the Dioxus CLI 0.7 (`dx`). Install `dx` with `cargo install dioxus-cli --version 0.7.10`, or download a prebuilt binary from the Dioxus releases page.
+## Features
 
-```bash
-cargo test
-cargo clippy --all-targets -- -D warnings
-dx serve --package openmacro-app --platform web
-```
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/dashboard.png" width="230" alt="Dashboard"><br><b>Dashboard</b><br><sub>Today's intake, expenditure, weight trend and habits at a glance</sub></td>
+    <td align="center"><img src="docs/screenshots/food-log.png" width="230" alt="Food log"><br><b>Food log</b><br><sub>A timeline by hour; AI meals show as one row</sub></td>
+    <td align="center"><img src="docs/screenshots/ai-logging.png" width="230" alt="AI logging"><br><b>AI logging</b><br><sub>Photo or description in, foods and amounts out</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/weight-trend.png" width="230" alt="Weight trend"><br><b>Weight trend</b><br><sub>A smoothed trend that sees past daily water swings</sub></td>
+    <td align="center"><img src="docs/screenshots/expenditure.png" width="230" alt="Expenditure"><br><b>Expenditure</b><br><sub>What you really burn, with its likely range</sub></td>
+    <td align="center"><img src="docs/screenshots/plan.png" width="230" alt="Plan"><br><b>Plan</b><br><sub>Your goal, rate, diet style and weekly check-in</sub></td>
+  </tr>
+</table>
 
-To build for Android, set `ANDROID_HOME`, `ANDROID_NDK_HOME` and `JAVA_HOME` (JDK 17+), then run:
+**Coaching**
+- Adaptive expenditure (TDEE) estimate with an uncertainty band, starting from Mifflin-St Jeor, Katch-McArdle or Cunningham
+- Goals to lose, maintain or gain at a chosen rate; coached or manual programs; weekly calorie shifting
+- Balanced, low-fat, low-carb and keto macro splits, from low to extra-high protein
+- Weekly check-ins that review your week before changing your targets
 
-```bash
-scripts/android-apk.sh aarch64-linux-android
-```
+**Logging**
+- 58,000 foods from USDA FoodData Central, the Australian Food Composition Database and Open Food Facts
+- Live barcode scanning, with Open Food Facts lookup for products not in the database
+- Custom foods, recipes with cooked weights, favourites, recent foods and quick add
+- Copy a meal or a whole day; a timeline by hour; water tracking
+- AI logging from a photo or a description, with corrections in plain words
 
-It builds with `dx` (release mode, with the bundled food database, so build `foods.db` first; see [docs/FOOD_DATA.md](docs/FOOD_DATA.md)), then swaps in the OpenMacro launcher icon, which `dx` can't set itself, and prints the APK's path. Install it with `adb install -r <apk>`.
+**Insights**
+- Expenditure, weight trend, energy balance, calories and macros, goal progress and body measurements, with 1W–All ranges
+- Fibre, vitamins and minerals against standard targets for your age and sex, with the top sources of each
 
-The build needs Android SDK platform 35 (`sdkmanager "platforms;android-35"`), which the Health Connect library compiles against. `crates/openmacro-app/android/` holds the Android manifest and `MainActivity.kt` (with the Health Connect bridge), which replace the ones `dx` generates.
+**Your data**
+- Stored on your phone; works offline
+- Backups to one file, CSV export, and Health Connect sync (weight and body fat in; food, water and weight out)
+- kcal or kJ, kg or lb, dark or light theme
 
-The icon's source is `crates/openmacro-app/android/icon.png`. After changing it, run `python3 scripts/make-android-icons.py` (needs Pillow) to regenerate the Android icons.
+## AI logging
 
-## Releasing
+Take a photo of your meal, or just describe it ("two eggs on toast with butter"). The AI lists the foods with their weights and puts them on your plate to check before you log. If something's wrong, tell it in plain words, such as "it was a peanut curry, not chickpea", and it looks again.
 
-1. Bump `version` in `crates/openmacro-app/Cargo.toml` and commit.
-2. Tag with release notes and push:
+**Bring your own key.** Use any of these:
+- **Google Gemini:** free tier available.
+- **OpenRouter:** one key for hundreds of models.
+- **OpenAI** or **Anthropic.**
+- **Any OpenAI-compatible service,** including Ollama on your own computer.
 
-   ```bash
-   git tag -a v0.3.0 -m "What changed in this release"
-   git push origin v0.3.0
-   ```
+A photo costs well under a cent. Nothing is sent anywhere unless you log with AI, and your key never leaves your phone or goes into backups.
 
-3. The [release workflow](.github/workflows/release.yml) builds the food database, builds and signs the arm64 and x86_64 APKs, and publishes a GitHub Release. Installed apps find it on their next launch and offer the update.
+**We measured which model to recommend.** We tested 7 small models on [100 photos of weighed meals](docs/AI_PHOTO_EVAL.md):
 
-Releases are signed with the project's release key, stored in the repository secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD` and `ANDROID_KEY_ALIAS`. Every update must be signed with the same key.
+| Model | Average error | Time per photo | Cost per 1,000 photos |
+|---|---|---|---|
+| **Gemini 3.1 Flash Lite** (default) | 88 kcal | 2.4 s | $0.67 |
+| Gemini 3.8 Flash | 88 kcal | 5.1 s | $2.08 |
+| Gemma 4 26B (open weights) | 98 kcal | 4.7 s | $0.08 |
+| Claude Haiku 5.5 | 109 kcal | 5.0 s | $0.45 |
+
+## Install
+
+1. Download the latest APK from [Releases](https://github.com/SilverCrocus/OpenMacro/releases/latest). Most phones need the `arm64-v8a` one.
+2. Open it, and allow your browser or file manager to install apps if Android asks.
+3. That's it. OpenMacro checks for new versions when it opens and updates itself.
+
+You can also add the repository to [Obtainium](https://github.com/ImranR98/Obtainium) to get updates. An iPhone version isn't available yet.
+
+## Contributing
+
+Contributions are very welcome, whether code, design, docs, food data or bug reports.
+- **Getting started:** [CONTRIBUTING.md](CONTRIBUTING.md) explains how to set up (the web preview runs with one command) and how to pick something to work on.
+- **What's next:** the [roadmap](docs/ROADMAP.md) lists what's planned.
+- **Building and releasing:** see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
+
+Built with [Rust](https://www.rust-lang.org) and [Dioxus](https://dioxuslabs.com), with SQLite for storage.
 
 ## Clean-room policy
 
-OpenMacro is an independent project. It is not affiliated with, endorsed by, or connected to MacroFactor or Stronger By Science.
+OpenMacro is an independent project, inspired by adaptive coaching apps such as MacroFactor. It is not affiliated with, endorsed by, or connected to MacroFactor or Stronger By Science.
+- **No copied code or assets:** the repository contains no proprietary source code, decompiled code, binaries or assets (icons, images, copy, fonts) from other apps.
+- **Written from our own specs:** the specs in `docs/` describe behaviour in our own words, and the code is written from them and from public science.
 
-- No proprietary source code, decompiled code, binaries, or assets (icons, images, copy, fonts) from other apps are committed to this repository.
-- The specs in `docs/` describe *behavior* in our own words, and the implementation is written from those specs and public science.
-- Reverse-engineering artifacts stay local in `research/private/`, which is git-ignored.
+OpenMacro gives general nutrition information, not medical advice.
 
 ## License
 
-Code: MIT; see [LICENSE](LICENSE). The food database has its own licences (USDA public domain, FSANZ CC BY 4.0, Open Food Facts ODbL); see [docs/FOOD_DATA.md](docs/FOOD_DATA.md).
+The code is under the MIT license; see [LICENSE](LICENSE). The food database has its own licences: USDA (public domain), FSANZ (CC BY 4.0) and Open Food Facts (ODbL). See [docs/FOOD_DATA.md](docs/FOOD_DATA.md).
