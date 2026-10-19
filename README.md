@@ -42,6 +42,12 @@ Most calorie apps give you a target from a formula and leave it there. OpenMacro
 - 🔒 **Yours.** No account, no subscription, no ads, no tracking. Your data lives on your phone and works offline, with backups, CSV export and Health Connect sync.
 - 🛠️ **Open.** MIT licensed and written in Rust. Read how every number is calculated in [the algorithms doc](docs/ALGORITHMS.md).
 
+## See it in 40 seconds
+
+<p align="center">
+  <a href="docs/media/openmacro-tour.mp4"><img src="docs/images/video-thumbnail.png" width="720" alt="Watch the 42-second OpenMacro tour"></a>
+</p>
+
 ## Features
 
 <table>

@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  OpenMacro's 40-second tour, made with HyperFrames (hyperframes.heygen.com).
+  OpenMacro's tour, made with HyperFrames (hyperframes.heygen.com). See README.md.
   Preview: npm run dev · Check: npm run check · Render: npm run render
   The voiceover is assets/voiceover.mp3 (made with ElevenLabs from
   voiceover.txt); scene times below follow its lines.
@@ -93,16 +93,16 @@
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="40.5" data-width="1920" data-height="1080">
+    <div id="root" data-composition-id="main" data-start="0" data-duration="42.25" data-width="1920" data-height="1080">
       <!-- Background, the whole video -->
-      <div id="bg" class="clip" data-start="0" data-duration="40.5" data-track-index="0">
+      <div id="bg" class="clip" data-start="0" data-duration="42.25" data-track-index="0">
         <div class="glow" id="glow-a"></div>
         <div class="glow" id="glow-b"></div>
         <div class="glow" id="glow-c"></div>
       </div>
 
       <!-- 1. Intro -->
-      <section id="s1" class="clip" data-start="0" data-duration="4.2" data-track-index="1">
+      <section id="s1" class="clip" data-start="0.0" data-duration="4.26" data-track-index="1">
         <div class="center">
           <img class="icon" src="assets/icon.png" alt="" />
           <div class="name">OpenMacro</div>
@@ -111,7 +111,7 @@
       </section>
 
       <!-- 2. Adaptive coaching -->
-      <section id="s2" class="clip" data-start="4.2" data-duration="7.4" data-track-index="1">
+      <section id="s2" class="clip" data-start="4.26" data-duration="7.53" data-track-index="1">
         <div class="copy">
           <div class="kicker">Adaptive coaching</div>
           <div class="headline">Learns what you<br /><span class="accent">actually burn</span></div>
@@ -122,7 +122,7 @@
       </section>
 
       <!-- 3. Logging -->
-      <section id="s3" class="clip" data-start="11.6" data-duration="10" data-track-index="1">
+      <section id="s3" class="clip" data-start="11.79" data-duration="11.9" data-track-index="1">
         <div class="copy" style="top: 230px;">
           <div class="kicker">Logging</div>
           <div class="headline">Log a meal<br /><span class="accent">in seconds</span></div>
@@ -138,7 +138,7 @@
       </section>
 
       <!-- 4. Insights -->
-      <section id="s4" class="clip" data-start="21.6" data-duration="5.6" data-track-index="1">
+      <section id="s4" class="clip" data-start="23.69" data-duration="5.85" data-track-index="1">
         <div class="copy">
           <div class="kicker">Insights</div>
           <div class="headline">See the trend,<br /><span class="accent">not the noise</span></div>
@@ -149,7 +149,7 @@
       </section>
 
       <!-- 5. Yours and open -->
-      <section id="s5" class="clip" data-start="27.2" data-duration="7.4" data-track-index="1">
+      <section id="s5" class="clip" data-start="29.54" data-duration="7.18" data-track-index="1">
         <div class="lines">
           <div class="line" id="l1">No account.</div>
           <div class="line" id="l2">No subscription.</div>
@@ -164,7 +164,7 @@
       </section>
 
       <!-- 6. Call to action -->
-      <section id="s6" class="clip" data-start="34.6" data-duration="5.9" data-track-index="1">
+      <section id="s6" class="clip" data-start="36.72" data-duration="5.53" data-track-index="1">
         <div class="center">
           <img class="icon" src="assets/icon.png" alt="" />
           <div class="name">OpenMacro</div>
@@ -174,17 +174,25 @@
       </section>
 
       <!-- Voiceover (ElevenLabs) -->
-      <audio id="vo" src="assets/voiceover.mp3" data-start="0" data-duration="40.5" data-track-index="2" data-volume="1"></audio>
+      <audio id="vo" src="assets/voiceover.mp3" data-start="0" data-duration="42.25" data-track-index="2" data-volume="1"></audio>
     </div>
 
     <script>
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
 
+      // When each line of the voiceover starts, in seconds. Written by
+      // make_voiceover.py from the narration's word timings; the scenes'
+      // data-start and data-duration above come from the same numbers.
+      const CUE = {"s2":4.61,"s3":12.14,"s4":24.04,"s5":29.89,"s6":37.07,"c1":14.14,"c2":16.54,"c3":18.03,"bubble":21.01,"l1":29.89,"l2":30.92,"l3":32.3,"l4":33.45,"badges":35.05,"end":42.25};
+      // Scenes appear slightly before their line starts.
+      const LEAD = 0.35;
+      const at = (cue) => Math.max(0, CUE[cue] - LEAD);
+
       // Background drifts slowly the whole time.
-      tl.fromTo("#glow-a", { x: 0, y: 0 }, { x: -380, y: -120, duration: 40.5, ease: "sine.inOut" }, 0);
-      tl.fromTo("#glow-b", { x: 0 }, { x: 300, duration: 40.5, ease: "sine.inOut" }, 0);
-      tl.fromTo("#glow-c", { x: 0 }, { x: -260, duration: 40.5, ease: "sine.inOut" }, 0);
+      tl.fromTo("#glow-a", { x: 0, y: 0 }, { x: -380, y: -120, duration: CUE.end, ease: "sine.inOut" }, 0);
+      tl.fromTo("#glow-b", { x: 0 }, { x: 300, duration: CUE.end, ease: "sine.inOut" }, 0);
+      tl.fromTo("#glow-c", { x: 0 }, { x: -260, duration: CUE.end, ease: "sine.inOut" }, 0);
 
       // Fades a scene in at `start` and out just before `end`.
       function scene(id, start, end) {
@@ -192,69 +200,62 @@
         tl.to(id, { opacity: 0, duration: 0.35, ease: "power2.in" }, end - 0.35);
       }
 
-      // Copy slides up, phones rise in from below.
-      function copyIn(sel, at) {
-        tl.fromTo(`${sel} .kicker`, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, at);
-        tl.fromTo(`${sel} .headline`, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, at + 0.1);
-        tl.fromTo(`${sel} .sub`, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, at + 0.35);
+      // Copy slides up, phones rise in from below, then float.
+      function copyIn(sel, t) {
+        tl.fromTo(`${sel} .kicker`, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, t);
+        tl.fromTo(`${sel} .headline`, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, t + 0.1);
+        tl.fromTo(`${sel} .sub`, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, t + 0.35);
       }
-      function phoneIn(sel, at, rotate) {
-        tl.fromTo(sel, { opacity: 0, y: 260, rotate: 0 }, { opacity: 1, y: 0, rotate, duration: 0.9, ease: "power3.out" }, at);
-      }
-      function float(sel, from, to) {
-        tl.to(sel, { y: -18, duration: to - from, ease: "sine.inOut" }, from);
+      function phone(sel, t, rotate, end) {
+        tl.fromTo(sel, { opacity: 0, y: 260, rotate: 0 }, { opacity: 1, y: 0, rotate, duration: 0.9, ease: "power3.out" }, t);
+        tl.to(sel, { y: -18, duration: end - (t + 0.9), ease: "sine.inOut" }, t + 0.9);
       }
 
       // 1. Intro
-      scene("#s1", 0, 4.2);
+      scene("#s1", 0, at("s2"));
       tl.fromTo("#s1 .icon", { scale: 0.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.9, ease: "back.out(1.7)" }, 0.15);
       tl.fromTo("#s1 .name", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.6);
       tl.fromTo("#s1 .tag", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.95);
 
       // 2. Adaptive coaching
-      scene("#s2", 4.2, 11.6);
-      copyIn("#s2", 4.35);
-      phoneIn("#s2-p1", 4.5, -4);
-      phoneIn("#s2-p2", 4.75, 3);
-      float("#s2-p1", 5.4, 11.6);
-      float("#s2-p2", 5.65, 11.6);
+      scene("#s2", at("s2"), at("s3"));
+      copyIn("#s2", at("s2") + 0.15);
+      phone("#s2-p1", at("s2") + 0.3, -4, at("s3"));
+      phone("#s2-p2", at("s2") + 0.55, 3, at("s3"));
 
       // 3. Logging
-      scene("#s3", 11.6, 21.6);
-      copyIn("#s3", 11.75);
-      phoneIn("#s3-p1", 11.9, -4);
-      phoneIn("#s3-p2", 12.15, 3);
-      ["#c1", "#c2", "#c3"].forEach((id, i) => {
-        tl.fromTo(id, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2)" }, 13.2 + i * 0.9);
+      scene("#s3", at("s3"), at("s4"));
+      copyIn("#s3", at("s3") + 0.15);
+      phone("#s3-p1", at("s3") + 0.3, -4, at("s4"));
+      phone("#s3-p2", at("s3") + 0.55, 3, at("s4"));
+      ["c1", "c2", "c3"].forEach((cue) => {
+        tl.fromTo(`#${cue}`, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2)" }, CUE[cue]);
       });
-      tl.fromTo("#bubble", { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "back.out(1.8)" }, 18.2);
-      float("#s3-p1", 12.8, 21.6);
-      float("#s3-p2", 13.05, 21.6);
+      tl.fromTo("#bubble", { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "back.out(1.8)" }, CUE.bubble);
 
       // 4. Insights
-      scene("#s4", 21.6, 27.2);
-      copyIn("#s4", 21.75);
-      phoneIn("#s4-p1", 21.9, -3);
-      phoneIn("#s4-p2", 22.15, 4);
-      float("#s4-p1", 22.8, 27.2);
-      float("#s4-p2", 23.05, 27.2);
+      scene("#s4", at("s4"), at("s5"));
+      copyIn("#s4", at("s4") + 0.15);
+      phone("#s4-p1", at("s4") + 0.3, -3, at("s5"));
+      phone("#s4-p2", at("s4") + 0.55, 4, at("s5"));
 
       // 5. Yours and open
-      scene("#s5", 27.2, 34.6);
-      ["#l1", "#l2", "#l3"].forEach((id, i) => {
-        tl.fromTo(id, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 27.35 + i * 0.75);
+      scene("#s5", at("s5"), at("s6"));
+      ["l1", "l2", "l3"].forEach((cue) => {
+        tl.fromTo(`#${cue}`, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, CUE[cue] - 0.1);
       });
-      tl.fromTo("#l4", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 29.9);
+      tl.fromTo("#l4", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, CUE.l4 - 0.1);
       ["#b1", "#b2", "#b3"].forEach((id, i) => {
-        tl.fromTo(id, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 31.6 + i * 0.25);
+        tl.fromTo(id, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, CUE.badges + i * 0.25);
       });
 
       // 6. Call to action
-      tl.fromTo("#s6", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 34.6);
-      tl.fromTo("#s6 .icon", { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }, 34.7);
-      tl.fromTo("#s6 .name", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 35.0);
-      tl.fromTo("#s6 .url", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 35.35);
-      tl.fromTo("#s6 .cta", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 35.8);
+      const s6 = at("s6");
+      tl.fromTo("#s6", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, s6);
+      tl.fromTo("#s6 .icon", { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }, s6 + 0.1);
+      tl.fromTo("#s6 .name", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, s6 + 0.4);
+      tl.fromTo("#s6 .url", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, s6 + 0.75);
+      tl.fromTo("#s6 .cta", { opacity: 0 }, { opacity: 1, duration: 0.6 }, s6 + 1.2);
 
       window.__timelines["main"] = tl;
       tl.seek(0);
