@@ -1,0 +1,263 @@
+<!doctype html>
+<!--
+  OpenMacro's 40-second tour, made with HyperFrames (hyperframes.heygen.com).
+  Preview: npm run dev · Check: npm run check · Render: npm run render
+  The voiceover is assets/voiceover.mp3 (made with ElevenLabs from
+  voiceover.txt); scene times below follow its lines.
+-->
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Inter";
+        src: url("assets/fonts/inter-variable.woff2") format("woff2");
+        font-weight: 100 900;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #0b0d11;
+        color: #eef0f4;
+        font-family: Inter, system-ui, sans-serif;
+      }
+      #root { position: relative; width: 100%; height: 100%; }
+      .clip { position: absolute; inset: 0; }
+
+      /* Background glows */
+      .glow { position: absolute; border-radius: 50%; filter: blur(90px); }
+      #glow-a { width: 900px; height: 700px; left: 900px; top: 520px; background: rgba(79, 209, 165, 0.22); }
+      #glow-b { width: 700px; height: 500px; left: -150px; top: -200px; background: rgba(92, 201, 138, 0.10); }
+      #glow-c { width: 600px; height: 500px; left: 1500px; top: -250px; background: rgba(240, 138, 93, 0.10); }
+
+      /* Phones */
+      .phone {
+        position: absolute;
+        border-radius: 52px;
+        padding: 11px;
+        background: linear-gradient(160deg, #2a2f39, #11141a 40%, #1c2028);
+        box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+      }
+      .phone img { display: block; width: 360px; border-radius: 42px; }
+      .phone.hero { box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(79, 209, 165, 0.35) inset, 0 0 70px rgba(79, 209, 165, 0.18); }
+
+      /* Text */
+      .kicker { font-size: 26px; font-weight: 700; letter-spacing: 0.18em; color: #4fd1a5; text-transform: uppercase; }
+      .headline { font-size: 84px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.02; margin-top: 18px; }
+      .sub { font-size: 34px; line-height: 1.4; color: #b9c0cc; margin-top: 28px; font-weight: 400; }
+      .copy { position: absolute; left: 140px; top: 270px; width: 860px; }
+      .chips { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 40px; }
+      .chip {
+        font-size: 28px; font-weight: 600; padding: 14px 26px; border-radius: 999px;
+        background: #181b21; border: 1px solid #2c313b; color: #eef0f4;
+      }
+      .chip b { color: #4fd1a5; font-weight: 700; }
+      .accent { color: #4fd1a5; }
+
+      /* Scene 1 */
+      #s1 .center, #s6 .center {
+        position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; text-align: center;
+      }
+      #s1 .icon, #s6 .icon { width: 230px; height: 230px; filter: drop-shadow(0 30px 60px rgba(0,0,0,0.5)); }
+      #s1 .name { font-size: 150px; font-weight: 800; letter-spacing: -0.04em; margin-top: 30px; }
+      #s1 .tag { font-size: 44px; color: #b9c0cc; margin-top: 10px; }
+
+      /* Scene 3 correction bubble */
+      .bubble {
+        position: absolute; left: 1210px; top: 760px; width: 560px;
+        padding: 22px 28px; border-radius: 26px 26px 6px 26px;
+        background: #4fd1a5; color: #062018; font-size: 30px; font-weight: 600; line-height: 1.3;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      }
+      .bubble small { display: block; font-size: 20px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; margin-bottom: 6px; }
+
+      /* Scene 5 */
+      #s5 .lines { position: absolute; left: 0; right: 0; top: 230px; text-align: center; }
+      #s5 .line { font-size: 104px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.12; }
+      #s5 .line.soft { font-size: 52px; font-weight: 600; color: #b9c0cc; margin-top: 30px; letter-spacing: -0.01em; }
+      #s5 .badges { position: absolute; left: 0; right: 0; top: 760px; display: flex; justify-content: center; gap: 18px; }
+
+      /* Scene 6 */
+      #s6 .name { font-size: 120px; font-weight: 800; letter-spacing: -0.04em; margin-top: 26px; }
+      #s6 .url {
+        margin-top: 34px; font-size: 44px; font-weight: 600; padding: 18px 40px; border-radius: 999px;
+        background: #181b21; border: 1px solid #2c313b;
+      }
+      #s6 .cta { margin-top: 30px; font-size: 36px; color: #b9c0cc; }
+      #s6 .cta b { color: #f2c14e; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="40.5" data-width="1920" data-height="1080">
+      <!-- Background, the whole video -->
+      <div id="bg" class="clip" data-start="0" data-duration="40.5" data-track-index="0">
+        <div class="glow" id="glow-a"></div>
+        <div class="glow" id="glow-b"></div>
+        <div class="glow" id="glow-c"></div>
+      </div>
+
+      <!-- 1. Intro -->
+      <section id="s1" class="clip" data-start="0" data-duration="4.2" data-track-index="1">
+        <div class="center">
+          <img class="icon" src="assets/icon.png" alt="" />
+          <div class="name">OpenMacro</div>
+          <div class="tag">The free, open-source nutrition coach</div>
+        </div>
+      </section>
+
+      <!-- 2. Adaptive coaching -->
+      <section id="s2" class="clip" data-start="4.2" data-duration="7.4" data-track-index="1">
+        <div class="copy">
+          <div class="kicker">Adaptive coaching</div>
+          <div class="headline">Learns what you<br /><span class="accent">actually burn</span></div>
+          <div class="sub">It estimates your expenditure from your food and your weight, and updates your targets every week.</div>
+        </div>
+        <div class="phone" id="s2-p1" style="left: 1040px; top: 150px;"><img src="assets/dashboard.png" alt="" /></div>
+        <div class="phone hero" id="s2-p2" style="left: 1440px; top: 110px;"><img src="assets/expenditure.png" alt="" /></div>
+      </section>
+
+      <!-- 3. Logging -->
+      <section id="s3" class="clip" data-start="11.6" data-duration="10" data-track-index="1">
+        <div class="copy" style="top: 230px;">
+          <div class="kicker">Logging</div>
+          <div class="headline">Log a meal<br /><span class="accent">in seconds</span></div>
+          <div class="chips">
+            <div class="chip" id="c1"><b>58,000</b> foods</div>
+            <div class="chip" id="c2">Barcode scanning</div>
+            <div class="chip" id="c3">AI from a photo</div>
+          </div>
+        </div>
+        <div class="phone" id="s3-p1" style="left: 1040px; top: 130px;"><img src="assets/food-log.png" alt="" /></div>
+        <div class="phone hero" id="s3-p2" style="left: 1440px; top: 90px;"><img src="assets/ai-logging.png" alt="" /></div>
+        <div class="bubble" id="bubble"><small>Something wrong? Just say so</small>“It was a peanut curry, not chickpea.”</div>
+      </section>
+
+      <!-- 4. Insights -->
+      <section id="s4" class="clip" data-start="21.6" data-duration="5.6" data-track-index="1">
+        <div class="copy">
+          <div class="kicker">Insights</div>
+          <div class="headline">See the trend,<br /><span class="accent">not the noise</span></div>
+          <div class="sub">Weight trend, energy balance, macros and micronutrients.</div>
+        </div>
+        <div class="phone hero" id="s4-p1" style="left: 1040px; top: 110px;"><img src="assets/weight-trend.png" alt="" /></div>
+        <div class="phone" id="s4-p2" style="left: 1440px; top: 150px;"><img src="assets/calories-and-macros.png" alt="" /></div>
+      </section>
+
+      <!-- 5. Yours and open -->
+      <section id="s5" class="clip" data-start="27.2" data-duration="7.4" data-track-index="1">
+        <div class="lines">
+          <div class="line" id="l1">No account.</div>
+          <div class="line" id="l2">No subscription.</div>
+          <div class="line" id="l3">No ads.</div>
+          <div class="line soft" id="l4">Your data stays on your phone, and every line of code is open.</div>
+        </div>
+        <div class="badges">
+          <div class="chip" id="b1">MIT licensed</div>
+          <div class="chip" id="b2">Built in Rust</div>
+          <div class="chip" id="b3">Android</div>
+        </div>
+      </section>
+
+      <!-- 6. Call to action -->
+      <section id="s6" class="clip" data-start="34.6" data-duration="5.9" data-track-index="1">
+        <div class="center">
+          <img class="icon" src="assets/icon.png" alt="" />
+          <div class="name">OpenMacro</div>
+          <div class="url">github.com/SilverCrocus/OpenMacro</div>
+          <div class="cta">Free download · <b>★</b> Star it and help build it</div>
+        </div>
+      </section>
+
+      <!-- Voiceover (ElevenLabs) -->
+      <audio id="vo" src="assets/voiceover.mp3" data-start="0" data-duration="40.5" data-track-index="2" data-volume="1"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      // Background drifts slowly the whole time.
+      tl.fromTo("#glow-a", { x: 0, y: 0 }, { x: -380, y: -120, duration: 40.5, ease: "sine.inOut" }, 0);
+      tl.fromTo("#glow-b", { x: 0 }, { x: 300, duration: 40.5, ease: "sine.inOut" }, 0);
+      tl.fromTo("#glow-c", { x: 0 }, { x: -260, duration: 40.5, ease: "sine.inOut" }, 0);
+
+      // Fades a scene in at `start` and out just before `end`.
+      function scene(id, start, end) {
+        tl.fromTo(id, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, start);
+        tl.to(id, { opacity: 0, duration: 0.35, ease: "power2.in" }, end - 0.35);
+      }
+
+      // Copy slides up, phones rise in from below.
+      function copyIn(sel, at) {
+        tl.fromTo(`${sel} .kicker`, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, at);
+        tl.fromTo(`${sel} .headline`, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, at + 0.1);
+        tl.fromTo(`${sel} .sub`, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, at + 0.35);
+      }
+      function phoneIn(sel, at, rotate) {
+        tl.fromTo(sel, { opacity: 0, y: 260, rotate: 0 }, { opacity: 1, y: 0, rotate, duration: 0.9, ease: "power3.out" }, at);
+      }
+      function float(sel, from, to) {
+        tl.to(sel, { y: -18, duration: to - from, ease: "sine.inOut" }, from);
+      }
+
+      // 1. Intro
+      scene("#s1", 0, 4.2);
+      tl.fromTo("#s1 .icon", { scale: 0.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.9, ease: "back.out(1.7)" }, 0.15);
+      tl.fromTo("#s1 .name", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.6);
+      tl.fromTo("#s1 .tag", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.95);
+
+      // 2. Adaptive coaching
+      scene("#s2", 4.2, 11.6);
+      copyIn("#s2", 4.35);
+      phoneIn("#s2-p1", 4.5, -4);
+      phoneIn("#s2-p2", 4.75, 3);
+      float("#s2-p1", 5.4, 11.6);
+      float("#s2-p2", 5.65, 11.6);
+
+      // 3. Logging
+      scene("#s3", 11.6, 21.6);
+      copyIn("#s3", 11.75);
+      phoneIn("#s3-p1", 11.9, -4);
+      phoneIn("#s3-p2", 12.15, 3);
+      ["#c1", "#c2", "#c3"].forEach((id, i) => {
+        tl.fromTo(id, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2)" }, 13.2 + i * 0.9);
+      });
+      tl.fromTo("#bubble", { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "back.out(1.8)" }, 18.2);
+      float("#s3-p1", 12.8, 21.6);
+      float("#s3-p2", 13.05, 21.6);
+
+      // 4. Insights
+      scene("#s4", 21.6, 27.2);
+      copyIn("#s4", 21.75);
+      phoneIn("#s4-p1", 21.9, -3);
+      phoneIn("#s4-p2", 22.15, 4);
+      float("#s4-p1", 22.8, 27.2);
+      float("#s4-p2", 23.05, 27.2);
+
+      // 5. Yours and open
+      scene("#s5", 27.2, 34.6);
+      ["#l1", "#l2", "#l3"].forEach((id, i) => {
+        tl.fromTo(id, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 27.35 + i * 0.75);
+      });
+      tl.fromTo("#l4", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 29.9);
+      ["#b1", "#b2", "#b3"].forEach((id, i) => {
+        tl.fromTo(id, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 31.6 + i * 0.25);
+      });
+
+      // 6. Call to action
+      tl.fromTo("#s6", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 34.6);
+      tl.fromTo("#s6 .icon", { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }, 34.7);
+      tl.fromTo("#s6 .name", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 35.0);
+      tl.fromTo("#s6 .url", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 35.35);
+      tl.fromTo("#s6 .cta", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 35.8);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

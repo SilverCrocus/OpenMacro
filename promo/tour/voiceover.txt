@@ -1,0 +1,11 @@
+Meet OpenMacro: the free, open-source nutrition coach.
+
+Instead of guessing your calories from a formula, it learns what you actually burn, and updates your targets every week.
+
+Logging takes seconds. Search fifty-eight thousand foods, scan a barcode, or snap a photo and let AI fill your plate. Got something wrong? Just tell it.
+
+Then watch your weight trend, energy balance and macros, without the daily noise.
+
+No account. No subscription. No ads. Your data stays on your phone, and every line of code is open.
+
+Get OpenMacro free on GitHub, and help us build it.

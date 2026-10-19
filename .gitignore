@@ -23,3 +23,8 @@ data/raw/
 data/nutrition5k/
 data/*.db
 crates/openmacro-app/assets/foods.db
+
+# HyperFrames working files for the promo video
+promo/tour/.hyperframes/
+promo/tour/renders/
+promo/tour/node_modules/
