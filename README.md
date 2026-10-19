@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="crates/openmacro-app/android/icon.png" width="128" alt="OpenMacro's icon: a smiling blue bowl of broccoli, rice and salmon">
+  <img src="docs/images/icon-rounded.png" width="128" alt="OpenMacro's icon: a smiling blue bowl of broccoli, rice and salmon">
 </p>
 
 <h1 align="center">OpenMacro</h1>
