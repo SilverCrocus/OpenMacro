@@ -44,9 +44,7 @@ Most calorie apps give you a target from a formula and leave it there. OpenMacro
 
 ## See it in 40 seconds
 
-<p align="center">
-  <a href="docs/media/openmacro-tour.mp4"><img src="docs/images/video-thumbnail.png" width="720" alt="Watch the 42-second OpenMacro tour"></a>
-</p>
+https://github.com/user-attachments/assets/26ebcbac-5fb4-47f2-9ba5-789011059a29
 
 ## Features
 
