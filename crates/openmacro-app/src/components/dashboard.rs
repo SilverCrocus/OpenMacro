@@ -365,15 +365,12 @@ pub fn Dashboard() -> Element {
 }
 
 /// What is left of today's target, or how far past it, in the user's energy
-/// unit. It only reads as over once that rounds to at least 1, so a fraction
-/// of a calorie past the target shows "0 left" rather than "0 over".
+/// unit. Both are rounded before subtracting, so the number always matches
+/// the "eaten / target" figures shown beside it. `{:.0}` rounds ties to
+/// even, so this rounds the same way.
 fn remaining_text(eaten: f64, target: f64) -> (String, bool) {
-    let over = fmt0(eaten - target);
-    if over == "0" || over.starts_with('-') {
-        (fmt0(target - eaten), false)
-    } else {
-        (over, true)
-    }
+    let left = target.round_ties_even() - eaten.round_ties_even();
+    (fmt0(left.abs()), left < 0.0)
 }
 
 #[component]
@@ -438,9 +435,25 @@ mod tests {
     }
 
     #[test]
-    fn a_fraction_over_is_not_over() {
+    fn matches_the_rounded_figures() {
+        // Shown as "1000 / 1895", so 895 left, not 894.
+        assert_eq!(remaining_text(1000.4, 1894.6), ("895".into(), false));
+        // Shown as "1894 / 1894": ties round to even, like `{:.0}`.
+        assert_eq!(remaining_text(1894.5, 1893.6), ("0".into(), false));
         assert_eq!(remaining_text(1894.3, 1894.0), ("0".into(), false));
-        assert_eq!(remaining_text(1893.8, 1894.0), ("0".into(), false));
         assert_eq!(remaining_text(1894.7, 1894.0), ("1".into(), true));
+    }
+
+    #[test]
+    fn rounds_like_the_figures_beside_it() {
+        for eaten in [0.0, 0.5, 1.5, 2.5, 987.5, 1000.4, 1894.49, 1894.5, 2013.6] {
+            for target in [1893.5, 1894.0, 1894.5, 1894.6, 2633.2] {
+                let (text, over) = remaining_text(eaten, target);
+                let diff =
+                    fmt0(target).parse::<f64>().unwrap() - fmt0(eaten).parse::<f64>().unwrap();
+                assert_eq!(text, fmt0(diff.abs()), "{eaten} of {target}");
+                assert_eq!(over, diff < 0.0, "{eaten} of {target}");
+            }
+        }
     }
 }
