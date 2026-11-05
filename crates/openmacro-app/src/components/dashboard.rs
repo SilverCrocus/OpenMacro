@@ -39,6 +39,11 @@ pub fn Dashboard() -> Element {
 
     let today_kcal = day_totals(&log, today).get_or_zero(Nutrient::Energy);
     let today_target = coach.target_for(today).kcal;
+    let (left_text, is_over) = remaining_text(
+        prefs::energy_value(today_kcal),
+        prefs::energy_value(today_target),
+    );
+    let left_word = if is_over { "over" } else { "left" };
 
     // Expenditure tile.
     let expenditure = coach.expenditure_kcal();
@@ -233,7 +238,13 @@ pub fn Dashboard() -> Element {
             }
         }
         section { class: "card hero",
-            Ring { fraction: today_kcal / today_target.max(1.0), size: 88 }
+            div { class: "hero-ring",
+                Ring { fraction: today_kcal / today_target.max(1.0), size: 88 }
+                div { class: "hero-ring-label",
+                    span { class: "hero-ring-num", "{left_text}" }
+                    span { class: "muted", "{energy_unit} {left_word}" }
+                }
+            }
             div {
                 div { class: "muted", "Today" }
                 div { class: "hero-num", "{today_text}" }
@@ -353,6 +364,18 @@ pub fn Dashboard() -> Element {
     }
 }
 
+/// What is left of today's target, or how far past it, in the user's energy
+/// unit. It only reads as over once that rounds to at least 1, so a fraction
+/// of a calorie past the target shows "0 left" rather than "0 over".
+fn remaining_text(eaten: f64, target: f64) -> (String, bool) {
+    let over = fmt0(eaten - target);
+    if over == "0" || over.starts_with('-') {
+        (fmt0(target - eaten), false)
+    } else {
+        (over, true)
+    }
+}
+
 #[component]
 fn WeighInCard() -> Element {
     let state = use_context::<AppState>();
@@ -399,5 +422,25 @@ fn WeighInCard() -> Element {
                 p { class: "muted pad", "Saved. Your trend and expenditure have been updated." }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn remaining_against_target() {
+        assert_eq!(remaining_text(988.0, 1894.0), ("906".into(), false));
+        assert_eq!(remaining_text(0.0, 1894.0), ("1894".into(), false));
+        assert_eq!(remaining_text(1894.0, 1894.0), ("0".into(), false));
+        assert_eq!(remaining_text(2014.0, 1894.0), ("120".into(), true));
+    }
+
+    #[test]
+    fn a_fraction_over_is_not_over() {
+        assert_eq!(remaining_text(1894.3, 1894.0), ("0".into(), false));
+        assert_eq!(remaining_text(1893.8, 1894.0), ("0".into(), false));
+        assert_eq!(remaining_text(1894.7, 1894.0), ("1".into(), true));
     }
 }
