@@ -15,33 +15,19 @@ mod health;
 mod keypad;
 mod persist;
 mod prefs;
+mod routes;
 mod seed;
 mod state;
 mod updater;
 
 use dioxus::prelude::*;
 
-use components::{Dashboard, FoodLog, Insight, More, Plan, Shell, check_for_update};
+use components::check_for_update;
+pub use routes::Route;
 use state::{AppState, today};
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 const ICON: Asset = asset!("/assets/icon-192.png");
-
-#[derive(Debug, Clone, Routable, PartialEq)]
-#[rustfmt::skip]
-pub enum Route {
-    #[layout(Shell)]
-        #[route("/")]
-        Dashboard {},
-        #[route("/log")]
-        FoodLog {},
-        #[route("/plan")]
-        Plan {},
-        #[route("/more")]
-        More {},
-        #[route("/insight/:metric")]
-        Insight { metric: String },
-}
 
 fn main() {
     dioxus::launch(App);
