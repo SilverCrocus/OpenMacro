@@ -61,11 +61,11 @@ pub fn Logger() -> Element {
     let count = plate.items.len();
     // Set while a recipe's ingredients are on the plate for editing.
     let recipe_edit = (state.recipe_edit)();
-    let log_text = if count == 1 {
-        "Log 1 item".to_string()
-    } else {
-        format!("Log {count} items")
-    };
+    let quick_add_open = tab() == Tab::QuickAdd
+        && !saving_recipe()
+        && detail().is_none()
+        && item_edit().is_none()
+        && copying_food().is_none();
 
     rsx! {
         div { class: "sheet-backdrop",
@@ -162,7 +162,7 @@ pub fn Logger() -> Element {
                         }
                     }
                 }
-                div { class: "sheet-body",
+                div { class: if quick_add_open { "quick-add-panel" } else { "sheet-body" },
                     if saving_recipe() {
                         super::recipe::RecipeForm {
                             items: plate.items.clone(),
@@ -220,29 +220,41 @@ pub fn Logger() -> Element {
                                 super::ai_log::AiTab {}
                             },
                             (None, None, Tab::QuickAdd) => rsx! {
-                                QuickAdd {}
+                                QuickAdd { count, editing_recipe: recipe_edit.is_some(), on_recipe: move |_| saving_recipe.set(true) }
                             },
                         }
                         }
                     }
                 }
-                if recipe_edit.is_some() && detail().is_none() && !saving_recipe() {
-                    footer { class: "sheet-footer plate-actions",
-                        button { onclick: move |_| state.close_plate(), "Cancel" }
-                        button {
-                            class: "primary",
-                            disabled: count == 0,
-                            onclick: move |_| saving_recipe.set(true),
-                            "Update recipe"
-                        }
-                    }
-                } else if count > 0 && detail().is_none() && !saving_recipe() {
-                    footer { class: "sheet-footer plate-actions",
-                        if count > 1 {
+                if !quick_add_open && (count > 0 || recipe_edit.is_some()) && detail().is_none() && !saving_recipe() {
+                    PlateActions { count, editing_recipe: recipe_edit.is_some(), on_recipe: move |_| saving_recipe.set(true),
+                        if count > 1 && recipe_edit.is_none() {
                             button { onclick: move |_| saving_recipe.set(true), "Save as recipe" }
                         }
-                        button { class: "primary", onclick: move |_| state.log_plate(), "{log_text}" }
                     }
+                }
+            }
+        }
+    }
+}
+
+#[component]
+fn PlateActions(
+    count: usize,
+    editing_recipe: bool,
+    on_recipe: EventHandler<()>,
+    children: Element,
+) -> Element {
+    let state = use_context::<AppState>();
+    rsx! {
+        footer { class: "sheet-footer plate-actions",
+            {children}
+            if editing_recipe {
+                button { onclick: move |_| state.close_plate(), "Cancel" }
+                button { class: "primary", disabled: count == 0, onclick: move |_| on_recipe.call(()), "Update recipe" }
+            } else {
+                button { class: "primary", disabled: count == 0, onclick: move |_| state.log_plate(),
+                    if count == 1 { "Log 1 item" } else { "Log {count} items" }
                 }
             }
         }
@@ -736,7 +748,7 @@ fn parse_number(s: &str) -> Option<f64> {
 }
 
 #[component]
-fn QuickAdd() -> Element {
+fn QuickAdd(count: usize, editing_recipe: bool, on_recipe: EventHandler<()>) -> Element {
     let state = use_context::<AppState>();
     let mut name = use_signal(String::new);
     let kcal = use_signal(String::new);
@@ -759,45 +771,51 @@ fn QuickAdd() -> Element {
     let hint = format!("Macros add up to {}", prefs::energy_text(macro_kcal));
 
     rsx! {
-        label { class: "field",
-            span { "Name (optional)" }
-            input {
-                r#type: "text",
-                placeholder: "Quick add",
-                value: "{name}",
-                oninput: move |e| name.set(e.value()),
+        div { class: "sheet-body",
+            label { class: "field",
+                span { "Name (optional)" }
+                input {
+                    r#type: "text",
+                    placeholder: "Quick add",
+                    value: "{name}",
+                    oninput: move |e| name.set(e.value()),
+                }
+            }
+            div { class: "field-grid",
+                NumberField { label: "Energy", unit: prefs::energy_symbol(), value: kcal }
+                NumberField { label: "Protein", unit: "g", value: protein }
+                NumberField { label: "Fat", unit: "g", value: fat }
+                NumberField { label: "Carbs", unit: "g", value: carbs }
+                NumberField { label: "Alcohol", unit: "g", value: alcohol }
+            }
+            p { class: "muted pad", "{hint}" }
+            if count > 1 && !editing_recipe {
+                button { onclick: move |_| on_recipe.call(()), "Save as recipe" }
             }
         }
-        div { class: "field-grid",
-            NumberField { label: "Energy", unit: prefs::energy_symbol(), value: kcal }
-            NumberField { label: "Protein", unit: "g", value: protein }
-            NumberField { label: "Fat", unit: "g", value: fat }
-            NumberField { label: "Carbs", unit: "g", value: carbs }
-            NumberField { label: "Alcohol", unit: "g", value: alcohol }
-        }
-        p { class: "muted pad", "{hint}" }
-        button {
-            class: "primary wide",
-            disabled: energy.is_none(),
-            onclick: move |_| {
-                let Some(energy) = energy else { return };
-                let label = name();
-                state
-                    .add_to_plate(PlateItem {
-                        food_id: None,
-                        name: if label.trim().is_empty() { "Quick add".into() } else { label.trim().to_string() },
-                        amount: "1 entry".into(),
-                        nutrients: {
-                            let n = NutrientProfile::from_macros(energy, p, f, c);
-                            if a > 0.0 { n.with(Nutrient::Alcohol, a) } else { n }
-                        },
-                        grams: None,
-                    });
-                for mut field in [name, kcal, protein, fat, carbs, alcohol] {
-                    field.set(String::new());
-                }
-            },
-            "Add to plate"
+        PlateActions { count, editing_recipe, on_recipe,
+            button {
+                disabled: energy.is_none(),
+                onclick: move |_| {
+                    let Some(energy) = energy else { return };
+                    let label = name();
+                    state
+                        .add_to_plate(PlateItem {
+                            food_id: None,
+                            name: if label.trim().is_empty() { "Quick add".into() } else { label.trim().to_string() },
+                            amount: "1 entry".into(),
+                            nutrients: {
+                                let n = NutrientProfile::from_macros(energy, p, f, c);
+                                if a > 0.0 { n.with(Nutrient::Alcohol, a) } else { n }
+                            },
+                            grams: None,
+                        });
+                    for mut field in [name, kcal, protein, fat, carbs, alcohol] {
+                        field.set(String::new());
+                    }
+                },
+                "Add to plate"
+            }
         }
     }
 }
