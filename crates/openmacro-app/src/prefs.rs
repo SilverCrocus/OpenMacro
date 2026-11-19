@@ -38,6 +38,40 @@ impl Theme {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    not(target_arch = "wasm32"),
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub enum FoodEntryTab {
+    #[default]
+    Search,
+    Scan,
+    Ai,
+    QuickAdd,
+    Library,
+}
+
+impl FoodEntryTab {
+    pub const ALL: [Self; 5] = [
+        Self::Search,
+        Self::Scan,
+        Self::Ai,
+        Self::QuickAdd,
+        Self::Library,
+    ];
+
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Search => "Search",
+            Self::Scan => "Scan",
+            Self::Ai => "AI",
+            Self::QuickAdd => "Quick Add",
+            Self::Library => "Library",
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(
     not(target_arch = "wasm32"),
@@ -47,6 +81,7 @@ impl Theme {
 pub struct Prefs {
     pub theme: Theme,
     pub clock_24h: bool,
+    pub default_food_tab: FoodEntryTab,
     pub energy: EnergyUnit,
     pub weight: WeightUnit,
     /// The food log's first and last hours (earlier or later entries
@@ -62,6 +97,7 @@ impl Default for Prefs {
         Self {
             theme: Theme::default(),
             clock_24h: false,
+            default_food_tab: FoodEntryTab::default(),
             energy: EnergyUnit::default(),
             weight: WeightUnit::default(),
             log_first_hour: 6,
@@ -165,4 +201,29 @@ pub fn apply_theme(theme: Theme) {
         "document.documentElement.dataset.theme = '{}';",
         theme.code()
     ));
+}
+
+#[cfg(all(test, not(target_arch = "wasm32")))]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn older_preferences_keep_their_settings_and_open_search() {
+        let prefs: Prefs = serde_json::from_str(r#"{"theme":"Light","clock_24h":true}"#).unwrap();
+        assert_eq!(prefs.theme, Theme::Light);
+        assert!(prefs.clock_24h);
+        assert_eq!(prefs.default_food_tab, FoodEntryTab::Search);
+    }
+
+    #[test]
+    fn every_food_tab_can_be_saved_and_restored() {
+        for tab in FoodEntryTab::ALL {
+            let prefs = Prefs {
+                default_food_tab: tab,
+                ..Prefs::default()
+            };
+            let saved = serde_json::to_string(&prefs).unwrap();
+            assert_eq!(serde_json::from_str::<Prefs>(&saved).unwrap(), prefs);
+        }
+    }
 }

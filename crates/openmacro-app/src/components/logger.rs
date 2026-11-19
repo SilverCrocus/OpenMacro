@@ -13,17 +13,8 @@ use crate::back::use_back_handler;
 use crate::food_search::{self, Database, FoundFood};
 use crate::foods::plate_item;
 use crate::keypad::{self, Key};
-use crate::prefs;
+use crate::prefs::{self, FoodEntryTab as Tab};
 use crate::state::{AppState, CoachSnapshot, LogEntry, PlateItem, day_totals};
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-enum Tab {
-    Search,
-    Scan,
-    Ai,
-    QuickAdd,
-    Library,
-}
 
 #[component]
 pub fn Logger() -> Element {
@@ -43,7 +34,13 @@ pub fn Logger() -> Element {
     let foods_db = use_context::<Resource<Option<Database>>>();
     // A food being copied into a new custom food.
     let mut copying_food = use_signal(|| None::<Food>);
-    let mut tab = use_signal(|| Tab::Search);
+    let mut tab = use_signal(|| {
+        if state.recipe_edit.peek().is_some() {
+            Tab::Search
+        } else {
+            prefs::PREFS.peek().default_food_tab
+        }
+    });
     let mut detail = use_signal(|| None::<Food>);
     // Set when a scanned barcode isn't found, to prefill a new custom food.
     let mut new_barcode = use_signal(|| None::<String>);
@@ -152,22 +149,15 @@ pub fn Logger() -> Element {
                 }
                 if !saving_recipe() {
                     nav { class: "sheet-tabs",
-                        for (value , label) in [
-                            (Tab::Search, "Search"),
-                            (Tab::Scan, "Scan"),
-                            (Tab::Ai, "AI"),
-                            (Tab::QuickAdd, "Quick Add"),
-                            (Tab::Library, "Library"),
-                        ]
-                        {
+                        for value in Tab::ALL {
                             button {
-                                key: "{label}",
+                                key: "{value.label()}",
                                 class: if tab() == value && detail().is_none() { "active" },
                                 onclick: move |_| {
                                     detail.set(None);
                                     tab.set(value);
                                 },
-                                "{label}"
+                                "{value.label()}"
                             }
                         }
                     }

@@ -8,7 +8,7 @@ use super::health::HealthConnect;
 use super::hour_label;
 use crate::export;
 use crate::food_search::{self, Database, FoodRegion};
-use crate::prefs::{EnergyUnit, PREFS, Theme, WeightUnit};
+use crate::prefs::{EnergyUnit, FoodEntryTab, PREFS, Theme, WeightUnit};
 use crate::state::{AppState, CoachSnapshot, Data, today};
 
 #[component]
@@ -415,6 +415,20 @@ fn DisplaySettings() -> Element {
                             class: if prefs.weight == unit { "active" },
                             onclick: move |_| PREFS.write().weight = unit,
                             "{unit.symbol()}"
+                        }
+                    }
+                }
+            }
+            div { class: "choice",
+                span { class: "choice-label", "Default food entry tab" }
+                div { class: "segmented even",
+                    for tab in FoodEntryTab::ALL {
+                        button {
+                            key: "{tab.label()}",
+                            class: if prefs.default_food_tab == tab { "active" },
+                            aria_pressed: prefs.default_food_tab == tab,
+                            onclick: move |_| PREFS.write().default_food_tab = tab,
+                            "{tab.label()}"
                         }
                     }
                 }
