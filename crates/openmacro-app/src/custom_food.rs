@@ -49,7 +49,12 @@ impl Input {
     /// The form filled in from a saved food, for editing. Values are per
     /// 100 g in kcal, and carbs are the stored total (US style), so building
     /// it again without changes gives the same food.
+    ///
+    /// A fast-food menu item without a published weight is filled in per
+    /// serve instead (its 100 g is only a placeholder), with the weight left
+    /// for the user to enter.
     pub fn from_food(food: &Food) -> Self {
+        let per_serve = crate::eat_out::unweighed(food);
         let value = |n: Nutrient| {
             food.per_100g
                 .get(n)
@@ -61,9 +66,14 @@ impl Input {
             name: food.name.clone(),
             brand: food.brand.clone().unwrap_or_default(),
             barcode: food.barcode.clone().unwrap_or_default(),
-            basis: Basis::Per100g,
+            basis: if per_serve {
+                Basis::Serving
+            } else {
+                Basis::Per100g
+            },
             serving_label: serving.map_or_else(|| "serving".into(), |s| s.label.clone()),
             serving_grams: serving
+                .filter(|_| !per_serve)
                 .map(|s| crate::foods::fmt_qty(s.grams))
                 .unwrap_or_default(),
             label: LabelStyle::UnitedStates,
@@ -162,6 +172,37 @@ pub fn build(input: &Input) -> Result<Food, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_menu_item_without_a_weight_is_copied_per_serve() {
+        let item = crate::eat_out::chains()
+            .iter()
+            .flat_map(|c| &c.items)
+            .find(|i| !i.weighed)
+            .unwrap();
+        let input = Input::from_food(&item.food);
+        assert_eq!(input.basis, Basis::Serving);
+        assert_eq!(input.serving_grams, "");
+        assert_eq!(
+            build(&input).unwrap_err(),
+            "Enter the serving weight in grams."
+        );
+        // Once weighed, a serve keeps the published values.
+        let food = build(&Input {
+            serving_grams: "215".into(),
+            ..input
+        })
+        .unwrap();
+        let kcal = food
+            .nutrients_for(food.default_amount())
+            .unwrap()
+            .get_or_zero(Nutrient::Energy);
+        assert!(
+            (kcal - item.kcal()).abs() < 0.01,
+            "{kcal} vs {}",
+            item.kcal()
+        );
+    }
 
     fn input() -> Input {
         Input {

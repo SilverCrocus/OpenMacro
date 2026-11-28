@@ -1,0 +1,1146 @@
+{
+  "id": "oporto",
+  "name": "Oporto",
+  "source": {
+    "url": "https://www.oporto.com.au/menu/",
+    "title": "Oporto menu nutrition panels",
+    "published": "2025-01-01",
+    "accessed": "2026-11-28"
+  },
+  "parts": {
+    "mayo_addon": {
+      "name": "Mayo (burger add-on)",
+      "grams": null,
+      "kj": 610,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://dohikw9d8lb84.cloudfront.net/49adfafb-2741-4a69-960f-28d921d4b009.json",
+      "note": "Energy only. 'Add Mayo' modifier (PLU 212999103, 610 kJ / 146 Cal) in the item's own 'Customise' list in Oporto's online-ordering menu feed (same figure as the feed's 'Mayo Dipping Sauce', 611 kJ). Macros not published for the add-on. The separate Nutritional Info panel for the mayo pot (PLU 2007003-1) says 25 g / 750 kJ, which does not match, so its macros were not used. Assumes the add-on portion equals the default portion in the burger; Oporto does not state the default portion."
+    },
+    "cheese_slice": {
+      "name": "Cheese (1 slice)",
+      "grams": null,
+      "kj": 170,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://dohikw9d8lb84.cloudfront.net/49adfafb-2741-4a69-960f-28d921d4b009.json",
+      "note": "Energy only. 'Add Cheese (1 slice)' modifier (PLU 212999206, 170 kJ / 41 Cal) in the item's own Customise list. Macros not published."
+    },
+    "bacon_piece": {
+      "name": "Bacon (1 piece)",
+      "grams": 17,
+      "kj": 150,
+      "protein_g": 4.8,
+      "fat_g": 1.8,
+      "saturated_fat_g": 0.6,
+      "carbs_g": 0.3,
+      "sugars_g": 0.3,
+      "fibre_g": null,
+      "sodium_mg": 300,
+      "source_url": "https://api.oporto.com.au/mobile-services/layout/nutrientInfo?plu=212006001-1",
+      "note": "Derived from two Nutritional Info panels whose component lists are identical apart from Bacon: Chicken & Egg Deluxe (PLU 212006001-1: 262 g, 2620 kJ, P 35.9, F 31.1, sat 6.9, C 57.7, sugars 14.9, Na 1345) minus Chicken & Egg Burger (PLU 212006004-1: 245 g, 2470 kJ, P 31.1, F 29.3, sat 6.3, C 57.4, sugars 14.6, Na 1045). Check: 17x4.8+37x1.8+17x0.3 = 153 kJ. Corroborated by the 'Add Bacon (1 piece)' modifier (PLU 212999205, 160 kJ / 38 Cal) offered in the Customise list of every item it is used for. Oporto doesn't say how many pieces each item has. The ordering feed's own item kJ for the same pair (2870 vs 2620) would give 250 kJ, but the Nutritional Info panels are the menu file's source."
+    },
+    "original_chilli_addon": {
+      "name": "Original Chilli Sauce (burger add-on)",
+      "grams": null,
+      "kj": 430,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://dohikw9d8lb84.cloudfront.net/49adfafb-2741-4a69-960f-28d921d4b009.json",
+      "note": "Energy only. 'Add Extra Original Chilli Sauce' (PLU 212999130, 430 kJ / 103 Cal) in the Bondi burgers' Customise list; same as the feed's 'Original Chilli Dipping Sauce' (430 kJ). The Nutritional Info panel for the chilli sauce pot (PLU 2007001-1) says 35 g / 610 kJ, which does not match, so its macros were not used."
+    },
+    "prego": {
+      "name": "Prego sauce",
+      "grams": 25,
+      "kj": 330,
+      "protein_g": 0.2,
+      "fat_g": 6.0,
+      "saturated_fat_g": 0.5,
+      "carbs_g": 6.3,
+      "sugars_g": 5.1,
+      "fibre_g": null,
+      "sodium_mg": 175,
+      "source_url": "https://api.oporto.com.au/mobile-services/layout/nutrientInfo?plu=2007004-1",
+      "note": "'Add Prego' modifier (PLU 212999104) in the Oprego burgers' Customise list is 330 kJ / 79 Cal, the same as the Prego Dipping Sauce Nutritional Info panel (PLU 2007004-1: 25 g, 330 kJ). Macros come from that panel, matched on name and identical energy. Check: 17x0.2+37x6.0+17x6.3 = 333 kJ."
+    },
+    "lemon_herb": {
+      "name": "Lemon & Herb sauce",
+      "grams": 25,
+      "kj": 310,
+      "protein_g": 0.2,
+      "fat_g": 5.8,
+      "saturated_fat_g": 0.4,
+      "carbs_g": 5.4,
+      "sugars_g": 2.0,
+      "fibre_g": null,
+      "sodium_mg": 245,
+      "source_url": "https://api.oporto.com.au/mobile-services/layout/nutrientInfo?plu=2007002-1",
+      "note": "'Add Lemon & Herb' modifier (PLU 212999102) in the Veggie Burger's Customise list is 310 kJ / 74 Cal, the same as the Lemon & Herb Dipping Sauce Nutritional Info panel (PLU 2007002-1: 25 g, 310 kJ). Macros come from that panel. Check: 17x0.2+37x5.8+17x5.4 = 310 kJ."
+    },
+    "halloumi_2pc": {
+      "name": "Halloumi (2 pieces)",
+      "grams": null,
+      "kj": 720,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://dohikw9d8lb84.cloudfront.net/49adfafb-2741-4a69-960f-28d921d4b009.json",
+      "note": "Energy only. 'Add Halloumi (2 pieces)' modifier (PLU 212999224, 720 kJ / 172 Cal) in the Breakfast Bowl's Customise list. Macros not published. Oporto doesn't say how many pieces the bowl has."
+    },
+    "green_goddess": {
+      "name": "Green Goddess Dressing",
+      "grams": null,
+      "kj": 350,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://dohikw9d8lb84.cloudfront.net/49adfafb-2741-4a69-960f-28d921d4b009.json",
+      "note": "Energy only. The Chicken Salad Bowl's own 'Green Goddess Dressing' option group (Green Goddess Dressing, PLU 2007017-1, 350 kJ / 84 Cal, or 'No Dressing'). The Nutritional Info API has no panel for it (404)."
+    }
+  },
+  "parts_sources": [
+    "https://www.oporto.com.au/menu/ (product descriptions and Nutritional Info panels)",
+    "https://www.oporto.com.au/locations/chatswood-westfield/menu/ (store menu page; loads the ordering feed below)",
+    "https://dohikw9d8lb84.cloudfront.net/49adfafb-2741-4a69-960f-28d921d4b009.json (Oporto online-ordering menu feed, 'Ecomm Pickup', updated 2026-11-27: product descriptions, Customise add/remove modifiers with kJ and Cal)",
+    "https://api.oporto.com.au/mobile-services/layout/nutrientInfo?plu=<plu> (Oporto Nutritional Info API: ingredient lists by component and nutrition panels; PLUs 212001001-1, 212001004-1, 212001008-1, 212001011-1, 212001013-1, 212001014-1, 212001016-1, 212002006-1, 212002007-1, 212002010-1, 212002024-1, 212002025-1, 212006001-1, 212006003-1, 212006004-1, 212006006-1, 2004004-1, 2004043-1, 2004045-1, 212008006-1, 2007001-1, 2007002-1, 2007003-1, 2007004-1, 2007007-1, 2007008-1)"
+  ],
+  "items": [
+    {
+      "id": "single-bondi-burger",
+      "name": "Single Bondi Burger",
+      "category": "Burgers",
+      "serving": "1 burger (single fillet)",
+      "grams": 231,
+      "kj": 2760,
+      "protein_g": 26.9,
+      "fat_g": 42.1,
+      "sat_fat_g": 5.6,
+      "carbs_g": 50.5,
+      "sugars_g": 7.2,
+      "fibre_g": null,
+      "sodium_mg": 940,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayo_addon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "Original Chilli sauce",
+          "kind": "dressing",
+          "count": 1,
+          "part": "original_chilli_addon"
+        }
+      ]
+    },
+    {
+      "id": "double-bondi-burger",
+      "name": "Double Bondi Burger",
+      "category": "Burgers",
+      "serving": "1 burger (double fillet)",
+      "grams": 310,
+      "kj": 3430,
+      "protein_g": 43.1,
+      "fat_g": 51.0,
+      "sat_fat_g": 6.5,
+      "carbs_g": 61.4,
+      "sugars_g": 8.2,
+      "fibre_g": null,
+      "sodium_mg": 1235,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayo_addon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "Original Chilli sauce",
+          "kind": "dressing",
+          "count": 1,
+          "part": "original_chilli_addon"
+        }
+      ]
+    },
+    {
+      "id": "single-otropo-burger",
+      "name": "Single Otropo Burger",
+      "category": "Burgers",
+      "serving": "1 burger (single fillet)",
+      "grams": 296,
+      "kj": 2970,
+      "protein_g": 34.6,
+      "fat_g": 40.4,
+      "sat_fat_g": 6.3,
+      "carbs_g": 58.6,
+      "sugars_g": 14.7,
+      "fibre_g": null,
+      "sodium_mg": 1390,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayo_addon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon_piece"
+        }
+      ]
+    },
+    {
+      "id": "double-otropo-burger",
+      "name": "Double Otropo Burger",
+      "category": "Burgers",
+      "serving": "1 burger (double fillet)",
+      "grams": 364,
+      "kj": 3440,
+      "protein_g": 50.7,
+      "fat_g": 44.5,
+      "sat_fat_g": 6.8,
+      "carbs_g": 69.2,
+      "sugars_g": 15.4,
+      "fibre_g": null,
+      "sodium_mg": 1640,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayo_addon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon_piece"
+        }
+      ]
+    },
+    {
+      "id": "single-oprego-burger",
+      "name": "Single Oprego Burger",
+      "category": "Burgers",
+      "serving": "1 burger (single fillet)",
+      "grams": 262,
+      "kj": 2260,
+      "protein_g": 27.0,
+      "fat_g": 26.1,
+      "sat_fat_g": 4.3,
+      "carbs_g": 55.6,
+      "sugars_g": 11.4,
+      "fibre_g": null,
+      "sodium_mg": 940,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayo_addon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "Prego sauce",
+          "kind": "dressing",
+          "count": 1,
+          "part": "prego"
+        }
+      ]
+    },
+    {
+      "id": "double-oprego-burger",
+      "name": "Double Oprego Burger",
+      "category": "Burgers",
+      "serving": "1 burger (double fillet)",
+      "grams": 335,
+      "kj": 2890,
+      "protein_g": 43.1,
+      "fat_g": 34.1,
+      "sat_fat_g": 5.2,
+      "carbs_g": 66.3,
+      "sugars_g": 12.2,
+      "fibre_g": null,
+      "sodium_mg": 1215,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayo_addon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "Prego sauce",
+          "kind": "dressing",
+          "count": 1,
+          "part": "prego"
+        }
+      ]
+    },
+    {
+      "id": "double-chicken-blt-burger",
+      "name": "Double Chicken BLT Burger",
+      "category": "Burgers",
+      "serving": "1 burger (double fillet)",
+      "grams": 331,
+      "kj": 3080,
+      "protein_g": 43.4,
+      "fat_g": 41.4,
+      "sat_fat_g": 5.7,
+      "carbs_g": 61.6,
+      "sugars_g": 8.4,
+      "fibre_g": null,
+      "sodium_mg": 1165,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayo_addon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon_piece"
+        }
+      ]
+    },
+    {
+      "id": "halloumi-chicken-burger",
+      "name": "Halloumi & Chicken Burger",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": 290,
+      "kj": 3450,
+      "protein_g": 40.3,
+      "fat_g": 46.6,
+      "sat_fat_g": 10.5,
+      "carbs_g": 63.8,
+      "sugars_g": 14.5,
+      "fibre_g": null,
+      "sodium_mg": 1485,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayo_addon"
+        },
+        {
+          "name": "tomato & capsicum relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "veggie-burger",
+      "name": "Veggie Burger",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": 276,
+      "kj": 2750,
+      "protein_g": 13.0,
+      "fat_g": 37.7,
+      "sat_fat_g": 5.6,
+      "carbs_g": 64.7,
+      "sugars_g": 10.4,
+      "fibre_g": null,
+      "sodium_mg": 1270,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayo_addon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "lemon & herb sauce",
+          "kind": "dressing",
+          "count": 1,
+          "part": "lemon_herb"
+        }
+      ]
+    },
+    {
+      "id": "chicken-cheese-burger",
+      "name": "Chicken & Cheese Burger",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": 215,
+      "kj": 2750,
+      "protein_g": 26.6,
+      "fat_g": 37.2,
+      "sat_fat_g": 5.4,
+      "carbs_g": 61.0,
+      "sugars_g": 16.0,
+      "fibre_g": null,
+      "sodium_mg": 1120,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayo_addon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-pulled-chicken-roll",
+      "name": "Fresh Pulled Chicken Roll",
+      "category": "Wraps & rolls",
+      "serving": "1 roll",
+      "grams": 297,
+      "kj": 2840,
+      "protein_g": 23.8,
+      "fat_g": 35.2,
+      "sat_fat_g": 4.3,
+      "carbs_g": 61.1,
+      "sugars_g": 7.6,
+      "fibre_g": null,
+      "sodium_mg": 1440,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "Original Chilli Sauce",
+          "kind": "dressing",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "veggie-rappa",
+      "name": "Veggie Rappa",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": 389,
+      "kj": 3760,
+      "protein_g": 16.0,
+      "fat_g": 48.2,
+      "sat_fat_g": 10.4,
+      "carbs_g": 98.6,
+      "sugars_g": 9.9,
+      "fibre_g": null,
+      "sodium_mg": 1805,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "lemon & herb sauce",
+          "kind": "dressing",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "chicken-rappsnacker",
+      "name": "Chicken Rappsnacker",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": 176,
+      "kj": 1910,
+      "protein_g": 20.9,
+      "fat_g": 21.5,
+      "sat_fat_g": 5.4,
+      "carbs_g": 45.2,
+      "sugars_g": 4.8,
+      "fibre_g": null,
+      "sodium_mg": 750,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayo_addon"
+        }
+      ]
+    },
+    {
+      "id": "pulled-chicken-bowl",
+      "name": "Pulled Chicken Bowl",
+      "category": "Bowls & salads",
+      "serving": "1 bowl",
+      "grams": 477,
+      "kj": 2400,
+      "protein_g": 35.0,
+      "fat_g": 22.7,
+      "sat_fat_g": 4.6,
+      "carbs_g": 52.6,
+      "sugars_g": 8.0,
+      "fibre_g": null,
+      "sodium_mg": 1475
+    },
+    {
+      "id": "chicken-salad-bowl",
+      "name": "Chicken Salad Bowl",
+      "category": "Bowls & salads",
+      "serving": "1 bowl",
+      "grams": 325,
+      "kj": 2200,
+      "protein_g": 46.2,
+      "fat_g": 20.0,
+      "sat_fat_g": 1.8,
+      "carbs_g": 27.5,
+      "sugars_g": 22.2,
+      "fibre_g": null,
+      "sodium_mg": 990,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "green goddess dressing",
+          "kind": "dressing",
+          "count": 1,
+          "part": "green_goddess"
+        }
+      ]
+    },
+    {
+      "id": "quarter-chicken",
+      "name": "Quarter Chicken",
+      "category": "Chicken",
+      "serving": "1/4 chicken (Original Chilli basting)",
+      "grams": 179,
+      "kj": 1240,
+      "protein_g": 41.8,
+      "fat_g": 12.9,
+      "sat_fat_g": 3.9,
+      "carbs_g": 3.0,
+      "sugars_g": 1.0,
+      "fibre_g": null,
+      "sodium_mg": 975
+    },
+    {
+      "id": "half-chicken",
+      "name": "Half Chicken",
+      "category": "Chicken",
+      "serving": "1/2 chicken (Original Chilli basting)",
+      "grams": 359,
+      "kj": 2480,
+      "protein_g": 83.6,
+      "fat_g": 25.9,
+      "sat_fat_g": 7.8,
+      "carbs_g": 6.1,
+      "sugars_g": 2.0,
+      "fibre_g": null,
+      "sodium_mg": 1955
+    },
+    {
+      "id": "whole-chicken",
+      "name": "Whole Chicken",
+      "category": "Chicken",
+      "serving": "1 whole chicken (Original Chilli basting)",
+      "grams": 717,
+      "kj": 4980,
+      "protein_g": 167.2,
+      "fat_g": 52.2,
+      "sat_fat_g": 15.6,
+      "carbs_g": 12.2,
+      "sugars_g": 4.1,
+      "fibre_g": null,
+      "sodium_mg": 3910
+    },
+    {
+      "id": "chicken-tenders-4-pack",
+      "name": "Chicken Tenders (4 pack)",
+      "category": "Chicken",
+      "serving": "4 grilled tenders",
+      "grams": null,
+      "kj": 1000,
+      "protein_g": 41.9,
+      "fat_g": 5.9,
+      "sat_fat_g": 1.0,
+      "carbs_g": 4.3,
+      "sugars_g": 4.3,
+      "fibre_g": null,
+      "sodium_mg": 335
+    },
+    {
+      "id": "spicy-chicken-bolas-large",
+      "name": "Spicy Chicken Bolas (Large)",
+      "category": "Chicken",
+      "serving": "1 large serve",
+      "grams": 195,
+      "kj": 2200,
+      "protein_g": 35.7,
+      "fat_g": 29.1,
+      "sat_fat_g": 4.3,
+      "carbs_g": 30.2,
+      "sugars_g": 1.0,
+      "fibre_g": null,
+      "sodium_mg": 1630
+    },
+    {
+      "id": "chips-regular",
+      "name": "Chips (Regular)",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 150,
+      "kj": 1520,
+      "protein_g": 6.3,
+      "fat_g": 16.1,
+      "sat_fat_g": 2.5,
+      "carbs_g": 46.1,
+      "sugars_g": 0.9,
+      "fibre_g": null,
+      "sodium_mg": 540
+    },
+    {
+      "id": "chips-large",
+      "name": "Chips (Large)",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 195,
+      "kj": 1980,
+      "protein_g": 8.1,
+      "fat_g": 21.0,
+      "sat_fat_g": 3.3,
+      "carbs_g": 60.0,
+      "sugars_g": 1.1,
+      "fibre_g": null,
+      "sodium_mg": 705
+    },
+    {
+      "id": "chips-family",
+      "name": "Chips (Family)",
+      "category": "Sides",
+      "serving": "1 family serve",
+      "grams": 380,
+      "kj": 3860,
+      "protein_g": 15.8,
+      "fat_g": 40.9,
+      "sat_fat_g": 6.4,
+      "carbs_g": 116.8,
+      "sugars_g": 2.0,
+      "fibre_g": null,
+      "sodium_mg": 1370
+    },
+    {
+      "id": "spicy-rice-regular",
+      "name": "Spicy Rice (Regular)",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 170,
+      "kj": 970,
+      "protein_g": 4.0,
+      "fat_g": 4.7,
+      "sat_fat_g": 0.5,
+      "carbs_g": 41.0,
+      "sugars_g": 3.2,
+      "fibre_g": null,
+      "sodium_mg": 660
+    },
+    {
+      "id": "spicy-rice-large",
+      "name": "Spicy Rice (Large)",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 350,
+      "kj": 1930,
+      "protein_g": 8.1,
+      "fat_g": 9.5,
+      "sat_fat_g": 1.1,
+      "carbs_g": 81.9,
+      "sugars_g": 6.3,
+      "fibre_g": null,
+      "sodium_mg": 1320
+    },
+    {
+      "id": "grilled-corn-regular",
+      "name": "Grilled Corn (Regular)",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 100,
+      "kj": 360,
+      "protein_g": 3.1,
+      "fat_g": 2.7,
+      "sat_fat_g": 0.5,
+      "carbs_g": 10.7,
+      "sugars_g": 4.7,
+      "fibre_g": null,
+      "sodium_mg": 290
+    },
+    {
+      "id": "grilled-corn-large",
+      "name": "Grilled Corn (Large)",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 200,
+      "kj": 720,
+      "protein_g": 6.2,
+      "fat_g": 5.4,
+      "sat_fat_g": 1.0,
+      "carbs_g": 21.4,
+      "sugars_g": 9.4,
+      "fibre_g": null,
+      "sodium_mg": 575
+    },
+    {
+      "id": "crunchy-slaw-regular",
+      "name": "Crunchy Slaw (Regular)",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 80,
+      "kj": 290,
+      "protein_g": 1.3,
+      "fat_g": 4.1,
+      "sat_fat_g": 0.3,
+      "carbs_g": 6.0,
+      "sugars_g": 5.6,
+      "fibre_g": null,
+      "sodium_mg": 145
+    },
+    {
+      "id": "crunchy-slaw-large",
+      "name": "Crunchy Slaw (Large)",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 140,
+      "kj": 520,
+      "protein_g": 2.3,
+      "fat_g": 7.1,
+      "sat_fat_g": 0.6,
+      "carbs_g": 10.6,
+      "sugars_g": 9.8,
+      "fibre_g": null,
+      "sodium_mg": 255
+    },
+    {
+      "id": "portuguese-salad-regular",
+      "name": "Portuguese Salad (Regular)",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 160,
+      "kj": 130,
+      "protein_g": 1.9,
+      "fat_g": 0.2,
+      "sat_fat_g": 0.0,
+      "carbs_g": 4.2,
+      "sugars_g": 4.1,
+      "fibre_g": null,
+      "sodium_mg": 30
+    },
+    {
+      "id": "portuguese-salad-large",
+      "name": "Portuguese Salad (Large)",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 280,
+      "kj": 230,
+      "protein_g": 3.3,
+      "fat_g": 0.3,
+      "sat_fat_g": 0.0,
+      "carbs_g": 7.4,
+      "sugars_g": 7.2,
+      "fibre_g": null,
+      "sodium_mg": 55
+    },
+    {
+      "id": "bbq-pulled-chicken-loaded-chips",
+      "name": "BBQ Pulled Chicken Loaded Chips",
+      "category": "Sides",
+      "serving": "1 serve",
+      "grams": 272,
+      "kj": 2990,
+      "protein_g": 21.5,
+      "fat_g": 32.7,
+      "sat_fat_g": 5.1,
+      "carbs_g": 67.8,
+      "sugars_g": 10.6,
+      "fibre_g": null,
+      "sodium_mg": 1330,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "chilli-pulled-chicken-loaded-chips",
+      "name": "Chilli Pulled Chicken Loaded Chips",
+      "category": "Sides",
+      "serving": "1 serve",
+      "grams": null,
+      "kj": 3210,
+      "protein_g": 21.8,
+      "fat_g": 44.4,
+      "sat_fat_g": 5.9,
+      "carbs_g": 58.6,
+      "sugars_g": 3.1,
+      "fibre_g": null,
+      "sodium_mg": 1220,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "chilli sauce",
+          "kind": "dressing",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "chilli-cheese-chips",
+      "name": "Chilli Cheese Chips",
+      "category": "Sides",
+      "serving": "1 serve",
+      "grams": 568,
+      "kj": 6150,
+      "protein_g": 22.7,
+      "fat_g": 76.7,
+      "sat_fat_g": 10.6,
+      "carbs_g": 163.6,
+      "sugars_g": 4.1,
+      "fibre_g": null,
+      "sodium_mg": 425,
+      "leave_off": [
+        {
+          "name": "cheese sauce",
+          "kind": "cheese_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "chilli sauce",
+          "kind": "dressing",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "breakfast-bowl",
+      "name": "Breakfast Bowl",
+      "category": "Breakfast",
+      "serving": "1 bowl",
+      "grams": 423,
+      "kj": 2840,
+      "protein_g": 40.8,
+      "fat_g": 40.9,
+      "sat_fat_g": 15.1,
+      "carbs_g": 34.7,
+      "sugars_g": 5.5,
+      "fibre_g": null,
+      "sodium_mg": 2015,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "halloumi",
+          "kind": "cheese",
+          "count": 1,
+          "part": "halloumi_2pc"
+        }
+      ]
+    },
+    {
+      "id": "chicken-egg-burger",
+      "name": "Chicken & Egg Burger",
+      "category": "Breakfast",
+      "serving": "1 burger",
+      "grams": 245,
+      "kj": 2470,
+      "protein_g": 31.1,
+      "fat_g": 29.3,
+      "sat_fat_g": 6.3,
+      "carbs_g": 57.4,
+      "sugars_g": 14.6,
+      "fibre_g": null,
+      "sodium_mg": 1045,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "bacon-egg-burger",
+      "name": "Bacon & Egg Burger",
+      "category": "Breakfast",
+      "serving": "1 burger",
+      "grams": 167,
+      "kj": 1530,
+      "protein_g": 17.2,
+      "fat_g": 11.8,
+      "sat_fat_g": 3.3,
+      "carbs_g": 46.4,
+      "sugars_g": 13.8,
+      "fibre_g": null,
+      "sodium_mg": 850,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon_piece"
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "churros-8-pack",
+      "name": "Churros (8 pack)",
+      "category": "Desserts",
+      "serving": "8 churros",
+      "grams": 196,
+      "kj": 2600,
+      "protein_g": 9.3,
+      "fat_g": 18.1,
+      "sat_fat_g": 7.1,
+      "carbs_g": 98.5,
+      "sugars_g": 33.1,
+      "fibre_g": null,
+      "sodium_mg": 1015,
+      "leave_off": [
+        {
+          "name": "caramel dipping sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "bola-de-berlim",
+      "name": "Bola de Berlim",
+      "category": "Desserts",
+      "serving": "1 bola",
+      "grams": null,
+      "kj": 1290,
+      "protein_g": 5.2,
+      "fat_g": 14.0,
+      "sat_fat_g": 3.5,
+      "carbs_g": 39.0,
+      "sugars_g": 13.0,
+      "fibre_g": null,
+      "sodium_mg": 265
+    },
+    {
+      "id": "chocolate-mousse",
+      "name": "Chocolate Mousse",
+      "category": "Desserts",
+      "serving": "1 mousse",
+      "grams": 95,
+      "kj": 1630,
+      "protein_g": 3.0,
+      "fat_g": 28.0,
+      "sat_fat_g": 19.4,
+      "carbs_g": 31.6,
+      "sugars_g": 29.6,
+      "fibre_g": null,
+      "sodium_mg": 65
+    },
+    {
+      "id": "prego-dipping-sauce",
+      "name": "Prego Dipping Sauce",
+      "category": "Sauces",
+      "serving": "1 dipping sauce",
+      "grams": 25,
+      "kj": 330,
+      "protein_g": 0.2,
+      "fat_g": 6.0,
+      "sat_fat_g": 0.5,
+      "carbs_g": 6.3,
+      "sugars_g": 5.1,
+      "fibre_g": null,
+      "sodium_mg": 175
+    },
+    {
+      "id": "garlic-dipping-sauce",
+      "name": "Garlic Dipping Sauce",
+      "category": "Sauces",
+      "serving": "1 dipping sauce",
+      "grams": 40,
+      "kj": 810,
+      "protein_g": 0.8,
+      "fat_g": 20.5,
+      "sat_fat_g": 1.5,
+      "carbs_g": 2.3,
+      "sugars_g": 1.0,
+      "fibre_g": null,
+      "sodium_mg": 260
+    },
+    {
+      "id": "lemon-herb-dipping-sauce",
+      "name": "Lemon & Herb Dipping Sauce",
+      "category": "Sauces",
+      "serving": "1 dipping sauce",
+      "grams": 25,
+      "kj": 310,
+      "protein_g": 0.2,
+      "fat_g": 5.8,
+      "sat_fat_g": 0.4,
+      "carbs_g": 5.4,
+      "sugars_g": 2.0,
+      "fibre_g": null,
+      "sodium_mg": 245
+    },
+    {
+      "id": "extremo-picante-dipping-sauce",
+      "name": "Extremo Picante Dipping Sauce",
+      "category": "Sauces",
+      "serving": "1 dipping sauce",
+      "grams": 30,
+      "kj": 520,
+      "protein_g": 0.2,
+      "fat_g": 12.5,
+      "sat_fat_g": 1.0,
+      "carbs_g": 1.7,
+      "sugars_g": 0.7,
+      "fibre_g": null,
+      "sodium_mg": 110
+    }
+  ]
+}

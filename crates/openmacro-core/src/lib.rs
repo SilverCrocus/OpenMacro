@@ -13,10 +13,12 @@
 //! - [`expenditure`]: adaptive daily energy expenditure from intake and weight change.
 //! - [`targets`]: goal-driven calorie targets, weekly distribution and macro splits.
 //! - [`checkin`]: weekly check-in timing and the days to review before one.
+//! - [`eat_out`]: what to order when eating out, from what's left of the day.
 
 pub mod bmr;
 pub mod body;
 pub mod checkin;
+pub mod eat_out;
 pub mod expenditure;
 pub mod food;
 pub mod log;

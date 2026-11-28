@@ -1,0 +1,970 @@
+{
+  "id": "schnitz",
+  "name": "Schnitz",
+  "source": {
+    "url": "https://schnitz.com.au/our-menu/",
+    "title": "Schnitz menu nutrition panels",
+    "published": null,
+    "accessed": "2026-11-28"
+  },
+  "parts": {
+    "signature_sauce_dip": {
+      "name": "Signature Sauce dip",
+      "grams": 30,
+      "kj": 610,
+      "protein_g": 0.3,
+      "fat_g": 13.0,
+      "saturated_fat_g": null,
+      "carbs_g": 7.4,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": 130,
+      "source_url": "https://schnitz.com.au/our-menu/",
+      "note": "Derived from Schnitz's own panels on the menu page: Tender Pack (served with Signature Sauce dip) minus N x the 'Original' single tender (60 g, 636 kJ, P 11.8, F 6.5, C 11.2, Na 350). 5 Pack 330 g / 3790 kJ minus 5 tenders gives 30 g, 610 kJ, P 0.3, F 13.0, C 7.4, Na 130. The 3 Pack gives the same (612 kJ). Schnitz's ordering API lists 'Dip Signature' at 609 kJ in the Tender Box '1 Dip' choice, which agrees. Saturated fat and sugars can't be derived (tender panel says 'less than 1 g'). Check: 17x0.3+37x13.0+17x7.4 = 612 kJ."
+    }
+  },
+  "parts_sources": [
+    "https://schnitz.com.au/our-menu/ (descriptions and nutrition panels for every item, including the Tender Packs, the single 'Original' tender and the Dips & Dunks)",
+    "https://order.schnitz.com.au/api/v1/stores/5/menu?&sale_type=100 (Schnitz online-ordering menu, Redcat, store 5 South Yarra: 'Remove' options per item confirm the parts; Tender Box '1 Dip' choice lists Dip Signature 609 kJ)"
+  ],
+  "items": [
+    {
+      "id": "plain-simple-burger",
+      "name": "Plain & Simple (Burger)",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": null,
+      "kj": 3120,
+      "protein_g": 49.4,
+      "fat_g": 32.4,
+      "sat_fat_g": 7.4,
+      "carbs_g": 61.9,
+      "sugars_g": 6.6,
+      "fibre_g": null,
+      "sodium_mg": 1090,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "plain-simple-wrap",
+      "name": "Plain & Simple (Wrap)",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": null,
+      "kj": 2940,
+      "protein_g": 46.8,
+      "fat_g": 35.4,
+      "sat_fat_g": 9.6,
+      "carbs_g": 47.5,
+      "sugars_g": 4.9,
+      "fibre_g": null,
+      "sodium_mg": 1020,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "status-quo-burger",
+      "name": "Status Quo (Burger)",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": null,
+      "kj": 3180,
+      "protein_g": 49.0,
+      "fat_g": 32.8,
+      "sat_fat_g": 7.5,
+      "carbs_g": 64.8,
+      "sugars_g": 9.3,
+      "fibre_g": null,
+      "sodium_mg": 1180,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "honey mustard mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "status-quo-wrap",
+      "name": "Status Quo (Wrap)",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": null,
+      "kj": 3010,
+      "protein_g": 46.6,
+      "fat_g": 35.8,
+      "sat_fat_g": 9.7,
+      "carbs_g": 50.7,
+      "sugars_g": 7.6,
+      "fibre_g": null,
+      "sodium_mg": 1120,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "honey mustard mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "american-dream-burger",
+      "name": "American Dream (Burger)",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": null,
+      "kj": 3060,
+      "protein_g": 49.4,
+      "fat_g": 29.4,
+      "sat_fat_g": 7.2,
+      "carbs_g": 64.9,
+      "sugars_g": 9.5,
+      "fibre_g": null,
+      "sodium_mg": 1050,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "honey mustard mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "american-dream-wrap",
+      "name": "American Dream (Wrap)",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": null,
+      "kj": 2890,
+      "protein_g": 47.0,
+      "fat_g": 32.4,
+      "sat_fat_g": 9.4,
+      "carbs_g": 50.7,
+      "sugars_g": 7.8,
+      "fibre_g": null,
+      "sodium_mg": 957,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "honey mustard mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "the-aussie-burger",
+      "name": "The Aussie (Burger)",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": null,
+      "kj": 3730,
+      "protein_g": 65.6,
+      "fat_g": 37.0,
+      "sat_fat_g": 10.9,
+      "carbs_g": 72.1,
+      "sugars_g": 15.3,
+      "fibre_g": null,
+      "sodium_mg": 1930,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "the-aussie-wrap",
+      "name": "The Aussie (Wrap)",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": null,
+      "kj": 3550,
+      "protein_g": 63.0,
+      "fat_g": 39.9,
+      "sat_fat_g": 13.1,
+      "carbs_g": 57.8,
+      "sugars_g": 13.6,
+      "fibre_g": null,
+      "sodium_mg": 1860,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "the-hawaiian-burger",
+      "name": "The Hawaiian (Burger)",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": null,
+      "kj": 3310,
+      "protein_g": 57.4,
+      "fat_g": 29.7,
+      "sat_fat_g": 8.7,
+      "carbs_g": 72.0,
+      "sugars_g": 15.6,
+      "fibre_g": null,
+      "sodium_mg": 1730,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "the-hawaiian-wrap",
+      "name": "The Hawaiian (Wrap)",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": null,
+      "kj": 3140,
+      "protein_g": 55.0,
+      "fat_g": 32.7,
+      "sat_fat_g": 10.9,
+      "carbs_g": 57.8,
+      "sugars_g": 13.9,
+      "fibre_g": null,
+      "sodium_mg": 1660,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "garden-of-eden-burger",
+      "name": "Garden of Eden (Burger)",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": null,
+      "kj": 2980,
+      "protein_g": 46.0,
+      "fat_g": 27.3,
+      "sat_fat_g": 3.2,
+      "carbs_g": 67.4,
+      "sugars_g": 11.9,
+      "fibre_g": null,
+      "sodium_mg": 1080,
+      "leave_off": [
+        {
+          "name": "aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "garden-of-eden-wrap",
+      "name": "Garden of Eden (Wrap)",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": null,
+      "kj": 2810,
+      "protein_g": 43.6,
+      "fat_g": 30.3,
+      "sat_fat_g": 5.4,
+      "carbs_g": 53.2,
+      "sugars_g": 10.3,
+      "fibre_g": null,
+      "sodium_mg": 1010,
+      "leave_off": [
+        {
+          "name": "aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "basic-instinct-burger",
+      "name": "Basic Instinct (Burger)",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": null,
+      "kj": 2790,
+      "protein_g": 45.0,
+      "fat_g": 26.1,
+      "sat_fat_g": 3.1,
+      "carbs_g": 60.7,
+      "sugars_g": 5.7,
+      "fibre_g": null,
+      "sodium_mg": 968,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "basic-instinct-wrap",
+      "name": "Basic Instinct (Wrap)",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": null,
+      "kj": 2620,
+      "protein_g": 42.6,
+      "fat_g": 29.2,
+      "sat_fat_g": 5.3,
+      "carbs_g": 46.6,
+      "sugars_g": 4.0,
+      "fibre_g": null,
+      "sodium_mg": 904,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "omg-burger",
+      "name": "OMG (Burger)",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": null,
+      "kj": 4020,
+      "protein_g": 66.0,
+      "fat_g": 44.2,
+      "sat_fat_g": 11.5,
+      "carbs_g": 72.4,
+      "sugars_g": 15.6,
+      "fibre_g": null,
+      "sodium_mg": 1790,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "omg-wrap",
+      "name": "OMG (Wrap)",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": null,
+      "kj": 3850,
+      "protein_g": 63.6,
+      "fat_g": 47.3,
+      "sat_fat_g": 13.7,
+      "carbs_g": 58.2,
+      "sugars_g": 13.9,
+      "fibre_g": null,
+      "sodium_mg": 1730,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "the-swiss-burger",
+      "name": "The Swiss (Burger)",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": null,
+      "kj": 3300,
+      "protein_g": 49.7,
+      "fat_g": 35.5,
+      "sat_fat_g": 7.6,
+      "carbs_g": 64.6,
+      "sugars_g": 7.7,
+      "fibre_g": null,
+      "sodium_mg": 1030,
+      "leave_off": [
+        {
+          "name": "Swiss cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sweet chilli mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "the-swiss-wrap",
+      "name": "The Swiss (Wrap)",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": null,
+      "kj": 3130,
+      "protein_g": 47.3,
+      "fat_g": 38.5,
+      "sat_fat_g": 9.8,
+      "carbs_g": 50.5,
+      "sugars_g": 6.0,
+      "fibre_g": null,
+      "sodium_mg": 966,
+      "leave_off": [
+        {
+          "name": "Swiss cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sweet chilli mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "royal-chip-butty-burger",
+      "name": "Royal Chip Butty (Burger)",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": null,
+      "kj": 3640,
+      "protein_g": 48.3,
+      "fat_g": 28.2,
+      "sat_fat_g": 3.4,
+      "carbs_g": 104.0,
+      "sugars_g": 10.2,
+      "fibre_g": null,
+      "sodium_mg": 1470
+    },
+    {
+      "id": "royal-chip-butty-wrap",
+      "name": "Royal Chip Butty (Wrap)",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": null,
+      "kj": 3470,
+      "protein_g": 45.9,
+      "fat_g": 31.3,
+      "sat_fat_g": 5.6,
+      "carbs_g": 89.6,
+      "sugars_g": 8.5,
+      "fibre_g": null,
+      "sodium_mg": 1410
+    },
+    {
+      "id": "spice-of-life-burger",
+      "name": "Spice of Life (Burger)",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": null,
+      "kj": 2880,
+      "protein_g": 48.7,
+      "fat_g": 26.7,
+      "sat_fat_g": 3.4,
+      "carbs_g": 60.9,
+      "sugars_g": 7.7,
+      "fibre_g": null,
+      "sodium_mg": 1120,
+      "leave_off": [
+        {
+          "name": "hot curry mayonnaise",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "spice-of-life-wrap",
+      "name": "Spice of Life (Wrap)",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": null,
+      "kj": 2710,
+      "protein_g": 46.3,
+      "fat_g": 29.7,
+      "sat_fat_g": 5.6,
+      "carbs_g": 46.7,
+      "sugars_g": 6.0,
+      "fibre_g": null,
+      "sodium_mg": 1050,
+      "leave_off": [
+        {
+          "name": "hot curry mayonnaise",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "tom-s-signature-tenders-3-pack",
+      "name": "Tom's Signature Tenders 3 Pack",
+      "category": "Chicken",
+      "serving": "3 tenders with Signature Sauce dip",
+      "grams": 210,
+      "kj": 2520,
+      "protein_g": 35.7,
+      "fat_g": 32.5,
+      "sat_fat_g": 3.0,
+      "carbs_g": 41.0,
+      "sugars_g": 8.1,
+      "fibre_g": null,
+      "sodium_mg": 1180,
+      "leave_off": [
+        {
+          "name": "Signature Sauce dip",
+          "kind": "mayo",
+          "count": 1,
+          "part": "signature_sauce_dip"
+        }
+      ]
+    },
+    {
+      "id": "tom-s-signature-tenders-5-pack",
+      "name": "Tom's Signature Tenders 5 Pack",
+      "category": "Chicken",
+      "serving": "5 tenders with Signature Sauce dip",
+      "grams": 330,
+      "kj": 3790,
+      "protein_g": 59.3,
+      "fat_g": 45.5,
+      "sat_fat_g": 4.3,
+      "carbs_g": 63.4,
+      "sugars_g": 9.0,
+      "fibre_g": null,
+      "sodium_mg": 1880,
+      "leave_off": [
+        {
+          "name": "Signature Sauce dip",
+          "kind": "mayo",
+          "count": 1,
+          "part": "signature_sauce_dip"
+        }
+      ]
+    },
+    {
+      "id": "tender-box-3",
+      "name": "Tender Box #3",
+      "category": "Chicken",
+      "serving": "1 box (3 tenders, small original chips, rainbow slaw, Signature Sauce dip)",
+      "grams": 508,
+      "kj": 4410,
+      "protein_g": 42.8,
+      "fat_g": 52.0,
+      "sat_fat_g": 4.8,
+      "carbs_g": 99.6,
+      "sugars_g": 17.6,
+      "fibre_g": null,
+      "sodium_mg": 1800,
+      "leave_off": [
+        {
+          "name": "Signature Sauce dip",
+          "kind": "mayo",
+          "count": 1,
+          "part": "signature_sauce_dip"
+        }
+      ]
+    },
+    {
+      "id": "schnuggets-6-pack",
+      "name": "Schnuggets 6 Pack",
+      "category": "Chicken",
+      "serving": "6 Schnuggets",
+      "grams": null,
+      "kj": 1690,
+      "protein_g": 20.6,
+      "fat_g": 24.7,
+      "sat_fat_g": 2.4,
+      "carbs_g": 25.1,
+      "sugars_g": 2.5,
+      "fibre_g": null,
+      "sodium_mg": 1060
+    },
+    {
+      "id": "regular-original-chips",
+      "name": "Regular Original Chips",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": null,
+      "kj": 2270,
+      "protein_g": 8.1,
+      "fat_g": 24.4,
+      "sat_fat_g": 1.9,
+      "carbs_g": 72.8,
+      "sugars_g": 2.0,
+      "fibre_g": null,
+      "sodium_mg": 1220
+    },
+    {
+      "id": "regular-sweet-potato-chips",
+      "name": "Regular Sweet Potato Chips",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": null,
+      "kj": 2300,
+      "protein_g": 3.2,
+      "fat_g": 29.9,
+      "sat_fat_g": 2.4,
+      "carbs_g": 67.5,
+      "sugars_g": 25.8,
+      "fibre_g": null,
+      "sodium_mg": 1010
+    },
+    {
+      "id": "chick-n-gravy-loaded-chips",
+      "name": "Chick'n'Gravy Loaded Chips",
+      "category": "Sides",
+      "serving": "1 serve",
+      "grams": null,
+      "kj": 3270,
+      "protein_g": 30.1,
+      "fat_g": 35.9,
+      "sat_fat_g": 5.9,
+      "carbs_g": 84.9,
+      "sugars_g": 3.5,
+      "fibre_g": null,
+      "sodium_mg": 2180,
+      "leave_off": [
+        {
+          "name": "cheese sauce",
+          "kind": "cheese_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "american-loaded-chips",
+      "name": "American Loaded Chips",
+      "category": "Sides",
+      "serving": "1 serve",
+      "grams": null,
+      "kj": 2980,
+      "protein_g": 21.7,
+      "fat_g": 34.8,
+      "sat_fat_g": 6.9,
+      "carbs_g": 78.2,
+      "sugars_g": 7.4,
+      "fibre_g": null,
+      "sodium_mg": 2230,
+      "leave_off": [
+        {
+          "name": "cheese sauce",
+          "kind": "cheese_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "crumbled bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "veggie-volcano-loaded-chips",
+      "name": "Veggie Volcano Loaded Chips",
+      "category": "Sides",
+      "serving": "1 serve",
+      "grams": null,
+      "kj": 4100,
+      "protein_g": 15.7,
+      "fat_g": 50.7,
+      "sat_fat_g": 7.0,
+      "carbs_g": 115.0,
+      "sugars_g": 6.4,
+      "fibre_g": null,
+      "sodium_mg": 2640,
+      "leave_off": [
+        {
+          "name": "cheese sauce",
+          "kind": "cheese_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "hot curry mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "teeny-weeny-pack-burger",
+      "name": "Teeny-Weeny Pack (Burger)",
+      "category": "Kids",
+      "serving": "1 pack (mini slider, mini original chips, drink)",
+      "grams": null,
+      "kj": 2960,
+      "protein_g": 31.0,
+      "fat_g": 26.5,
+      "sat_fat_g": 6.8,
+      "carbs_g": 85.1,
+      "sugars_g": 20.0,
+      "fibre_g": null,
+      "sodium_mg": 1270,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "kiddy-schnugget-pack",
+      "name": "Kiddy Schnugget Pack",
+      "category": "Kids",
+      "serving": "1 pack (4 Schnuggets, mini original chips, tomato sauce, drink)",
+      "grams": null,
+      "kj": 2540,
+      "protein_g": 17.6,
+      "fat_g": 27.1,
+      "sat_fat_g": 2.7,
+      "carbs_g": 73.1,
+      "sugars_g": 24.7,
+      "fibre_g": null,
+      "sodium_mg": 1560,
+      "leave_off": [
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "aioli",
+      "name": "Aioli",
+      "category": "Sauces",
+      "serving": "1 dip",
+      "grams": null,
+      "kj": 750,
+      "protein_g": 0.5,
+      "fat_g": 19.5,
+      "sat_fat_g": 1.4,
+      "carbs_g": 1.1,
+      "sugars_g": 0.7,
+      "fibre_g": null,
+      "sodium_mg": 89
+    },
+    {
+      "id": "bbq-relish",
+      "name": "BBQ Relish",
+      "category": "Sauces",
+      "serving": "1 dip",
+      "grams": null,
+      "kj": 193,
+      "protein_g": 0.3,
+      "fat_g": 0.3,
+      "sat_fat_g": 0.0,
+      "carbs_g": 11.1,
+      "sugars_g": 9.6,
+      "fibre_g": null,
+      "sodium_mg": 209
+    },
+    {
+      "id": "kettle-cooked-gravy",
+      "name": "Kettle-Cooked Gravy",
+      "category": "Sauces",
+      "serving": "1 dip",
+      "grams": null,
+      "kj": 293,
+      "protein_g": 0.7,
+      "fat_g": 0.7,
+      "sat_fat_g": 0.2,
+      "carbs_g": 15.4,
+      "sugars_g": 2.2,
+      "fibre_g": null,
+      "sodium_mg": 1280
+    }
+  ]
+}

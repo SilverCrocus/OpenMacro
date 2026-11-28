@@ -1,0 +1,1055 @@
+{
+  "id": "guzman-y-gomez",
+  "name": "Guzman y Gomez",
+  "source": {
+    "url": "https://www.guzmanygomez.com.au/wp-content/uploads/2026/11/261029_NUTRITION_ALLERGEN_GUIDE_420X297MM.pdf",
+    "title": "Guzman y Gomez Allergen, Ingredient, and Nutritional Information",
+    "published": "2026-10",
+    "accessed": "2026-11-28"
+  },
+  "parts": {
+    "guacamole_extra_regular": {
+      "name": "Guacamole (extra, regular burritos, bowls & salads)",
+      "grams": 70,
+      "kj": 526,
+      "protein_g": 1.2,
+      "fat_g": 13.2,
+      "saturated_fat_g": 2.9,
+      "carbs_g": 0.5,
+      "sugars_g": 0.5,
+      "fibre_g": 1.0,
+      "sodium_mg": 189,
+      "source_url": "https://www.guzmanygomez.com.au/wp-content/uploads/2026/11/261029_NUTRITION_ALLERGEN_GUIDE_420X297MM.pdf",
+      "note": "GYG Nutrition, Allergen & Ingredient guide (info current 29 Oct 2026), table 'EXTRAS - REG BURRITOS, BOWLS & SALADS'. GYG doesn't state the standard guacamole portion inside a Cali Burrito separately; this is its published serve for guacamole on a regular burrito."
+    }
+  },
+  "parts_sources": [
+    "https://www.guzmanygomez.com.au/wp-content/uploads/2026/11/261029_NUTRITION_ALLERGEN_GUIDE_420X297MM.pdf"
+  ],
+  "items": [
+    {
+      "id": "grilled-chicken-burrito-mild",
+      "name": "Grilled Chicken Burrito (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 burrito, mild",
+      "grams": 480,
+      "kj": 3240,
+      "protein_g": 48.3,
+      "fat_g": 23.5,
+      "sat_fat_g": 11.5,
+      "carbs_g": 91.0,
+      "sugars_g": 5.7,
+      "fibre_g": 7.0,
+      "sodium_mg": 1950,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "ground-beef-burrito-mild",
+      "name": "Ground Beef Burrito (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 burrito, mild",
+      "grams": 480,
+      "kj": 3470,
+      "protein_g": 36.7,
+      "fat_g": 33.5,
+      "sat_fat_g": 17.1,
+      "carbs_g": 93.9,
+      "sugars_g": 6.4,
+      "fibre_g": 7.9,
+      "sodium_mg": 1950,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "pulled-pork-burrito-mild",
+      "name": "Pulled Pork Burrito (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 burrito, mild",
+      "grams": 480,
+      "kj": 3180,
+      "protein_g": 42.1,
+      "fat_g": 24.9,
+      "sat_fat_g": 12.4,
+      "carbs_g": 90.4,
+      "sugars_g": 5.1,
+      "fibre_g": 7.0,
+      "sodium_mg": 2030,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "pulled-shiitake-mushroom-burrito-mild",
+      "name": "Pulled Shiitake Mushroom Burrito (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 burrito, mild",
+      "grams": 480,
+      "kj": 3760,
+      "protein_g": 32.3,
+      "fat_g": 41.2,
+      "sat_fat_g": 20.4,
+      "carbs_g": 94.8,
+      "sugars_g": 5.6,
+      "fibre_g": 16.8,
+      "sodium_mg": 2390,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "sautéed-vegetables-with-guacamole-burrito-mild",
+      "name": "Sautéed Vegetables with Guacamole Burrito (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 burrito, mild",
+      "grams": 550,
+      "kj": 3380,
+      "protein_g": 24.0,
+      "fat_g": 35.2,
+      "sat_fat_g": 13.5,
+      "carbs_g": 96.7,
+      "sugars_g": 9.9,
+      "fibre_g": 10.3,
+      "sodium_mg": 1930,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "shredded-beef-brisket-burrito-mild",
+      "name": "Shredded Beef Brisket Burrito (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 burrito, mild",
+      "grams": 480,
+      "kj": 3370,
+      "protein_g": 48.5,
+      "fat_g": 27.3,
+      "sat_fat_g": 13.2,
+      "carbs_g": 90.6,
+      "sugars_g": 5.3,
+      "fibre_g": 7.0,
+      "sodium_mg": 1930,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "grilled-chicken-bowl-mild",
+      "name": "Grilled Chicken Bowl (Mild)",
+      "category": "Bowls & salads",
+      "serving": "1 bowl, mild",
+      "grams": 455,
+      "kj": 2760,
+      "protein_g": 43.8,
+      "fat_g": 20.5,
+      "sat_fat_g": 7.9,
+      "carbs_g": 74.1,
+      "sugars_g": 3.5,
+      "fibre_g": 6.3,
+      "sodium_mg": 1700,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "ground-beef-bowl-mild",
+      "name": "Ground Beef Bowl (Mild)",
+      "category": "Bowls & salads",
+      "serving": "1 bowl, mild",
+      "grams": 455,
+      "kj": 2990,
+      "protein_g": 32.2,
+      "fat_g": 30.5,
+      "sat_fat_g": 13.5,
+      "carbs_g": 77.0,
+      "sugars_g": 4.2,
+      "fibre_g": 7.2,
+      "sodium_mg": 1690,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "pulled-pork-bowl-mild",
+      "name": "Pulled Pork Bowl (Mild)",
+      "category": "Bowls & salads",
+      "serving": "1 bowl, mild",
+      "grams": 455,
+      "kj": 2700,
+      "protein_g": 37.6,
+      "fat_g": 21.9,
+      "sat_fat_g": 8.8,
+      "carbs_g": 73.5,
+      "sugars_g": 2.9,
+      "fibre_g": 6.3,
+      "sodium_mg": 1770,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "pulled-shiitake-mushroom-bowl-mild",
+      "name": "Pulled Shiitake Mushroom Bowl (Mild)",
+      "category": "Bowls & salads",
+      "serving": "1 bowl, mild",
+      "grams": 455,
+      "kj": 3290,
+      "protein_g": 27.8,
+      "fat_g": 38.2,
+      "sat_fat_g": 16.8,
+      "carbs_g": 77.9,
+      "sugars_g": 3.4,
+      "fibre_g": 16.1,
+      "sodium_mg": 2130,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "sautéed-vegetables-with-guacamole-bowl-mild",
+      "name": "Sautéed Vegetables with Guacamole Bowl (Mild)",
+      "category": "Bowls & salads",
+      "serving": "1 bowl, mild",
+      "grams": 525,
+      "kj": 2900,
+      "protein_g": 19.5,
+      "fat_g": 32.2,
+      "sat_fat_g": 10.0,
+      "carbs_g": 79.8,
+      "sugars_g": 7.7,
+      "fibre_g": 9.6,
+      "sodium_mg": 1670,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "shredded-beef-brisket-bowl-mild",
+      "name": "Shredded Beef Brisket Bowl (Mild)",
+      "category": "Bowls & salads",
+      "serving": "1 bowl, mild",
+      "grams": 455,
+      "kj": 2900,
+      "protein_g": 44.0,
+      "fat_g": 24.3,
+      "sat_fat_g": 9.6,
+      "carbs_g": 73.7,
+      "sugars_g": 3.1,
+      "fibre_g": 6.3,
+      "sodium_mg": 1680,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "grilled-chicken-nachos-mild",
+      "name": "Grilled Chicken Nachos (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 nachos, mild",
+      "grams": 500,
+      "kj": 4630,
+      "protein_g": 52.3,
+      "fat_g": 64.3,
+      "sat_fat_g": 18.4,
+      "carbs_g": 77.7,
+      "sugars_g": 5.3,
+      "fibre_g": 11.9,
+      "sodium_mg": 1840,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "ground-beef-nachos-mild",
+      "name": "Ground Beef Nachos (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 nachos, mild",
+      "grams": 500,
+      "kj": 4860,
+      "protein_g": 40.7,
+      "fat_g": 74.3,
+      "sat_fat_g": 24.0,
+      "carbs_g": 80.6,
+      "sugars_g": 6.0,
+      "fibre_g": 12.8,
+      "sodium_mg": 1840,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "pulled-pork-nachos-mild",
+      "name": "Pulled Pork Nachos (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 nachos, mild",
+      "grams": 500,
+      "kj": 4570,
+      "protein_g": 46.1,
+      "fat_g": 65.7,
+      "sat_fat_g": 19.3,
+      "carbs_g": 77.1,
+      "sugars_g": 4.7,
+      "fibre_g": 11.9,
+      "sodium_mg": 1920,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "pulled-shiitake-mushroom-nachos-mild",
+      "name": "Pulled Shiitake Mushroom Nachos (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 nachos, mild",
+      "grams": 500,
+      "kj": 5160,
+      "protein_g": 36.3,
+      "fat_g": 82.0,
+      "sat_fat_g": 27.3,
+      "carbs_g": 81.5,
+      "sugars_g": 5.2,
+      "fibre_g": 21.7,
+      "sodium_mg": 2280,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "sautéed-vegetables-nachos-mild",
+      "name": "Sautéed Vegetables Nachos (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 nachos, mild",
+      "grams": 500,
+      "kj": 4250,
+      "protein_g": 26.8,
+      "fat_g": 62.8,
+      "sat_fat_g": 17.6,
+      "carbs_g": 83.0,
+      "sugars_g": 9.0,
+      "fibre_g": 14.2,
+      "sodium_mg": 1620,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "shredded-beef-brisket-nachos-mild",
+      "name": "Shredded Beef Brisket Nachos (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 nachos, mild",
+      "grams": 500,
+      "kj": 4770,
+      "protein_g": 52.5,
+      "fat_g": 68.1,
+      "sat_fat_g": 20.1,
+      "carbs_g": 77.3,
+      "sugars_g": 4.9,
+      "fibre_g": 11.9,
+      "sodium_mg": 1820,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "cheese-quesadilla-mild",
+      "name": "Cheese Quesadilla (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, mild",
+      "grams": 110,
+      "kj": 1610,
+      "protein_g": 16.2,
+      "fat_g": 20.6,
+      "sat_fat_g": 12.6,
+      "carbs_g": 33.3,
+      "sugars_g": 1.9,
+      "fibre_g": 1.0,
+      "sodium_mg": 661
+    },
+    {
+      "id": "grilled-chicken-quesadilla-mild",
+      "name": "Grilled Chicken Quesadilla (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, mild",
+      "grams": 160,
+      "kj": 1920,
+      "protein_g": 29.8,
+      "fat_g": 22.4,
+      "sat_fat_g": 13.1,
+      "carbs_g": 33.7,
+      "sugars_g": 2.3,
+      "fibre_g": 1.0,
+      "sodium_mg": 824
+    },
+    {
+      "id": "ground-beef-quesadilla-mild",
+      "name": "Ground Beef Quesadilla (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, mild",
+      "grams": 160,
+      "kj": 2030,
+      "protein_g": 24.0,
+      "fat_g": 27.4,
+      "sat_fat_g": 15.9,
+      "carbs_g": 35.1,
+      "sugars_g": 2.6,
+      "fibre_g": 1.5,
+      "sodium_mg": 822
+    },
+    {
+      "id": "pulled-pork-quesadilla-mild",
+      "name": "Pulled Pork Quesadilla (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, mild",
+      "grams": 160,
+      "kj": 1890,
+      "protein_g": 26.7,
+      "fat_g": 23.1,
+      "sat_fat_g": 13.5,
+      "carbs_g": 33.4,
+      "sugars_g": 2.0,
+      "fibre_g": 1.0,
+      "sodium_mg": 862
+    },
+    {
+      "id": "pulled-shiitake-mushroom-quesadilla-mild",
+      "name": "Pulled Shiitake Mushroom Quesadilla (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, mild",
+      "grams": 160,
+      "kj": 2180,
+      "protein_g": 21.8,
+      "fat_g": 31.2,
+      "sat_fat_g": 17.5,
+      "carbs_g": 35.6,
+      "sugars_g": 2.2,
+      "fibre_g": 5.9,
+      "sodium_mg": 1040
+    },
+    {
+      "id": "sautéed-vegetables-with-guacamole-quesadilla-mild",
+      "name": "Sautéed Vegetables with Guacamole Quesadilla (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, mild",
+      "grams": 195,
+      "kj": 1990,
+      "protein_g": 17.6,
+      "fat_g": 28.2,
+      "sat_fat_g": 14.1,
+      "carbs_g": 36.6,
+      "sugars_g": 4.4,
+      "fibre_g": 2.7,
+      "sodium_mg": 810
+    },
+    {
+      "id": "shredded-beef-brisket-quesadilla-mild",
+      "name": "Shredded Beef Brisket Quesadilla (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, mild",
+      "grams": 160,
+      "kj": 1980,
+      "protein_g": 29.9,
+      "fat_g": 24.3,
+      "sat_fat_g": 13.9,
+      "carbs_g": 33.5,
+      "sugars_g": 2.1,
+      "fibre_g": 1.0,
+      "sodium_mg": 814
+    },
+    {
+      "id": "grilled-chicken-soft-flour-taco-mild",
+      "name": "Grilled Chicken Soft Flour Taco (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft flour taco, mild",
+      "grams": 118,
+      "kj": 805,
+      "protein_g": 15.8,
+      "fat_g": 7.1,
+      "sat_fat_g": 3.7,
+      "carbs_g": 15.6,
+      "sugars_g": 1.9,
+      "fibre_g": 1.0,
+      "sodium_mg": 472,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "ground-beef-soft-flour-taco-mild",
+      "name": "Ground Beef Soft Flour Taco (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft flour taco, mild",
+      "grams": 118,
+      "kj": 897,
+      "protein_g": 11.2,
+      "fat_g": 11.1,
+      "sat_fat_g": 5.9,
+      "carbs_g": 16.7,
+      "sugars_g": 2.2,
+      "fibre_g": 1.4,
+      "sodium_mg": 470,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "pulled-pork-soft-flour-taco-mild",
+      "name": "Pulled Pork Soft Flour Taco (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft flour taco, mild",
+      "grams": 118,
+      "kj": 781,
+      "protein_g": 13.3,
+      "fat_g": 7.7,
+      "sat_fat_g": 4.0,
+      "carbs_g": 15.3,
+      "sugars_g": 1.7,
+      "fibre_g": 1.0,
+      "sodium_mg": 502,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "pulled-shiitake-mushroom-soft-flour-taco-mild",
+      "name": "Pulled Shiitake Mushroom Soft Flour Taco (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft flour taco, mild",
+      "grams": 118,
+      "kj": 1180,
+      "protein_g": 6.9,
+      "fat_g": 19.7,
+      "sat_fat_g": 6.2,
+      "carbs_g": 18.2,
+      "sugars_g": 3.9,
+      "fibre_g": 3.0,
+      "sodium_mg": 574,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "sautéed-vegetables-with-guacamole-soft-flour-taco-mild",
+      "name": "Sautéed Vegetables with Guacamole Soft Flour Taco (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft flour taco, mild",
+      "grams": 188,
+      "kj": 1020,
+      "protein_g": 9.4,
+      "fat_g": 14.2,
+      "sat_fat_g": 7.2,
+      "carbs_g": 17.1,
+      "sugars_g": 1.9,
+      "fibre_g": 5.0,
+      "sodium_mg": 646,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "shredded-beef-brisket-soft-flour-taco-mild",
+      "name": "Shredded Beef Brisket Soft Flour Taco (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft flour taco, mild",
+      "grams": 118,
+      "kj": 860,
+      "protein_g": 15.9,
+      "fat_g": 8.6,
+      "sat_fat_g": 4.3,
+      "carbs_g": 15.4,
+      "sugars_g": 1.8,
+      "fibre_g": 1.0,
+      "sodium_mg": 463,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "crispy-chicken-tenders-cali-burrito-mild",
+      "name": "Crispy Chicken Tenders Cali Burrito (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 Cali burrito, mild",
+      "grams": 470,
+      "kj": 4380,
+      "protein_g": 36.4,
+      "fat_g": 58.6,
+      "sat_fat_g": 17.6,
+      "carbs_g": 90.4,
+      "sugars_g": 7.2,
+      "fibre_g": 8.0,
+      "sodium_mg": 2160,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole_extra_regular"
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "grilled-chicken-cali-burrito-mild",
+      "name": "Grilled Chicken Cali Burrito (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 Cali burrito, mild",
+      "grams": 470,
+      "kj": 4040,
+      "protein_g": 47.5,
+      "fat_g": 50.4,
+      "sat_fat_g": 17.4,
+      "carbs_g": 77.8,
+      "sugars_g": 7.4,
+      "fibre_g": 6.6,
+      "sodium_mg": 1760,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole_extra_regular"
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "pulled-pork-cali-burrito-mild",
+      "name": "Pulled Pork Cali Burrito (Mild)",
+      "category": "Tacos & burritos",
+      "serving": "1 Cali burrito, mild",
+      "grams": 470,
+      "kj": 3980,
+      "protein_g": 41.3,
+      "fat_g": 51.8,
+      "sat_fat_g": 18.3,
+      "carbs_g": 77.2,
+      "sugars_g": 6.8,
+      "fibre_g": 6.6,
+      "sodium_mg": 1830,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole_extra_regular"
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "bacon-brekkie-burrito-mild",
+      "name": "Bacon Brekkie Burrito (Mild)",
+      "category": "Breakfast",
+      "serving": "1 brekkie burrito, mild",
+      "grams": 240,
+      "kj": 2460,
+      "protein_g": 25.3,
+      "fat_g": 33.3,
+      "sat_fat_g": 12.1,
+      "carbs_g": 45.2,
+      "sugars_g": 2.7,
+      "fibre_g": 3.2,
+      "sodium_mg": 1340,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "free-range-chicken-chorizo-brekkie-burrito-mild",
+      "name": "Free Range Chicken Chorizo Brekkie Burrito (Mild)",
+      "category": "Breakfast",
+      "serving": "1 brekkie burrito, mild",
+      "grams": 240,
+      "kj": 2420,
+      "protein_g": 22.7,
+      "fat_g": 33.7,
+      "sat_fat_g": 12.0,
+      "carbs_g": 44.7,
+      "sugars_g": 2.5,
+      "fibre_g": 3.2,
+      "sodium_mg": 1200,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "fries-with-chipotle-seasoning-medium",
+      "name": "Fries with Chipotle Seasoning (Medium)",
+      "category": "Sides",
+      "serving": "1 medium fries",
+      "grams": 120,
+      "kj": 1500,
+      "protein_g": 5.3,
+      "fat_g": 18.5,
+      "sat_fat_g": 1.6,
+      "carbs_g": 40.7,
+      "sugars_g": 0.7,
+      "fibre_g": 4.2,
+      "sodium_mg": 474
+    },
+    {
+      "id": "fries-with-chipotle-seasoning-large",
+      "name": "Fries with Chipotle Seasoning (Large)",
+      "category": "Sides",
+      "serving": "1 large fries",
+      "grams": 180,
+      "kj": 2250,
+      "protein_g": 7.9,
+      "fat_g": 27.7,
+      "sat_fat_g": 2.3,
+      "carbs_g": 61.0,
+      "sugars_g": 1.1,
+      "fibre_g": 6.3,
+      "sodium_mg": 711
+    },
+    {
+      "id": "corn-chips",
+      "name": "Corn Chips",
+      "category": "Sides",
+      "serving": "1 serve corn chips",
+      "grams": 100,
+      "kj": 2170,
+      "protein_g": 7.0,
+      "fat_g": 28.4,
+      "sat_fat_g": 2.5,
+      "carbs_g": 56.5,
+      "sugars_g": 1.4,
+      "fibre_g": 5.4,
+      "sodium_mg": 280
+    },
+    {
+      "id": "corn-chips-with-medium-guac",
+      "name": "Corn Chips with Medium Guac",
+      "category": "Sides",
+      "serving": "1 serve corn chips with medium guacamole",
+      "grams": 232,
+      "kj": 3160,
+      "protein_g": 9.3,
+      "fat_g": 53.3,
+      "sat_fat_g": 7.9,
+      "carbs_g": 57.4,
+      "sugars_g": 2.3,
+      "fibre_g": 7.3,
+      "sodium_mg": 636
+    },
+    {
+      "id": "medium-guacamole",
+      "name": "Medium Guacamole",
+      "category": "Sides",
+      "serving": "1 medium side of guacamole",
+      "grams": 132,
+      "kj": 991,
+      "protein_g": 2.3,
+      "fat_g": 24.9,
+      "sat_fat_g": 5.4,
+      "carbs_g": 0.9,
+      "sugars_g": 0.9,
+      "fibre_g": 1.9,
+      "sodium_mg": 356
+    },
+    {
+      "id": "crispy-chicken-tenders-3",
+      "name": "Crispy Chicken Tenders (3)",
+      "category": "Chicken",
+      "serving": "3 tenders, no sauce",
+      "grams": 150,
+      "kj": 1420,
+      "protein_g": 24.2,
+      "fat_g": 17.5,
+      "sat_fat_g": 1.8,
+      "carbs_g": 20.0,
+      "sugars_g": 0.8,
+      "fibre_g": 2.1,
+      "sodium_mg": 1100
+    },
+    {
+      "id": "churros-with-chocolate-sauce",
+      "name": "Churros with Chocolate Sauce",
+      "category": "Desserts",
+      "serving": "1 serve churros with chocolate sauce",
+      "grams": 110,
+      "kj": 1710,
+      "protein_g": 5.9,
+      "fat_g": 21.7,
+      "sat_fat_g": 3.5,
+      "carbs_g": 46.6,
+      "sugars_g": 18.3,
+      "fibre_g": 1.9,
+      "sodium_mg": 218
+    },
+    {
+      "id": "churros-with-dulce-de-leche",
+      "name": "Churros with Dulce de Leche",
+      "category": "Desserts",
+      "serving": "1 serve churros with dulce de leche",
+      "grams": 110,
+      "kj": 1580,
+      "protein_g": 7.0,
+      "fat_g": 17.3,
+      "sat_fat_g": 3.0,
+      "carbs_g": 44.4,
+      "sugars_g": 22.0,
+      "fibre_g": 1.9,
+      "sodium_mg": 263
+    },
+    {
+      "id": "guacamole-extra",
+      "name": "Guacamole (extra)",
+      "category": "Sauces",
+      "serving": "1 extra serve on a regular burrito, bowl or salad",
+      "grams": 70,
+      "kj": 526,
+      "protein_g": 1.2,
+      "fat_g": 13.2,
+      "sat_fat_g": 2.9,
+      "carbs_g": 0.5,
+      "sugars_g": 0.5,
+      "fibre_g": 1.0,
+      "sodium_mg": 189
+    },
+    {
+      "id": "queso-mild-extra",
+      "name": "Queso, Mild (extra)",
+      "category": "Sauces",
+      "serving": "1 extra serve on a regular burrito, bowl or salad",
+      "grams": 80,
+      "kj": 419,
+      "protein_g": 6.2,
+      "fat_g": 7.6,
+      "sat_fat_g": 5.1,
+      "carbs_g": 2.0,
+      "sugars_g": 0.8,
+      "fibre_g": 0.2,
+      "sodium_mg": 362
+    },
+    {
+      "id": "sour-cream",
+      "name": "Sour Cream",
+      "category": "Sauces",
+      "serving": "1 side of sour cream",
+      "grams": 87,
+      "kj": 680,
+      "protein_g": 2.4,
+      "fat_g": 16.0,
+      "sat_fat_g": 10.8,
+      "carbs_g": 3.5,
+      "sugars_g": 3.5,
+      "fibre_g": 0.0,
+      "sodium_mg": 33
+    },
+    {
+      "id": "chipotle-mayo",
+      "name": "Chipotle Mayo",
+      "category": "Sauces",
+      "serving": "1 dipping sauce",
+      "grams": 40,
+      "kj": 896,
+      "protein_g": 0.7,
+      "fat_g": 23.2,
+      "sat_fat_g": 1.8,
+      "carbs_g": 1.5,
+      "sugars_g": 1.1,
+      "fibre_g": 0.0,
+      "sodium_mg": 254
+    }
+  ]
+}

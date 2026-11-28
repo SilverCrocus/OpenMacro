@@ -1,0 +1,771 @@
+{
+  "id": "red-rooster",
+  "name": "Red Rooster",
+  "source": {
+    "url": "https://www.redrooster.com.au/menu/",
+    "title": "Red Rooster menu nutrition panels",
+    "published": null,
+    "accessed": "2026-11-28"
+  },
+  "parts": {
+    "bacon": {
+      "name": "Bacon",
+      "grams": null,
+      "kj": 240,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://d3q9pev4i2crwv.cloudfront.net/e47aebaf-5ac1-4a65-a968-ba78592ac4f6.json",
+      "note": "Energy only, from two pairs that Red Rooster publishes with and without bacon in its online-ordering menu feed. The feed's descriptions are identical apart from the bacon. ROAST Chicken BLT Burger 2410 kJ vs ROAST Chicken Deluxe Burger 2170 kJ, and FILLET 3400 vs 3160. ROAST Cheesy Bacon Burger 2830 kJ vs ROAST Cheesy BBQ Burger 2590 kJ, and FILLET 3820 vs 3580. All four differences are 240 kJ. The Deluxe and Cheesy BBQ burgers are sold only in the Burger Pack and have no Nutritional Info panel (API 404), so macros and grams can't be derived."
+    }
+  },
+  "parts_sources": [
+    "https://www.redrooster.com.au/menu/ (product descriptions and Nutritional Info panels)",
+    "https://d3q9pev4i2crwv.cloudfront.net/e47aebaf-5ac1-4a65-a968-ba78592ac4f6.json (Red Rooster online-ordering menu feed 'Ecomm Pickup Base', updated 2026-11-27: descriptions, Customise ADD and Remove options, item kJ including the Burger Pack's Chicken Deluxe and Cheesy BBQ burgers)",
+    "https://apiv2.prd2.redrooster.com.au/mobile-services/layout/nutrientInfo?plu=<plu> (Red Rooster Nutritional Info API: ingredient lists and panels; PLUs 111003005-1, 111003007-1, 111003011-1, 111003013-1, 111003017-1, 111003019-1, 111003066-1, 111003068-1, 1003050-1, plus sauce tubs 1011002-1, 1011003-1, 1011005-1, 1011008-1, 1011010-1, 1011013-1)",
+    "https://www.redrooster.com.au/nutritions/ (disclaimer page only; no component figures)"
+  ],
+  "items": [
+    {
+      "id": "reds-burger-roast",
+      "name": "Reds Burger (Roast)",
+      "category": "Burgers",
+      "serving": "1 burger (pulled roast chicken)",
+      "grams": 210,
+      "kj": 2450,
+      "protein_g": 28.3,
+      "fat_g": 34.3,
+      "sat_fat_g": 5.7,
+      "carbs_g": 40.4,
+      "sugars_g": 5.2,
+      "fibre_g": null,
+      "sodium_mg": 1060,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herb mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "reds-burger-fillet",
+      "name": "Reds Burger (Fillet)",
+      "category": "Burgers",
+      "serving": "1 burger (fried fillet)",
+      "grams": 253,
+      "kj": 3440,
+      "protein_g": 32.4,
+      "fat_g": 49.0,
+      "sat_fat_g": 6.7,
+      "carbs_g": 63.2,
+      "sugars_g": 5.8,
+      "fibre_g": null,
+      "sodium_mg": 1765,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herb mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "spicy-burger-roast",
+      "name": "Spicy Burger (Roast)",
+      "category": "Burgers",
+      "serving": "1 burger (pulled roast chicken)",
+      "grams": 198,
+      "kj": 2040,
+      "protein_g": 25.6,
+      "fat_g": 24.3,
+      "sat_fat_g": 3.0,
+      "carbs_g": 41.0,
+      "sugars_g": 5.6,
+      "fibre_g": null,
+      "sodium_mg": 1120,
+      "leave_off": [
+        {
+          "name": "whole egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "Reds Hot sauce",
+          "kind": "dressing",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "spicy-burger-fillet",
+      "name": "Spicy Burger (Fillet)",
+      "category": "Burgers",
+      "serving": "1 burger (fried fillet)",
+      "grams": 241,
+      "kj": 3040,
+      "protein_g": 29.8,
+      "fat_g": 39.0,
+      "sat_fat_g": 4.0,
+      "carbs_g": 63.8,
+      "sugars_g": 6.2,
+      "fibre_g": null,
+      "sodium_mg": 1825,
+      "leave_off": [
+        {
+          "name": "whole egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "Reds Hot sauce",
+          "kind": "dressing",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "cheesy-bacon-burger-roast",
+      "name": "Cheesy Bacon Burger (Roast)",
+      "category": "Burgers",
+      "serving": "1 burger (pulled roast chicken)",
+      "grams": 238,
+      "kj": 2830,
+      "protein_g": 36.3,
+      "fat_g": 34.7,
+      "sat_fat_g": 10.6,
+      "carbs_g": 54.1,
+      "sugars_g": 10.4,
+      "fibre_g": null,
+      "sodium_mg": 1800,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "smokey BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "smokey cheese sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "cheesy-bacon-burger-fillet",
+      "name": "Cheesy Bacon Burger (Fillet)",
+      "category": "Burgers",
+      "serving": "1 burger (fried fillet)",
+      "grams": 281,
+      "kj": 3820,
+      "protein_g": 40.5,
+      "fat_g": 49.4,
+      "sat_fat_g": 11.6,
+      "carbs_g": 76.9,
+      "sugars_g": 11.0,
+      "fibre_g": null,
+      "sodium_mg": 2500,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "smokey BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "smokey cheese sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "chicken-blt-burger-roast",
+      "name": "Chicken BLT Burger (Roast)",
+      "category": "Burgers",
+      "serving": "1 burger (pulled roast chicken)",
+      "grams": 290,
+      "kj": 2410,
+      "protein_g": 35.9,
+      "fat_g": 27.1,
+      "sat_fat_g": 6.0,
+      "carbs_g": 45.9,
+      "sugars_g": 9.7,
+      "fibre_g": null,
+      "sodium_mg": 1605,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "whole egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "chipotle mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "chicken-blt-burger-fillet",
+      "name": "Chicken BLT Burger (Fillet)",
+      "category": "Burgers",
+      "serving": "1 burger (fried fillet)",
+      "grams": 333,
+      "kj": 3400,
+      "protein_g": 40.0,
+      "fat_g": 41.8,
+      "sat_fat_g": 7.0,
+      "carbs_g": 68.7,
+      "sugars_g": 10.3,
+      "fibre_g": null,
+      "sodium_mg": 2305,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "whole egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "chipotle mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "rooster-roll",
+      "name": "Rooster Roll",
+      "category": "Wraps & rolls",
+      "serving": "1 roll",
+      "grams": 235,
+      "kj": 2550,
+      "protein_g": 28.6,
+      "fat_g": 25.1,
+      "sat_fat_g": 3.9,
+      "carbs_g": 64.3,
+      "sugars_g": 15.0,
+      "fibre_g": null,
+      "sodium_mg": 1450,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "rippa-roll",
+      "name": "Rippa Roll",
+      "category": "Wraps & rolls",
+      "serving": "1 roll",
+      "grams": 248,
+      "kj": 2430,
+      "protein_g": 23.0,
+      "fat_g": 32.9,
+      "sat_fat_g": 2.8,
+      "carbs_g": 47.0,
+      "sugars_g": 1.9,
+      "fibre_g": null,
+      "sodium_mg": 1155,
+      "leave_off": [
+        {
+          "name": "herb mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "chilli-aioli-rippa-roll",
+      "name": "Chilli Aioli Rippa Roll",
+      "category": "Wraps & rolls",
+      "serving": "1 roll",
+      "grams": 248,
+      "kj": 1990,
+      "protein_g": 22.9,
+      "fat_g": 19.0,
+      "sat_fat_g": 1.7,
+      "carbs_g": 51.2,
+      "sugars_g": 4.8,
+      "fibre_g": null,
+      "sodium_mg": 1310,
+      "leave_off": [
+        {
+          "name": "chilli aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "flayva-wrap",
+      "name": "Flayva Wrap",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": 273,
+      "kj": 2870,
+      "protein_g": 29.1,
+      "fat_g": 46.6,
+      "sat_fat_g": 12.2,
+      "carbs_g": 36.8,
+      "sugars_g": 3.5,
+      "fibre_g": null,
+      "sodium_mg": 1275,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herb mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "whole-chicken",
+      "name": "Whole Chicken",
+      "category": "Chicken",
+      "serving": "1 whole roast chicken",
+      "grams": 653,
+      "kj": 4710,
+      "protein_g": 139.7,
+      "fat_g": 45.5,
+      "sat_fat_g": 10.3,
+      "carbs_g": 35.0,
+      "sugars_g": 3.6,
+      "fibre_g": null,
+      "sodium_mg": 4345
+    },
+    {
+      "id": "half-chicken",
+      "name": "Half Chicken",
+      "category": "Chicken",
+      "serving": "1/2 roast chicken",
+      "grams": 327,
+      "kj": 2350,
+      "protein_g": 69.8,
+      "fat_g": 22.7,
+      "sat_fat_g": 5.1,
+      "carbs_g": 17.5,
+      "sugars_g": 1.8,
+      "fibre_g": null,
+      "sodium_mg": 2170
+    },
+    {
+      "id": "quarter-chicken",
+      "name": "Quarter Chicken",
+      "category": "Chicken",
+      "serving": "1/4 roast chicken",
+      "grams": 163,
+      "kj": 1180,
+      "protein_g": 34.9,
+      "fat_g": 11.4,
+      "sat_fat_g": 2.6,
+      "carbs_g": 8.8,
+      "sugars_g": 0.9,
+      "fibre_g": null,
+      "sodium_mg": 1085
+    },
+    {
+      "id": "fried-chicken",
+      "name": "Fried Chicken",
+      "category": "Chicken",
+      "serving": "1 piece",
+      "grams": 84,
+      "kj": 1050,
+      "protein_g": 18.1,
+      "fat_g": 15.8,
+      "sat_fat_g": 2.8,
+      "carbs_g": 9.0,
+      "sugars_g": 0.2,
+      "fibre_g": null,
+      "sodium_mg": 585
+    },
+    {
+      "id": "hot-honey-fried-chicken",
+      "name": "Hot Honey Fried Chicken",
+      "category": "Chicken",
+      "serving": "1 piece",
+      "grams": 119,
+      "kj": 1380,
+      "protein_g": 18.2,
+      "fat_g": 15.9,
+      "sat_fat_g": 2.8,
+      "carbs_g": 28.2,
+      "sugars_g": 18.4,
+      "fibre_g": null,
+      "sodium_mg": 650
+    },
+    {
+      "id": "reds-hot-fried-chicken",
+      "name": "Reds Hot Fried Chicken",
+      "category": "Chicken",
+      "serving": "1 piece",
+      "grams": 109,
+      "kj": 1540,
+      "protein_g": 18.6,
+      "fat_g": 28.1,
+      "sat_fat_g": 3.7,
+      "carbs_g": 10.6,
+      "sugars_g": 1.1,
+      "fibre_g": null,
+      "sodium_mg": 1025
+    },
+    {
+      "id": "10-cheesy-nuggets",
+      "name": "10 Cheesy Nuggets",
+      "category": "Chicken",
+      "serving": "10 nuggets",
+      "grams": 180,
+      "kj": 2430,
+      "protein_g": 21.4,
+      "fat_g": 38.0,
+      "sat_fat_g": 7.0,
+      "carbs_g": 37.0,
+      "sugars_g": 2.5,
+      "fibre_g": null,
+      "sodium_mg": 1440
+    },
+    {
+      "id": "chips-regular",
+      "name": "Chips (Regular)",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 121,
+      "kj": 1220,
+      "protein_g": 5.2,
+      "fat_g": 13.2,
+      "sat_fat_g": 1.1,
+      "carbs_g": 36.2,
+      "sugars_g": 0.4,
+      "fibre_g": null,
+      "sodium_mg": 40
+    },
+    {
+      "id": "chips-large",
+      "name": "Chips (Large)",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 202,
+      "kj": 2040,
+      "protein_g": 8.7,
+      "fat_g": 22.0,
+      "sat_fat_g": 1.8,
+      "carbs_g": 60.4,
+      "sugars_g": 0.6,
+      "fibre_g": null,
+      "sodium_mg": 70
+    },
+    {
+      "id": "chips-family",
+      "name": "Chips (Family)",
+      "category": "Sides",
+      "serving": "1 family serve",
+      "grams": 420,
+      "kj": 4240,
+      "protein_g": 18.1,
+      "fat_g": 45.8,
+      "sat_fat_g": 3.8,
+      "carbs_g": 125.6,
+      "sugars_g": 1.3,
+      "fibre_g": null,
+      "sodium_mg": 145
+    },
+    {
+      "id": "gravy-regular",
+      "name": "Gravy (Regular)",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 135,
+      "kj": 210,
+      "protein_g": 0.1,
+      "fat_g": 0.8,
+      "sat_fat_g": 0.5,
+      "carbs_g": 10.4,
+      "sugars_g": 0.8,
+      "fibre_g": null,
+      "sodium_mg": 765
+    },
+    {
+      "id": "gravy-large",
+      "name": "Gravy (Large)",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 465,
+      "kj": 720,
+      "protein_g": 0.4,
+      "fat_g": 2.8,
+      "sat_fat_g": 1.9,
+      "carbs_g": 35.8,
+      "sugars_g": 2.8,
+      "fibre_g": null,
+      "sodium_mg": 2625
+    },
+    {
+      "id": "mash-gravy-regular",
+      "name": "Mash & Gravy (Regular)",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 130,
+      "kj": 310,
+      "protein_g": 1.0,
+      "fat_g": 2.3,
+      "sat_fat_g": 1.4,
+      "carbs_g": 11.7,
+      "sugars_g": 1.2,
+      "fibre_g": null,
+      "sodium_mg": 600
+    },
+    {
+      "id": "mash-gravy-large",
+      "name": "Mash & Gravy (Large)",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 465,
+      "kj": 1140,
+      "protein_g": 4.1,
+      "fat_g": 8.8,
+      "sat_fat_g": 5.4,
+      "carbs_g": 42.6,
+      "sugars_g": 4.5,
+      "fibre_g": null,
+      "sodium_mg": 2090
+    },
+    {
+      "id": "crunchy-slaw-regular",
+      "name": "Crunchy Slaw (Regular)",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 130,
+      "kj": 590,
+      "protein_g": 2.1,
+      "fat_g": 8.8,
+      "sat_fat_g": 0.7,
+      "carbs_g": 11.6,
+      "sugars_g": 10.6,
+      "fibre_g": null,
+      "sodium_mg": 310
+    },
+    {
+      "id": "crunchy-slaw-large",
+      "name": "Crunchy Slaw (Large)",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 300,
+      "kj": 1350,
+      "protein_g": 4.9,
+      "fat_g": 20.2,
+      "sat_fat_g": 1.7,
+      "carbs_g": 26.7,
+      "sugars_g": 24.5,
+      "fibre_g": null,
+      "sodium_mg": 710
+    },
+    {
+      "id": "pineapple-fritter",
+      "name": "Pineapple Fritter",
+      "category": "Sides",
+      "serving": "1 fritter",
+      "grams": 70,
+      "kj": 630,
+      "protein_g": 1.9,
+      "fat_g": 6.0,
+      "sat_fat_g": 0.6,
+      "carbs_g": 21.4,
+      "sugars_g": 10.1,
+      "fibre_g": null,
+      "sodium_mg": 30
+    },
+    {
+      "id": "kids-cheeseburger",
+      "name": "Kids Cheeseburger",
+      "category": "Kids",
+      "serving": "1 burger",
+      "grams": 157,
+      "kj": 1770,
+      "protein_g": 17.8,
+      "fat_g": 17.5,
+      "sat_fat_g": 5.2,
+      "carbs_g": 47.6,
+      "sugars_g": 7.1,
+      "fibre_g": null,
+      "sodium_mg": 1090,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "vanilla-slice-bites-6-pieces",
+      "name": "Vanilla Slice Bites (6 pieces)",
+      "category": "Desserts",
+      "serving": "6 pieces",
+      "grams": 96,
+      "kj": 990,
+      "protein_g": 4.7,
+      "fat_g": 7.5,
+      "sat_fat_g": 4.0,
+      "carbs_g": 36.2,
+      "sugars_g": 12.9,
+      "fibre_g": null,
+      "sodium_mg": 275
+    },
+    {
+      "id": "vanilla-slice-bites-10-pieces",
+      "name": "Vanilla Slice Bites (10 pieces)",
+      "category": "Desserts",
+      "serving": "10 pieces",
+      "grams": 160,
+      "kj": 1650,
+      "protein_g": 7.8,
+      "fat_g": 12.5,
+      "sat_fat_g": 6.7,
+      "carbs_g": 60.3,
+      "sugars_g": 21.4,
+      "fibre_g": null,
+      "sodium_mg": 460
+    },
+    {
+      "id": "chocolate-mousse",
+      "name": "Chocolate Mousse",
+      "category": "Desserts",
+      "serving": "1 mousse",
+      "grams": 95,
+      "kj": 1630,
+      "protein_g": 3.0,
+      "fat_g": 28.0,
+      "sat_fat_g": 19.4,
+      "carbs_g": 31.6,
+      "sugars_g": 29.6,
+      "fibre_g": null,
+      "sodium_mg": 65
+    },
+    {
+      "id": "herb-mayo-sauce",
+      "name": "Herb Mayo Sauce",
+      "category": "Sauces",
+      "serving": "1 sauce",
+      "grams": 40,
+      "kj": 1180,
+      "protein_g": 0.6,
+      "fat_g": 31.4,
+      "sat_fat_g": 2.4,
+      "carbs_g": 0.7,
+      "sugars_g": 0.6,
+      "fibre_g": null,
+      "sodium_mg": 210
+    },
+    {
+      "id": "sweet-sour-sauce",
+      "name": "Sweet & Sour Sauce",
+      "category": "Sauces",
+      "serving": "1 sauce",
+      "grams": null,
+      "kj": 110,
+      "protein_g": 0.1,
+      "fat_g": 0.0,
+      "sat_fat_g": 0.0,
+      "carbs_g": 6.2,
+      "sugars_g": 5.4,
+      "fibre_g": null,
+      "sodium_mg": 140
+    }
+  ]
+}

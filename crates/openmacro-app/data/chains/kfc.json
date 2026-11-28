@@ -1,0 +1,1010 @@
+{
+  "id": "kfc",
+  "name": "KFC",
+  "source": {
+    "url": "https://www.kfc.com.au/nutrition-allergen",
+    "title": "KFC Australia Nutrition & Allergen Guide",
+    "published": "2026-02",
+    "accessed": "2026-11-28"
+  },
+  "parts": {
+    "bacon": {
+      "name": "Bacon",
+      "grams": null,
+      "kj": 231,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://orderserv-kfc-apac-olo-api.yum.com/dev/v1/catalogs/afd3813afa364270bfd33f0a8d77252d/KFCAustraliaMenu-Generic/items/I-31040",
+      "note": "Energy only. KFC's ordering catalog gives the Bacon modifier (M-200013) a caloricValue of 231, the same field that holds each item's kJ. It publishes no grams or macros for it, so the macro check can't be run."
+    },
+    "cheese_slice": {
+      "name": "Cheese Slice",
+      "grams": null,
+      "kj": 164,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://orderserv-kfc-apac-olo-api.yum.com/dev/v1/catalogs/afd3813afa364270bfd33f0a8d77252d/KFCAustraliaMenu-Generic/items/I-31040",
+      "note": "Energy only. Catalog caloricValue of the Cheese Slice modifier (M-200009), in kJ like the items'. No grams or macros published, so the macro check can't be run."
+    },
+    "sweet_sour_dip": {
+      "name": "Sweet & Sour Dip",
+      "grams": 29,
+      "kj": 252,
+      "protein_g": 0.1,
+      "fat_g": 0.4,
+      "saturated_fat_g": 0.0,
+      "carbs_g": 13.9,
+      "sugars_g": 10.8,
+      "fibre_g": null,
+      "sodium_mg": 174,
+      "source_url": "https://orderserv-kfc-apac-olo-api.yum.com/dev/v1/catalogs/afd3813afa364270bfd33f0a8d77252d/KFCAustraliaMenu-Generic/items/I-41091",
+      "note": "Panel of the Sweet & Sour Dip sold on its own (I-41091). It is the default dip in 6 and 10 Nuggets, and their published totals include it: 6 Nuggets 1302 kJ = 2 x 3 Nuggets (525) + 252; 10 Nuggets 2254 kJ = 10/3 x 525 + 2 x 252."
+    }
+  },
+  "parts_sources": [
+    "https://orderserv-kfc-apac-olo-api.yum.com/dev/v1/catalogs/afd3813afa364270bfd33f0a8d77252d/KFCAustraliaMenu-Generic/items/<item id> (item detail behind kfc.com.au product pages; Recipe and Extras modifier groups, fetched for all 49 menu items, e.g. I-31040 Zinger Burger)",
+    "https://orderserv-kfc-apac-olo-api.yum.com/dev/v1/catalogs/afd3813afa364270bfd33f0a8d77252d/KFCAustraliaMenu-677-web-pickup (store catalog; no modifier nutrition)",
+    "https://www.kfc.com.au/nutrition-allergen",
+    "https://assets.ctfassets.net/crbk84xktnsl/7am1rNOQI1hXG7He0CzaLE/9180d5425f7961a8d1d99b151a500684/KFC_Core_Burger_Sauce_Ingredient_List_10.11.26.pdf",
+    "https://assets.ctfassets.net/crbk84xktnsl/304EcLX4DFbzZ2u2KvTJaX/52d78bf5045c584c991cad3ff5e694e1/KFC_Core_Sides_Ingredient_List_10.11.26.pdf"
+  ],
+  "items": [
+    {
+      "id": "original-crispy-burger",
+      "name": "Original Crispy Burger",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": 183,
+      "kj": 1874,
+      "protein_g": 24.7,
+      "fat_g": 22.3,
+      "sat_fat_g": 2.1,
+      "carbs_g": 35.9,
+      "sugars_g": 4.3,
+      "fibre_g": null,
+      "sodium_mg": 776,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "original-crispy-bacon-cheese-burger",
+      "name": "Original Crispy Bacon & Cheese Burger",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": 215,
+      "kj": 2384,
+      "protein_g": 31.6,
+      "fat_g": 32.8,
+      "sat_fat_g": 6.1,
+      "carbs_g": 36.2,
+      "sugars_g": 4.7,
+      "fibre_g": null,
+      "sodium_mg": 1178,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "pepper mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "original-crispy-bbq-bacon-stacker-burger",
+      "name": "Original Crispy BBQ Bacon Stacker Burger",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": 331,
+      "kj": 3526,
+      "protein_g": 55.0,
+      "fat_g": 45.8,
+      "sat_fat_g": 8.6,
+      "carbs_g": 51.5,
+      "sugars_g": 9.0,
+      "fibre_g": null,
+      "sodium_mg": 1964,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "double-tender-burger",
+      "name": "Double Tender Burger",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": 207,
+      "kj": 2183,
+      "protein_g": 28.8,
+      "fat_g": 28.1,
+      "sat_fat_g": 2.6,
+      "carbs_g": 37.4,
+      "sugars_g": 4.2,
+      "fibre_g": null,
+      "sodium_mg": 1490,
+      "leave_off": [
+        {
+          "name": "pepper mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "zinger-burger",
+      "name": "Zinger Burger",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": 185,
+      "kj": 1874,
+      "protein_g": 26.2,
+      "fat_g": 22.5,
+      "sat_fat_g": 2.3,
+      "carbs_g": 34.4,
+      "sugars_g": 4.4,
+      "fibre_g": null,
+      "sodium_mg": 944,
+      "leave_off": [
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "zinger-bacon-cheese-burger",
+      "name": "Zinger Bacon & Cheese Burger",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": 219,
+      "kj": 2298,
+      "protein_g": 33.1,
+      "fat_g": 30.0,
+      "sat_fat_g": 6.2,
+      "carbs_g": 36.2,
+      "sugars_g": 5.7,
+      "fibre_g": null,
+      "sodium_mg": 1384,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "Supercharged sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "zinger-stacker-burger",
+      "name": "Zinger Stacker Burger",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": 312,
+      "kj": 3082,
+      "protein_g": 51.2,
+      "fat_g": 37.3,
+      "sat_fat_g": 8.0,
+      "carbs_g": 48.8,
+      "sugars_g": 9.3,
+      "fibre_g": null,
+      "sodium_mg": 1996,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "Supercharged sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "chilli relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "zinger-crunch-burger",
+      "name": "Zinger Crunch Burger",
+      "category": "Burgers",
+      "serving": "1 burger",
+      "grams": 244,
+      "kj": 2378,
+      "protein_g": 29.7,
+      "fat_g": 29.3,
+      "sat_fat_g": 4.8,
+      "carbs_g": 45.2,
+      "sugars_g": 8.2,
+      "fibre_g": null,
+      "sodium_mg": 1231,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "jalapeno mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "original-pepper-mayo-slider",
+      "name": "Original Pepper Mayo Slider",
+      "category": "Burgers",
+      "serving": "1 slider",
+      "grams": 115,
+      "kj": 1276,
+      "protein_g": 14.9,
+      "fat_g": 15.6,
+      "sat_fat_g": 1.9,
+      "carbs_g": 25.7,
+      "sugars_g": 2.6,
+      "fibre_g": null,
+      "sodium_mg": 782,
+      "leave_off": [
+        {
+          "name": "pepper mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "original-bbq-slider",
+      "name": "Original BBQ Slider",
+      "category": "Burgers",
+      "serving": "1 slider",
+      "grams": 116,
+      "kj": 1163,
+      "protein_g": 14.9,
+      "fat_g": 10.8,
+      "sat_fat_g": 1.6,
+      "carbs_g": 29.4,
+      "sugars_g": 6.0,
+      "fibre_g": null,
+      "sodium_mg": 807,
+      "leave_off": [
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "original-supercharged-slider",
+      "name": "Original Supercharged Slider",
+      "category": "Burgers",
+      "serving": "1 slider",
+      "grams": 116,
+      "kj": 1232,
+      "protein_g": 14.9,
+      "fat_g": 14.1,
+      "sat_fat_g": 1.8,
+      "carbs_g": 26.4,
+      "sugars_g": 3.0,
+      "fibre_g": null,
+      "sodium_mg": 801,
+      "leave_off": [
+        {
+          "name": "Supercharged sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "1-piece-of-chicken",
+      "name": "1 Piece of Chicken",
+      "category": "Chicken",
+      "serving": "1 piece Original Recipe chicken",
+      "grams": 87,
+      "kj": 984,
+      "protein_g": 20.4,
+      "fat_g": 13.9,
+      "sat_fat_g": 2.6,
+      "carbs_g": 7.2,
+      "sugars_g": 0.2,
+      "fibre_g": null,
+      "sodium_mg": 407
+    },
+    {
+      "id": "3-pieces-of-chicken",
+      "name": "3 Pieces of Chicken",
+      "category": "Chicken",
+      "serving": "3 pieces Original Recipe chicken",
+      "grams": 260,
+      "kj": 2951,
+      "protein_g": 61.2,
+      "fat_g": 41.8,
+      "sat_fat_g": 7.8,
+      "carbs_g": 21.5,
+      "sugars_g": 0.5,
+      "fibre_g": null,
+      "sodium_mg": 1220
+    },
+    {
+      "id": "original-crispy-fillet-piece",
+      "name": "Original Crispy Fillet Piece",
+      "category": "Chicken",
+      "serving": "1 fillet",
+      "grams": 95,
+      "kj": 936,
+      "protein_g": 18.9,
+      "fat_g": 11.8,
+      "sat_fat_g": 1.1,
+      "carbs_g": 10.5,
+      "sugars_g": 0.3,
+      "fibre_g": null,
+      "sodium_mg": 510
+    },
+    {
+      "id": "zinger-fillet-piece",
+      "name": "Zinger Fillet Piece",
+      "category": "Chicken",
+      "serving": "1 fillet",
+      "grams": 97,
+      "kj": 936,
+      "protein_g": 20.4,
+      "fat_g": 12.0,
+      "sat_fat_g": 1.4,
+      "carbs_g": 9.1,
+      "sugars_g": 0.4,
+      "fibre_g": null,
+      "sodium_mg": 679
+    },
+    {
+      "id": "1-original-tender",
+      "name": "1 Original Tender",
+      "category": "Chicken",
+      "serving": "1 tender",
+      "grams": 57,
+      "kj": 563,
+      "protein_g": 11.4,
+      "fat_g": 7.1,
+      "sat_fat_g": 0.7,
+      "carbs_g": 6.2,
+      "sugars_g": 0.1,
+      "fibre_g": null,
+      "sodium_mg": 598
+    },
+    {
+      "id": "3-pieces-wicked-boneless",
+      "name": "3 Pieces Wicked Boneless",
+      "category": "Chicken",
+      "serving": "3 pieces",
+      "grams": 144,
+      "kj": 1434,
+      "protein_g": 28.2,
+      "fat_g": 17.3,
+      "sat_fat_g": 2.2,
+      "carbs_g": 18.4,
+      "sugars_g": 0.3,
+      "fibre_g": null,
+      "sodium_mg": 1103
+    },
+    {
+      "id": "6-pieces-wicked-boneless",
+      "name": "6 Pieces Wicked Boneless",
+      "category": "Chicken",
+      "serving": "6 pieces",
+      "grams": 288,
+      "kj": 2868,
+      "protein_g": 56.4,
+      "fat_g": 34.6,
+      "sat_fat_g": 4.3,
+      "carbs_g": 36.9,
+      "sugars_g": 0.6,
+      "fibre_g": null,
+      "sodium_mg": 2206
+    },
+    {
+      "id": "snack-popcorn-chicken",
+      "name": "Snack Popcorn Chicken",
+      "category": "Chicken",
+      "serving": "1 snack serve",
+      "grams": 70,
+      "kj": 1009,
+      "protein_g": 11.8,
+      "fat_g": 15.0,
+      "sat_fat_g": 1.5,
+      "carbs_g": 14.8,
+      "sugars_g": 0.4,
+      "fibre_g": null,
+      "sodium_mg": 577
+    },
+    {
+      "id": "regular-popcorn-chicken",
+      "name": "Regular Popcorn Chicken",
+      "category": "Chicken",
+      "serving": "1 regular serve",
+      "grams": 114,
+      "kj": 1644,
+      "protein_g": 19.3,
+      "fat_g": 24.4,
+      "sat_fat_g": 2.4,
+      "carbs_g": 24.2,
+      "sugars_g": 0.7,
+      "fibre_g": null,
+      "sodium_mg": 939
+    },
+    {
+      "id": "maxi-popcorn-chicken",
+      "name": "Maxi Popcorn Chicken",
+      "category": "Chicken",
+      "serving": "1 maxi serve",
+      "grams": 209,
+      "kj": 3014,
+      "protein_g": 35.3,
+      "fat_g": 44.7,
+      "sat_fat_g": 4.4,
+      "carbs_g": 44.3,
+      "sugars_g": 1.3,
+      "fibre_g": null,
+      "sodium_mg": 1722
+    },
+    {
+      "id": "3-wicked-wings",
+      "name": "3 Wicked Wings",
+      "category": "Chicken",
+      "serving": "3 wings",
+      "grams": 124,
+      "kj": 1629,
+      "protein_g": 22.6,
+      "fat_g": 27.3,
+      "sat_fat_g": 4.8,
+      "carbs_g": 13.9,
+      "sugars_g": 1.2,
+      "fibre_g": null,
+      "sodium_mg": 698
+    },
+    {
+      "id": "6-wicked-wings",
+      "name": "6 Wicked Wings",
+      "category": "Chicken",
+      "serving": "6 wings",
+      "grams": 248,
+      "kj": 3259,
+      "protein_g": 45.1,
+      "fat_g": 54.5,
+      "sat_fat_g": 9.7,
+      "carbs_g": 27.8,
+      "sugars_g": 2.5,
+      "fibre_g": null,
+      "sodium_mg": 1395
+    },
+    {
+      "id": "3-nuggets",
+      "name": "3 Nuggets",
+      "category": "Chicken",
+      "serving": "3 nuggets",
+      "grams": 48,
+      "kj": 525,
+      "protein_g": 8.0,
+      "fat_g": 7.7,
+      "sat_fat_g": 1.2,
+      "carbs_g": 6.0,
+      "sugars_g": 0.1,
+      "fibre_g": null,
+      "sodium_mg": 296
+    },
+    {
+      "id": "6-nuggets",
+      "name": "6 Nuggets",
+      "category": "Chicken",
+      "serving": "6 nuggets",
+      "grams": 125,
+      "kj": 1302,
+      "protein_g": 16.2,
+      "fat_g": 15.7,
+      "sat_fat_g": 2.3,
+      "carbs_g": 25.9,
+      "sugars_g": 11.1,
+      "fibre_g": null,
+      "sodium_mg": 765,
+      "leave_off": [
+        {
+          "name": "sweet & sour dip",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "sweet_sour_dip"
+        }
+      ]
+    },
+    {
+      "id": "10-nuggets",
+      "name": "10 Nuggets",
+      "category": "Chicken",
+      "serving": "10 nuggets",
+      "grams": 218,
+      "kj": 2254,
+      "protein_g": 27.0,
+      "fat_g": 26.3,
+      "sat_fat_g": 3.9,
+      "carbs_g": 47.8,
+      "sugars_g": 22.2,
+      "fibre_g": null,
+      "sodium_mg": 1333,
+      "leave_off": [
+        {
+          "name": "sweet & sour dip",
+          "kind": "sweet_sauce",
+          "count": 2,
+          "part": "sweet_sour_dip"
+        }
+      ]
+    },
+    {
+      "id": "zinger-crunch-twister",
+      "name": "Zinger Crunch Twister",
+      "category": "Wraps & rolls",
+      "serving": "1 twister",
+      "grams": 270,
+      "kj": 2435,
+      "protein_g": 27.4,
+      "fat_g": 27.9,
+      "sat_fat_g": 4.8,
+      "carbs_g": 53.4,
+      "sugars_g": 7.0,
+      "fibre_g": null,
+      "sodium_mg": 1159,
+      "leave_off": [
+        {
+          "name": "jalapeno mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "original-crunch-twister",
+      "name": "Original Crunch Twister",
+      "category": "Wraps & rolls",
+      "serving": "1 twister",
+      "grams": 275,
+      "kj": 2465,
+      "protein_g": 29.0,
+      "fat_g": 30.0,
+      "sat_fat_g": 4.8,
+      "carbs_g": 48.9,
+      "sugars_g": 5.7,
+      "fibre_g": null,
+      "sodium_mg": 1604,
+      "leave_off": [
+        {
+          "name": "pepper mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "zinger-crunch-bowl",
+      "name": "Zinger Crunch Bowl",
+      "category": "Bowls & salads",
+      "serving": "1 bowl",
+      "grams": 278,
+      "kj": 1738,
+      "protein_g": 23.2,
+      "fat_g": 23.2,
+      "sat_fat_g": 2.2,
+      "carbs_g": 27.5,
+      "sugars_g": 10.0,
+      "fibre_g": null,
+      "sodium_mg": 988,
+      "leave_off": [
+        {
+          "name": "jalapeno mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "original-tenders-crunch-bowl",
+      "name": "Original Tenders Crunch Bowl",
+      "category": "Bowls & salads",
+      "serving": "1 bowl",
+      "grams": 293,
+      "kj": 1989,
+      "protein_g": 25.5,
+      "fat_g": 27.8,
+      "sat_fat_g": 2.5,
+      "carbs_g": 29.3,
+      "sugars_g": 8.8,
+      "fibre_g": null,
+      "sodium_mg": 1470,
+      "leave_off": [
+        {
+          "name": "pepper mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "zinger-protein-bowl",
+      "name": "Zinger Protein Bowl",
+      "category": "Bowls & salads",
+      "serving": "1 bowl",
+      "grams": 359,
+      "kj": 2309,
+      "protein_g": 44.0,
+      "fat_g": 28.9,
+      "sat_fat_g": 2.8,
+      "carbs_g": 27.6,
+      "sugars_g": 9.8,
+      "fibre_g": null,
+      "sodium_mg": 1531,
+      "leave_off": [
+        {
+          "name": "Supercharged sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "regular-chips",
+      "name": "Regular Chips",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 120,
+      "kj": 1186,
+      "protein_g": 4.4,
+      "fat_g": 11.5,
+      "sat_fat_g": 1.1,
+      "carbs_g": 40.6,
+      "sugars_g": 3.9,
+      "fibre_g": null,
+      "sodium_mg": 633
+    },
+    {
+      "id": "large-chips",
+      "name": "Large Chips",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 240,
+      "kj": 2371,
+      "protein_g": 8.9,
+      "fat_g": 23.0,
+      "sat_fat_g": 2.2,
+      "carbs_g": 81.1,
+      "sugars_g": 7.1,
+      "fibre_g": null,
+      "sodium_mg": 1155
+    },
+    {
+      "id": "regular-potato-gravy",
+      "name": "Regular Potato & Gravy",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 110,
+      "kj": 267,
+      "protein_g": 1.9,
+      "fat_g": 0.9,
+      "sat_fat_g": 0.1,
+      "carbs_g": 12.0,
+      "sugars_g": 0.8,
+      "fibre_g": null,
+      "sodium_mg": 532
+    },
+    {
+      "id": "large-potato-gravy",
+      "name": "Large Potato & Gravy",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 450,
+      "kj": 1094,
+      "protein_g": 7.7,
+      "fat_g": 3.6,
+      "sat_fat_g": 0.5,
+      "carbs_g": 49.1,
+      "sugars_g": 3.2,
+      "fibre_g": null,
+      "sodium_mg": 2178
+    },
+    {
+      "id": "regular-coleslaw",
+      "name": "Regular Coleslaw",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 110,
+      "kj": 388,
+      "protein_g": 1.1,
+      "fat_g": 3.4,
+      "sat_fat_g": 0.3,
+      "carbs_g": 14.1,
+      "sugars_g": 10.6,
+      "fibre_g": null,
+      "sodium_mg": 173
+    },
+    {
+      "id": "large-coleslaw",
+      "name": "Large Coleslaw",
+      "category": "Sides",
+      "serving": "1 large serve",
+      "grams": 450,
+      "kj": 1588,
+      "protein_g": 4.5,
+      "fat_g": 14.0,
+      "sat_fat_g": 1.4,
+      "carbs_g": 58.1,
+      "sugars_g": 43.2,
+      "fibre_g": null,
+      "sodium_mg": 706
+    },
+    {
+      "id": "regular-gravy",
+      "name": "Regular Gravy",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 110,
+      "kj": 215,
+      "protein_g": 1.8,
+      "fat_g": 1.2,
+      "sat_fat_g": 0.1,
+      "carbs_g": 8.3,
+      "sugars_g": 0.9,
+      "fibre_g": null,
+      "sodium_mg": 695
+    },
+    {
+      "id": "crunchy-jalapeno-slaw",
+      "name": "Crunchy Jalapeno Slaw",
+      "category": "Sides",
+      "serving": "1 serve",
+      "grams": 181,
+      "kj": 802,
+      "protein_g": 2.8,
+      "fat_g": 11.2,
+      "sat_fat_g": 0.9,
+      "carbs_g": 18.4,
+      "sugars_g": 9.6,
+      "fibre_g": null,
+      "sodium_mg": 309,
+      "leave_off": [
+        {
+          "name": "jalapeno mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "dinner-roll",
+      "name": "Dinner Roll",
+      "category": "Sides",
+      "serving": "1 roll",
+      "grams": 39,
+      "kj": 449,
+      "protein_g": 4.0,
+      "fat_g": 2.4,
+      "sat_fat_g": 0.3,
+      "carbs_g": 16.5,
+      "sugars_g": 2.8,
+      "fibre_g": null,
+      "sodium_mg": 129
+    },
+    {
+      "id": "double-chocolate-mousse",
+      "name": "Double Chocolate Mousse",
+      "category": "Desserts",
+      "serving": "1 mousse",
+      "grams": 92,
+      "kj": 1490,
+      "protein_g": 2.8,
+      "fat_g": 29.9,
+      "sat_fat_g": 21.4,
+      "carbs_g": 19.8,
+      "sugars_g": 16.8,
+      "fibre_g": null,
+      "sodium_mg": 22
+    },
+    {
+      "id": "regular-pepsi",
+      "name": "Regular Pepsi",
+      "category": "Drinks",
+      "serving": "1 regular drink",
+      "grams": 391,
+      "kj": 434,
+      "protein_g": 0.0,
+      "fat_g": 0.0,
+      "sat_fat_g": 0.0,
+      "carbs_g": 27.4,
+      "sugars_g": 27.4,
+      "fibre_g": null,
+      "sodium_mg": 39
+    },
+    {
+      "id": "regular-pepsi-max",
+      "name": "Regular Pepsi Max",
+      "category": "Drinks",
+      "serving": "1 regular drink",
+      "grams": 375,
+      "kj": 6,
+      "protein_g": 0.2,
+      "fat_g": 0.0,
+      "sat_fat_g": 0.0,
+      "carbs_g": 0.2,
+      "sugars_g": 0.0,
+      "fibre_g": null,
+      "sodium_mg": 49
+    },
+    {
+      "id": "regular-solo",
+      "name": "Regular Solo",
+      "category": "Drinks",
+      "serving": "1 regular drink",
+      "grams": 390,
+      "kj": 780,
+      "protein_g": 0.2,
+      "fat_g": 0.0,
+      "sat_fat_g": 0.0,
+      "carbs_g": 44.9,
+      "sugars_g": 44.9,
+      "fibre_g": null,
+      "sodium_mg": 70
+    },
+    {
+      "id": "apple-juice",
+      "name": "Apple Juice",
+      "category": "Drinks",
+      "serving": "1 bottle",
+      "grams": 315,
+      "kj": 589,
+      "protein_g": 0.0,
+      "fat_g": 0.0,
+      "sat_fat_g": 0.0,
+      "carbs_g": 34.7,
+      "sugars_g": 33.4,
+      "fibre_g": null,
+      "sodium_mg": 16
+    },
+    {
+      "id": "supercharged-dip",
+      "name": "Supercharged Dip",
+      "category": "Sauces",
+      "serving": "1 dip",
+      "grams": 25,
+      "kj": 440,
+      "protein_g": 0.4,
+      "fat_g": 9.8,
+      "sat_fat_g": 0.8,
+      "carbs_g": 4.2,
+      "sugars_g": 3.0,
+      "fibre_g": null,
+      "sodium_mg": 185
+    },
+    {
+      "id": "saucy-tomato-dip",
+      "name": "Saucy Tomato Dip",
+      "category": "Sauces",
+      "serving": "1 dip",
+      "grams": 29,
+      "kj": 148,
+      "protein_g": 0.5,
+      "fat_g": 0.1,
+      "sat_fat_g": 0.0,
+      "carbs_g": 8.1,
+      "sugars_g": 7.1,
+      "fibre_g": null,
+      "sodium_mg": 255
+    },
+    {
+      "id": "sweet-sour-dip",
+      "name": "Sweet & Sour Dip",
+      "category": "Sauces",
+      "serving": "1 dip",
+      "grams": 29,
+      "kj": 252,
+      "protein_g": 0.1,
+      "fat_g": 0.4,
+      "sat_fat_g": 0.0,
+      "carbs_g": 13.9,
+      "sugars_g": 10.8,
+      "fibre_g": null,
+      "sodium_mg": 174
+    },
+    {
+      "id": "liquid-gold-dip",
+      "name": "Liquid Gold Dip",
+      "category": "Sauces",
+      "serving": "1 dip",
+      "grams": 24,
+      "kj": 409,
+      "protein_g": 0.3,
+      "fat_g": 10.3,
+      "sat_fat_g": 0.8,
+      "carbs_g": 1.5,
+      "sugars_g": 1.0,
+      "fibre_g": null,
+      "sodium_mg": 192
+    }
+  ]
+}

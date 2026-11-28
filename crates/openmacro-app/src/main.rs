@@ -7,6 +7,7 @@ mod backup;
 mod barcode;
 mod components;
 mod custom_food;
+mod eat_out;
 mod export;
 mod food_search;
 mod foods;

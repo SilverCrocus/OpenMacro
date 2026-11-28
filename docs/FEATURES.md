@@ -43,12 +43,13 @@ Every way of adding food puts items on a **plate** first. The plate is a draft l
 - Each item has an inline quantity field and a unit picker.
 - Leaving with a non-empty plate asks for confirmation before discarding it.
 
-The logger sheet has five tabs:
+The logger sheet has six tabs:
 
 | Tab | Behavior | Priority |
 |---|---|---|
-| **Search** | Text search across the food database. Results are grouped as *Common* (generic foods) and *Branded*, with "see more" on each group. Each row shows calories, P/F/C and the default serving, and has a one-tap add. History, favorites, custom foods and recipes appear as their own sections. | P0 |
+| **Search** | Text search across the food database. Results are grouped as *Common* (generic foods) and *Branded*, with "see more" on each group. In Australia, fast-food menu items show as *Fast food*, after Common. Each row shows calories, P/F/C and the default serving, and has a one-tap add. History, favorites, custom foods and recipes appear as their own sections. | P0 |
 | **Scan** | Two modes: *Barcode* (live camera with a torch toggle) and *Label* (photograph a nutrition label, AI-assisted). A keyboard button opens manual barcode entry with a "Look up" button. When a barcode isn't found, the user can create a custom food with that barcode. | P0 (barcode), P2 (label) |
+| **Eat out** | Australian fast-food chains (McDonald's, KFC, Oporto, Grill'd, Subway and more). Each chain's menu by section, from the chain's own nutrition information, with *Suggested for you*: meal-sized orders that fit the calories left today, most protein per calorie first (see ALGORITHMS.md §7). | P1 |
 | **Quick Add** | Enter energy (kcal or kJ) plus optional protein, fat, carbs and alcohol in grams. Shows the calories implied by the macro grams for comparison. | P0 |
 | **Library** | The user's Recipes, custom Foods and Favorites, with a filter box and a "+" to create new items. | P0 |
 | **AI** | *Snap*: photograph a meal. *Describe*: free text of up to about 500 characters, plus up to 3 photos. The AI returns plate items mapped onto real database foods with quantities and units. Composite dishes expand into editable ingredient rows. A disclaimer asks users to verify the results. Users bring their own API key, and nothing is sent unless they turn it on. | P2 (pluggable provider) |

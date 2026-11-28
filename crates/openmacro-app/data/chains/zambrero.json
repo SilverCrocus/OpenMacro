@@ -1,0 +1,1223 @@
+{
+  "id": "zambrero",
+  "name": "Zambrero",
+  "source": {
+    "url": "https://dph95f73vdxmz.cloudfront.net/uploads/ops/resources/HOM16015_Zambrero_Nutritional_AUS_New_Menu_JULY_2026_NOV_THE-DOCTORS-ORDER-LOADED-CHIPS.pdf",
+    "title": "Zambrero Nutritional Information (AUS)",
+    "published": "2026-11",
+    "accessed": "2026-11-28"
+  },
+  "parts": {
+    "guacamole": {
+      "name": "Guacamole (per serve on all other products)",
+      "grams": null,
+      "kj": 353,
+      "protein_g": 0.8,
+      "fat_g": 8.7,
+      "saturated_fat_g": 1.9,
+      "carbs_g": 0.5,
+      "sugars_g": 0.5,
+      "fibre_g": null,
+      "sodium_mg": 91,
+      "source_url": "https://dph95f73vdxmz.cloudfront.net/uploads/ops/resources/HOM16015_Zambrero_Nutritional_AUS_New_Menu_JULY_2026_NOV_THE-DOCTORS-ORDER-LOADED-CHIPS.pdf",
+      "note": "Zambrero Nutritional Information (AUS), data correct as of 03 Nov 2026 (V7.7), 'Corn Chips, Chips & Guacamole' table. Column 'per serve on all other products' (everything except a single taco). Serve weight not printed (784 kJ/100 g implies ~45 g)."
+    },
+    "guacamole_single_taco": {
+      "name": "Guacamole (per serve on single taco)",
+      "grams": null,
+      "kj": 196,
+      "protein_g": 0.4,
+      "fat_g": 4.8,
+      "saturated_fat_g": 1.1,
+      "carbs_g": 0.3,
+      "sugars_g": 0.3,
+      "fibre_g": null,
+      "sodium_mg": 50,
+      "source_url": "https://dph95f73vdxmz.cloudfront.net/uploads/ops/resources/HOM16015_Zambrero_Nutritional_AUS_New_Menu_JULY_2026_NOV_THE-DOCTORS-ORDER-LOADED-CHIPS.pdf",
+      "note": "Zambrero Nutritional Information (AUS), data correct as of 03 Nov 2026 (V7.7), 'Corn Chips, Chips & Guacamole' table. Column 'per serve on single taco'. Serve weight not printed (implies ~25 g)."
+    }
+  },
+  "parts_sources": [
+    "https://dph95f73vdxmz.cloudfront.net/uploads/ops/resources/HOM16015_Zambrero_Nutritional_AUS_New_Menu_JULY_2026_NOV_THE-DOCTORS-ORDER-LOADED-CHIPS.pdf",
+    "https://www.zambrero.com.au/menu",
+    "https://www.zambrero.com.au/menu/burritos",
+    "https://www.zambrero.com.au/menu/nachos",
+    "https://www.zambrero.com.au/menu/soft-taco",
+    "https://www.zambrero.com.au/menu/quesadilla-stack",
+    "https://www.zambrero.com.au/allergens"
+  ],
+  "items": [
+    {
+      "id": "classic-burrito-barbacoa-beef",
+      "name": "Classic Burrito (Barbacoa Beef)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular burrito, without sauce",
+      "grams": null,
+      "kj": 3360,
+      "protein_g": 37.2,
+      "fat_g": 31,
+      "sat_fat_g": 15.7,
+      "carbs_g": 92.6,
+      "sugars_g": 13.3,
+      "fibre_g": null,
+      "sodium_mg": 1846,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-burrito-grilled-chicken",
+      "name": "Classic Burrito (Grilled Chicken)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular burrito, without sauce",
+      "grams": null,
+      "kj": 3240,
+      "protein_g": 35.5,
+      "fat_g": 29.7,
+      "sat_fat_g": 14.2,
+      "carbs_g": 90.1,
+      "sugars_g": 9.5,
+      "fibre_g": null,
+      "sodium_mg": 1838,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-burrito-pork",
+      "name": "Classic Burrito (Pork)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular burrito, without sauce",
+      "grams": null,
+      "kj": 3240,
+      "protein_g": 32.5,
+      "fat_g": 29.2,
+      "sat_fat_g": 14.1,
+      "carbs_g": 92,
+      "sugars_g": 13.1,
+      "fibre_g": null,
+      "sodium_mg": 1756,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-burrito-lamb",
+      "name": "Classic Burrito (Lamb)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular burrito, without sauce",
+      "grams": null,
+      "kj": 3330,
+      "protein_g": 34.6,
+      "fat_g": 31.5,
+      "sat_fat_g": 16,
+      "carbs_g": 92.4,
+      "sugars_g": 10.3,
+      "fibre_g": null,
+      "sodium_mg": 1506,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-burrito-classic-beef-mince",
+      "name": "Classic Burrito (Classic Beef Mince)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular burrito, without sauce",
+      "grams": null,
+      "kj": 3400,
+      "protein_g": 32.4,
+      "fat_g": 35.3,
+      "sat_fat_g": 17.1,
+      "carbs_g": 90.4,
+      "sugars_g": 9.4,
+      "fibre_g": null,
+      "sodium_mg": 1758,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-burrito-pulled-mushroom",
+      "name": "Classic Burrito (Pulled Mushroom)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular burrito, without sauce",
+      "grams": null,
+      "kj": 3230,
+      "protein_g": 23.7,
+      "fat_g": 31.5,
+      "sat_fat_g": 16.7,
+      "carbs_g": 97.3,
+      "sugars_g": 9.4,
+      "fibre_g": null,
+      "sodium_mg": 1685,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-burrito-vegetarian",
+      "name": "Classic Burrito (Vegetarian)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular burrito, without sauce",
+      "grams": null,
+      "kj": 3850,
+      "protein_g": 24,
+      "fat_g": 37.4,
+      "sat_fat_g": 16,
+      "carbs_g": 120,
+      "sugars_g": 9.4,
+      "fibre_g": null,
+      "sodium_mg": 1752,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole"
+        }
+      ]
+    },
+    {
+      "id": "classic-bowl-barbacoa-beef",
+      "name": "Classic Bowl (Barbacoa Beef)",
+      "category": "Bowls & salads",
+      "serving": "1 regular bowl, without sauce",
+      "grams": null,
+      "kj": 2180,
+      "protein_g": 29.7,
+      "fat_g": 22.4,
+      "sat_fat_g": 11.4,
+      "carbs_g": 49,
+      "sugars_g": 10.6,
+      "fibre_g": null,
+      "sodium_mg": 1311,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-bowl-grilled-chicken",
+      "name": "Classic Bowl (Grilled Chicken)",
+      "category": "Bowls & salads",
+      "serving": "1 regular bowl, without sauce",
+      "grams": null,
+      "kj": 2060,
+      "protein_g": 28,
+      "fat_g": 21.1,
+      "sat_fat_g": 9.9,
+      "carbs_g": 46.5,
+      "sugars_g": 6.8,
+      "fibre_g": null,
+      "sodium_mg": 1303,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-bowl-pork",
+      "name": "Classic Bowl (Pork)",
+      "category": "Bowls & salads",
+      "serving": "1 regular bowl, without sauce",
+      "grams": null,
+      "kj": 2050,
+      "protein_g": 25,
+      "fat_g": 20.6,
+      "sat_fat_g": 9.8,
+      "carbs_g": 48.4,
+      "sugars_g": 10.4,
+      "fibre_g": null,
+      "sodium_mg": 1221,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-bowl-lamb",
+      "name": "Classic Bowl (Lamb)",
+      "category": "Bowls & salads",
+      "serving": "1 regular bowl, without sauce",
+      "grams": null,
+      "kj": 2150,
+      "protein_g": 27.1,
+      "fat_g": 22.9,
+      "sat_fat_g": 11.7,
+      "carbs_g": 48.8,
+      "sugars_g": 7.6,
+      "fibre_g": null,
+      "sodium_mg": 971,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-bowl-classic-beef-mince",
+      "name": "Classic Bowl (Classic Beef Mince)",
+      "category": "Bowls & salads",
+      "serving": "1 regular bowl, without sauce",
+      "grams": null,
+      "kj": 2220,
+      "protein_g": 24.9,
+      "fat_g": 26.7,
+      "sat_fat_g": 12.8,
+      "carbs_g": 46.8,
+      "sugars_g": 6.5,
+      "fibre_g": null,
+      "sodium_mg": 1223,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-bowl-pulled-mushroom",
+      "name": "Classic Bowl (Pulled Mushroom)",
+      "category": "Bowls & salads",
+      "serving": "1 regular bowl, without sauce",
+      "grams": null,
+      "kj": 2050,
+      "protein_g": 16.2,
+      "fat_g": 22.9,
+      "sat_fat_g": 12.4,
+      "carbs_g": 53.7,
+      "sugars_g": 6.7,
+      "fibre_g": null,
+      "sodium_mg": 1150,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-bowl-vegetarian",
+      "name": "Classic Bowl (Vegetarian)",
+      "category": "Bowls & salads",
+      "serving": "1 regular bowl, without sauce",
+      "grams": null,
+      "kj": 2670,
+      "protein_g": 16.4,
+      "fat_g": 28.9,
+      "sat_fat_g": 11.7,
+      "carbs_g": 76.4,
+      "sugars_g": 6.7,
+      "fibre_g": null,
+      "sodium_mg": 1217,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole"
+        }
+      ]
+    },
+    {
+      "id": "nachos-barbacoa-beef",
+      "name": "Nachos (Barbacoa Beef)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular nachos, without sauce",
+      "grams": null,
+      "kj": 3460,
+      "protein_g": 38,
+      "fat_g": 50.8,
+      "sat_fat_g": 19.2,
+      "carbs_g": 53.8,
+      "sugars_g": 10.1,
+      "fibre_g": null,
+      "sodium_mg": 1525,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole"
+        }
+      ]
+    },
+    {
+      "id": "nachos-grilled-chicken",
+      "name": "Nachos (Grilled Chicken)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular nachos, without sauce",
+      "grams": null,
+      "kj": 3280,
+      "protein_g": 35.9,
+      "fat_g": 48.8,
+      "sat_fat_g": 17.4,
+      "carbs_g": 50,
+      "sugars_g": 5.7,
+      "fibre_g": null,
+      "sodium_mg": 1586,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole"
+        }
+      ]
+    },
+    {
+      "id": "nachos-pork",
+      "name": "Nachos (Pork)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular nachos, without sauce",
+      "grams": null,
+      "kj": 3310,
+      "protein_g": 32.4,
+      "fat_g": 48.6,
+      "sat_fat_g": 17.3,
+      "carbs_g": 53.1,
+      "sugars_g": 9.9,
+      "fibre_g": null,
+      "sodium_mg": 1417,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole"
+        }
+      ]
+    },
+    {
+      "id": "nachos-lamb",
+      "name": "Nachos (Lamb)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular nachos, without sauce",
+      "grams": null,
+      "kj": 3420,
+      "protein_g": 34.9,
+      "fat_g": 51.4,
+      "sat_fat_g": 19.5,
+      "carbs_g": 53.6,
+      "sugars_g": 6.5,
+      "fibre_g": null,
+      "sodium_mg": 1117,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole"
+        }
+      ]
+    },
+    {
+      "id": "nachos-classic-beef-mince",
+      "name": "Nachos (Classic Beef Mince)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular nachos, without sauce",
+      "grams": null,
+      "kj": 3500,
+      "protein_g": 32.2,
+      "fat_g": 55.9,
+      "sat_fat_g": 20.9,
+      "carbs_g": 51.2,
+      "sugars_g": 5.2,
+      "fibre_g": null,
+      "sodium_mg": 1419,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole"
+        }
+      ]
+    },
+    {
+      "id": "nachos-pulled-mushroom",
+      "name": "Nachos (Pulled Mushroom)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular nachos, without sauce",
+      "grams": null,
+      "kj": 3300,
+      "protein_g": 21.8,
+      "fat_g": 51.4,
+      "sat_fat_g": 20.4,
+      "carbs_g": 59.5,
+      "sugars_g": 5.5,
+      "fibre_g": null,
+      "sodium_mg": 1331,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole"
+        }
+      ]
+    },
+    {
+      "id": "nachos-vegetarian",
+      "name": "Nachos (Vegetarian)",
+      "category": "Tacos & burritos",
+      "serving": "1 regular nachos, without sauce",
+      "grams": null,
+      "kj": 3360,
+      "protein_g": 21.2,
+      "fat_g": 55.1,
+      "sat_fat_g": 18.3,
+      "carbs_g": 55.2,
+      "sugars_g": 5.6,
+      "fibre_g": null,
+      "sodium_mg": 1198,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 2,
+          "part": "guacamole"
+        }
+      ]
+    },
+    {
+      "id": "quesadilla-barbacoa-beef",
+      "name": "Quesadilla (Barbacoa Beef)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, without sauce",
+      "grams": null,
+      "kj": 2370,
+      "protein_g": 34.6,
+      "fat_g": 26.8,
+      "sat_fat_g": 13.8,
+      "carbs_g": 45.3,
+      "sugars_g": 11.2,
+      "fibre_g": null,
+      "sodium_mg": 1439
+    },
+    {
+      "id": "quesadilla-grilled-chicken",
+      "name": "Quesadilla (Grilled Chicken)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, without sauce",
+      "grams": null,
+      "kj": 2250,
+      "protein_g": 32.9,
+      "fat_g": 25.5,
+      "sat_fat_g": 12.3,
+      "carbs_g": 42.8,
+      "sugars_g": 7.4,
+      "fibre_g": null,
+      "sodium_mg": 1431
+    },
+    {
+      "id": "quesadilla-pork",
+      "name": "Quesadilla (Pork)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, without sauce",
+      "grams": null,
+      "kj": 2240,
+      "protein_g": 29.9,
+      "fat_g": 25,
+      "sat_fat_g": 12.2,
+      "carbs_g": 44.7,
+      "sugars_g": 11,
+      "fibre_g": null,
+      "sodium_mg": 1349
+    },
+    {
+      "id": "quesadilla-lamb",
+      "name": "Quesadilla (Lamb)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, without sauce",
+      "grams": null,
+      "kj": 2340,
+      "protein_g": 32,
+      "fat_g": 27.3,
+      "sat_fat_g": 14.1,
+      "carbs_g": 45.1,
+      "sugars_g": 8.2,
+      "fibre_g": null,
+      "sodium_mg": 1099
+    },
+    {
+      "id": "quesadilla-classic-beef-mince",
+      "name": "Quesadilla (Classic Beef Mince)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, without sauce",
+      "grams": null,
+      "kj": 2430,
+      "protein_g": 28.8,
+      "fat_g": 31.4,
+      "sat_fat_g": 17.3,
+      "carbs_g": 44.6,
+      "sugars_g": 6.8,
+      "fibre_g": null,
+      "sodium_mg": 1393
+    },
+    {
+      "id": "quesadilla-pulled-mushroom",
+      "name": "Quesadilla (Pulled Mushroom)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, without sauce",
+      "grams": null,
+      "kj": 2260,
+      "protein_g": 20.1,
+      "fat_g": 27.6,
+      "sat_fat_g": 16.9,
+      "carbs_g": 51.5,
+      "sugars_g": 7,
+      "fibre_g": null,
+      "sodium_mg": 1320
+    },
+    {
+      "id": "quesadilla-vegetarian",
+      "name": "Quesadilla (Vegetarian)",
+      "category": "Tacos & burritos",
+      "serving": "1 quesadilla, without sauce",
+      "grams": null,
+      "kj": 2060,
+      "protein_g": 20.8,
+      "fat_g": 23.8,
+      "sat_fat_g": 11.4,
+      "carbs_g": 47.4,
+      "sugars_g": 7.2,
+      "fibre_g": null,
+      "sodium_mg": 1133
+    },
+    {
+      "id": "soft-taco-barbacoa-beef",
+      "name": "Soft Taco (Barbacoa Beef)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft taco, without sauce",
+      "grams": null,
+      "kj": 998,
+      "protein_g": 14.3,
+      "fat_g": 12.1,
+      "sat_fat_g": 7,
+      "carbs_g": 17.6,
+      "sugars_g": 4.4,
+      "fibre_g": null,
+      "sodium_mg": 506,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "soft-taco-grilled-chicken",
+      "name": "Soft Taco (Grilled Chicken)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft taco, without sauce",
+      "grams": null,
+      "kj": 937,
+      "protein_g": 13.5,
+      "fat_g": 11.4,
+      "sat_fat_g": 6.2,
+      "carbs_g": 16.3,
+      "sugars_g": 2.5,
+      "fibre_g": null,
+      "sodium_mg": 503,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "soft-taco-pork",
+      "name": "Soft Taco (Pork)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft taco, without sauce",
+      "grams": null,
+      "kj": 935,
+      "protein_g": 12,
+      "fat_g": 11.2,
+      "sat_fat_g": 6.2,
+      "carbs_g": 17.3,
+      "sugars_g": 4.3,
+      "fibre_g": null,
+      "sodium_mg": 461,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "soft-taco-lamb",
+      "name": "Soft Taco (Lamb)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft taco, without sauce",
+      "grams": null,
+      "kj": 983,
+      "protein_g": 13,
+      "fat_g": 12.3,
+      "sat_fat_g": 7.1,
+      "carbs_g": 17.5,
+      "sugars_g": 2.9,
+      "fibre_g": null,
+      "sodium_mg": 336,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "soft-taco-classic-beef-mince",
+      "name": "Soft Taco (Classic Beef Mince)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft taco, without sauce",
+      "grams": null,
+      "kj": 1020,
+      "protein_g": 11.9,
+      "fat_g": 14.2,
+      "sat_fat_g": 7.7,
+      "carbs_g": 16.5,
+      "sugars_g": 2.3,
+      "fibre_g": null,
+      "sodium_mg": 462,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "soft-taco-pulled-mushroom",
+      "name": "Soft Taco (Pulled Mushroom)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft taco, without sauce",
+      "grams": null,
+      "kj": 932,
+      "protein_g": 7.6,
+      "fat_g": 12.3,
+      "sat_fat_g": 7.5,
+      "carbs_g": 19.9,
+      "sugars_g": 2.4,
+      "fibre_g": null,
+      "sodium_mg": 426,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "soft-taco-vegetarian",
+      "name": "Soft Taco (Vegetarian)",
+      "category": "Tacos & burritos",
+      "serving": "1 soft taco, without sauce",
+      "grams": null,
+      "kj": 974,
+      "protein_g": 7,
+      "fat_g": 14.8,
+      "sat_fat_g": 6.8,
+      "carbs_g": 17.4,
+      "sugars_g": 2.3,
+      "fibre_g": null,
+      "sodium_mg": 361,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "guacamole",
+          "kind": "guacamole",
+          "count": 1,
+          "part": "guacamole_single_taco"
+        }
+      ]
+    },
+    {
+      "id": "corn-chips-zam-spice",
+      "name": "Corn Chips & Zam Spice",
+      "category": "Sides",
+      "serving": "1 serve",
+      "grams": null,
+      "kj": 1400,
+      "protein_g": 5.4,
+      "fat_g": 16.6,
+      "sat_fat_g": 1.5,
+      "carbs_g": 41.1,
+      "sugars_g": 1.4,
+      "fibre_g": null,
+      "sodium_mg": 357
+    },
+    {
+      "id": "corn-chips-guacamole",
+      "name": "Corn Chips & Guacamole",
+      "category": "Sides",
+      "serving": "1 serve",
+      "grams": null,
+      "kj": 1740,
+      "protein_g": 6,
+      "fat_g": 25.1,
+      "sat_fat_g": 3.4,
+      "carbs_g": 40.9,
+      "sugars_g": 1.6,
+      "fibre_g": null,
+      "sodium_mg": 285
+    },
+    {
+      "id": "chips-hot-with-seasoning-regular",
+      "name": "Chips (hot) with Seasoning, Regular",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": null,
+      "kj": 1120,
+      "protein_g": 3.2,
+      "fat_g": 8.4,
+      "sat_fat_g": 0.96,
+      "carbs_g": 44.4,
+      "sugars_g": 0.48,
+      "fibre_g": null,
+      "sodium_mg": 744
+    },
+    {
+      "id": "chips-hot-with-seasoning-big",
+      "name": "Chips (hot) with Seasoning, BIG",
+      "category": "Sides",
+      "serving": "1 BIG serve",
+      "grams": null,
+      "kj": 1490,
+      "protein_g": 4.3,
+      "fat_g": 11.2,
+      "sat_fat_g": 1.3,
+      "carbs_g": 59.2,
+      "sugars_g": 0.64,
+      "fibre_g": null,
+      "sodium_mg": 992
+    },
+    {
+      "id": "hashbrowns",
+      "name": "Hashbrowns",
+      "category": "Sides",
+      "serving": "1 serve",
+      "grams": null,
+      "kj": 410,
+      "protein_g": 1.5,
+      "fat_g": 4.3,
+      "sat_fat_g": 2.1,
+      "carbs_g": 13.2,
+      "sugars_g": 0.31,
+      "fibre_g": null,
+      "sodium_mg": 821
+    },
+    {
+      "id": "guacamole-add-on",
+      "name": "Guacamole (add-on)",
+      "category": "Sauces",
+      "serving": "1 serve added to a burrito, bowl or other product (not single taco)",
+      "grams": null,
+      "kj": 353,
+      "protein_g": 0.8,
+      "fat_g": 8.7,
+      "sat_fat_g": 1.9,
+      "carbs_g": 0.5,
+      "sugars_g": 0.5,
+      "fibre_g": null,
+      "sodium_mg": 91
+    },
+    {
+      "id": "basilo-sauce",
+      "name": "Basilo Sauce",
+      "category": "Sauces",
+      "serving": "1 serve on a burrito, bowl or nachos",
+      "grams": null,
+      "kj": 426,
+      "protein_g": 0.34,
+      "fat_g": 10.8,
+      "sat_fat_g": 1.6,
+      "carbs_g": 0.9,
+      "sugars_g": 0.44,
+      "fibre_g": null,
+      "sodium_mg": 170
+    },
+    {
+      "id": "chipotle-sauce",
+      "name": "Chipotle Sauce",
+      "category": "Sauces",
+      "serving": "1 serve on a burrito, bowl or nachos",
+      "grams": null,
+      "kj": 412,
+      "protein_g": 0.2,
+      "fat_g": 10.5,
+      "sat_fat_g": 1.6,
+      "carbs_g": 0.9,
+      "sugars_g": 0.3,
+      "fibre_g": null,
+      "sodium_mg": 169
+    },
+    {
+      "id": "garlic-sauce",
+      "name": "Garlic Sauce",
+      "category": "Sauces",
+      "serving": "1 serve on a burrito, bowl or nachos",
+      "grams": null,
+      "kj": 370,
+      "protein_g": 0.24,
+      "fat_g": 9.3,
+      "sat_fat_g": 1.5,
+      "carbs_g": 0.9,
+      "sugars_g": 0.2,
+      "fibre_g": null,
+      "sodium_mg": 136
+    },
+    {
+      "id": "red-chilli-sauce",
+      "name": "Red Chilli Sauce",
+      "category": "Sauces",
+      "serving": "1 serve on a burrito, bowl or nachos",
+      "grams": null,
+      "kj": 118,
+      "protein_g": 0.2,
+      "fat_g": 0.3,
+      "sat_fat_g": 0.1,
+      "carbs_g": 5.8,
+      "sugars_g": 5,
+      "fibre_g": null,
+      "sodium_mg": 136
+    },
+    {
+      "id": "secret-bbq-sauce",
+      "name": "Secret BBQ Sauce",
+      "category": "Sauces",
+      "serving": "1 serve on a burrito, bowl or nachos",
+      "grams": null,
+      "kj": 129,
+      "protein_g": 0.1,
+      "fat_g": 0.7,
+      "sat_fat_g": 0.1,
+      "carbs_g": 5.9,
+      "sugars_g": 4.1,
+      "fibre_g": null,
+      "sodium_mg": 72
+    },
+    {
+      "id": "trezigo-sauce",
+      "name": "Trezigo Sauce",
+      "category": "Sauces",
+      "serving": "1 serve on a burrito, bowl or nachos",
+      "grams": null,
+      "kj": 98,
+      "protein_g": 0.1,
+      "fat_g": 1.9,
+      "sat_fat_g": 0.4,
+      "carbs_g": 1.5,
+      "sugars_g": 1.2,
+      "fibre_g": null,
+      "sodium_mg": 166
+    },
+    {
+      "id": "verde-sauce",
+      "name": "Verde Sauce",
+      "category": "Sauces",
+      "serving": "1 serve on a burrito, bowl or nachos",
+      "grams": null,
+      "kj": 129,
+      "protein_g": 0.2,
+      "fat_g": 2.9,
+      "sat_fat_g": 0.44,
+      "carbs_g": 1,
+      "sugars_g": 0.88,
+      "fibre_g": null,
+      "sodium_mg": 177
+    }
+  ]
+}

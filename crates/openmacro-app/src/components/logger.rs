@@ -3,7 +3,7 @@
 use std::rc::Rc;
 
 use dioxus::prelude::*;
-use openmacro_core::food::Food;
+use openmacro_core::food::{Amount, Food};
 use openmacro_core::nutrients::{
     KCAL_PER_G_CARBS, KCAL_PER_G_FAT, KCAL_PER_G_PROTEIN, Nutrient, NutrientProfile,
 };
@@ -45,6 +45,8 @@ pub fn Logger() -> Element {
     // Set when a scanned barcode isn't found, to prefill a new custom food.
     let mut new_barcode = use_signal(|| None::<String>);
     let query = use_signal(String::new);
+    // The Eat out tab's open chain.
+    let eat_out_chain = use_signal(|| None::<String>);
     let mut saving_recipe = use_signal(|| false);
 
     let plate = state.plate.read().clone();
@@ -216,6 +218,15 @@ pub fn Logger() -> Element {
                             (None, None, Tab::Library) => rsx! {
                                 super::library::LibraryTab { on_select: move |food| detail.set(Some(food)), new_barcode }
                             },
+                            (None, None, Tab::EatOut) => rsx! {
+                                super::eat_out::EatOutTab {
+                                    chain: eat_out_chain,
+                                    kcal_left: target_kcal - day_kcal - plate_kcal,
+                                    kcal_target: target_kcal,
+                                    hour: plate.hour,
+                                    on_select: move |food| detail.set(Some(food)),
+                                }
+                            },
                             (None, None, Tab::Ai) => rsx! {
                                 super::ai_log::AiTab {}
                             },
@@ -366,6 +377,9 @@ fn SearchTab(query: Signal<String>, on_select: EventHandler<Food>) -> Element {
         if !results.common.is_empty() {
             ResultSection { key: "Common-{q}", title: "Common", foods: results.common, on_select }
         }
+        if !results.eat_out.is_empty() {
+            ResultSection { key: "Fast food-{q}", title: "Fast food", foods: results.eat_out, on_select }
+        }
         if !results.branded.is_empty() {
             ResultSection { key: "Branded-{q}", title: "Branded", foods: results.branded, on_select }
         }
@@ -373,7 +387,7 @@ fn SearchTab(query: Signal<String>, on_select: EventHandler<Food>) -> Element {
 }
 
 #[component]
-fn ResultSection(
+pub(super) fn ResultSection(
     title: &'static str,
     foods: Vec<FoundFood>,
     on_select: EventHandler<Food>,
@@ -429,7 +443,11 @@ fn ResultSection(
 
 /// "155 kcal · 13P 11F 1C · 1 large (50 g)"
 fn default_summary(food: &Food) -> String {
-    let amount = food.default_amount();
+    amount_summary(food, food.default_amount())
+}
+
+/// [`default_summary`] for another amount, such as "3 slice".
+pub(super) fn amount_summary(food: &Food, amount: Amount) -> String {
     match (
         food.nutrients_for(amount),
         crate::foods::amount_label(food, amount),
@@ -462,7 +480,14 @@ pub(super) fn FoodDetail(
     let state = use_context::<AppState>();
     use_back_handler(move |_| on_back.call(()));
     let coach = use_context::<Memo<CoachSnapshot>>();
-    let food = Rc::new(food);
+    // A menu item can have parts left off, such as its mayo. What's shown
+    // and logged is then the item without them.
+    let menu_item = crate::eat_out::item(&food.id).filter(|i| !i.parts.is_empty());
+    let mut left_off = use_signal(|| crate::eat_out::left_off(&food.id));
+    let food = Rc::new(match menu_item {
+        Some(item) => item.without(&left_off()),
+        None => food,
+    });
     let units = keypad::units(&food);
     let start = editing
         .as_ref()
@@ -612,6 +637,36 @@ pub(super) fn FoodDetail(
         }
         if let Some(brand) = &food.brand {
             p { class: "muted detail-brand", "{brand}" }
+        }
+        if let Some(item) = menu_item {
+            div { class: "leave-off",
+                span { class: "muted small", "Leave off" }
+                div { class: "chip-row",
+                    for part in &item.parts {
+                        {
+                            let key = part.key.clone();
+                            let on = left_off.read().contains(&key);
+                            rsx! {
+                                button {
+                                    key: "{key}",
+                                    class: if on { "chip active" } else { "chip" },
+                                    aria_pressed: "{on}",
+                                    onclick: move |_| {
+                                        let mut keys = left_off.write();
+                                        if on {
+                                            keys.retain(|k| k != &key);
+                                        } else {
+                                            keys.push(key.clone());
+                                        }
+                                    },
+                                    "{part.name} "
+                                    span { class: "chip-note", "−{super::eat_out::saving(part)}" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         if let Some(on_copy) = on_copy {
             {
