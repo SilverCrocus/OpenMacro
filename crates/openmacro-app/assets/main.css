@@ -581,6 +581,8 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
   margin-bottom: 12px;
 }
 .ai-view video, .ai-view img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* The photo being sent is shown whole, not cropped to the frame. */
+.ai-view img { object-fit: contain; }
 .ai-shutter {
   position: absolute;
   left: 50%;

@@ -60,6 +60,9 @@ pub struct Plate {
     /// The meal's name when AI logging filled the plate; what's logged
     /// with it shows as one row.
     pub meal: Option<String>,
+    /// Counts up each time a plate is logged or discarded, so AI logging
+    /// started for one plate isn't carried over to the next.
+    pub number: u32,
 }
 
 impl Plate {
@@ -70,6 +73,7 @@ impl Plate {
             hour: 8,
             items: Vec::new(),
             meal: None,
+            number: 0,
         }
     }
 
@@ -529,6 +533,7 @@ impl AppState {
         plate.open = false;
         plate.items.clear();
         plate.meal = None;
+        plate.number = plate.number.wrapping_add(1);
         self.recipe_edit.set(None);
     }
 
@@ -554,6 +559,7 @@ impl AppState {
         let (date, hour, items, meal) = {
             let mut plate = self.plate.write();
             plate.open = false;
+            plate.number = plate.number.wrapping_add(1);
             let meal = plate.meal.take();
             (
                 plate.date,
