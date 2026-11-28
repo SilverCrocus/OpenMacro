@@ -5,6 +5,7 @@ mod chart;
 mod checkin;
 mod copy;
 mod dashboard;
+mod eat_out;
 mod edit_entry;
 mod food_log;
 #[cfg(not(target_arch = "wasm32"))]

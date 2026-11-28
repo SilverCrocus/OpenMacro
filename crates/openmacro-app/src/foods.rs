@@ -355,6 +355,12 @@ pub fn fmt_qty(v: f64) -> String {
 pub fn amount_label(food: &Food, amount: Amount) -> Option<String> {
     match amount {
         Amount::Grams(g) => Some(format!("{} g", fmt_qty(g))),
+        // A menu item without a published weight: "2 wrap" rather than a
+        // made-up weight.
+        Amount::Servings { index, count } if crate::eat_out::unweighed(food) => food
+            .servings
+            .get(index)
+            .map(|s| format!("{} {}", fmt_qty(count), s.label)),
         Amount::Servings { index, count } => food.servings.get(index).map(|s| {
             format!(
                 "{} {} ({} g)",
@@ -372,7 +378,9 @@ pub fn plate_item(food: &Food, amount: Amount) -> Option<PlateItem> {
         name: food.name.clone(),
         amount: amount_label(food, amount)?,
         nutrients: food.nutrients_for(amount)?,
-        grams: food.grams(amount),
+        grams: food
+            .grams(amount)
+            .filter(|_| !crate::eat_out::unweighed(food)),
     })
 }
 

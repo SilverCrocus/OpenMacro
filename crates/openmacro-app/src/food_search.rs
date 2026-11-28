@@ -79,13 +79,28 @@ fn yours(food: &Food) -> FoundFood {
 pub struct Results {
     /// The user's own custom foods.
     pub yours: Vec<FoundFood>,
+    /// Fast-food chains' menu items (Australian chains, so Australia only).
+    pub eat_out: Vec<FoundFood>,
     pub common: Vec<FoundFood>,
     pub branded: Vec<FoundFood>,
 }
 
 impl Results {
     pub fn is_empty(&self) -> bool {
-        self.yours.is_empty() && self.common.is_empty() && self.branded.is_empty()
+        self.yours.is_empty()
+            && self.eat_out.is_empty()
+            && self.common.is_empty()
+            && self.branded.is_empty()
+    }
+}
+
+/// Where a menu item's numbers came from, for search results.
+pub const EAT_OUT_SOURCE: &str = "Menu";
+
+fn menu_item(item: &crate::eat_out::MenuItem) -> FoundFood {
+    FoundFood {
+        food: item.food.clone(),
+        source: EAT_OUT_SOURCE,
     }
 }
 
@@ -123,6 +138,7 @@ pub fn search(
     let mut results = search_unranked(db, custom, query, region);
     for section in [
         &mut results.yours,
+        &mut results.eat_out,
         &mut results.common,
         &mut results.branded,
     ] {
@@ -138,6 +154,14 @@ fn search_unranked(
     region: FoodRegion,
 ) -> Results {
     let yours = search_custom(custom, query);
+    let eat_out: Vec<FoundFood> = if region == FoodRegion::Australia {
+        crate::eat_out::search(query)
+            .into_iter()
+            .map(menu_item)
+            .collect()
+    } else {
+        Vec::new()
+    };
     #[cfg(not(target_arch = "wasm32"))]
     if let Some(db) = db {
         let hits = db
@@ -145,6 +169,7 @@ fn search_unranked(
             .unwrap_or_default();
         let mut results = Results {
             yours,
+            eat_out,
             ..Results::default()
         };
         for hit in hits {
@@ -164,12 +189,11 @@ fn search_unranked(
         return results;
     }
     #[cfg(target_arch = "wasm32")]
-    let _ = (db, region);
-    #[cfg(not(target_arch = "wasm32"))]
-    let _ = region;
+    let _ = db;
 
     Results {
         yours,
+        eat_out,
         common: search_samples(&FOODS, query)
             .into_iter()
             .map(|(_, food)| FoundFood {
@@ -194,6 +218,9 @@ pub fn history_counts(log: &[LogEntry]) -> HashMap<String, usize> {
 pub fn resolve(db: Option<&Database>, custom: &[Food], id: &str) -> Option<FoundFood> {
     if id.starts_with("custom:") {
         return custom.iter().find(|f| f.id == id).map(yours);
+    }
+    if let Some(item) = crate::eat_out::item(id) {
+        return Some(menu_item(item));
     }
     if id.starts_with("sample:") {
         return crate::foods::food_by_id(id).map(|f| FoundFood {

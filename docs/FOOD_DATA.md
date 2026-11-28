@@ -14,6 +14,17 @@ The credit text is stored in the database (`meta.attribution`) and shown in the 
 
 **Open Food Facts licence:** under the ODbL, the bundled `foods.db` is a derived database and must be offered under the ODbL too. The app's code stays MIT.
 
+## Fast-food chain menus
+
+The **Eat out** tab (and search) has the menus of Australian fast-food chains. They aren't in `foods.db`: each chain is one JSON file in [`crates/openmacro-app/data/chains/`](../crates/openmacro-app/data/chains), built into the app.
+
+- **Chains:** Domino's, Guzman y Gomez, Hungry Jack's, KFC, McDonald's, Nando's, Oporto, Pizza Hut, Red Rooster, Schnitz, Subway and Zambrero. Taco Bell isn't included because it publishes no nutrition in Australia. Grill'd and Mad Mex aren't included yet.
+- **Source:** each chain's own published nutrition information (its website or the nutrition guide it links to). Every file records the page or PDF and its date, and the app shows them under the chain's menu. These figures aren't openly licensed like the datasets above. They're the chains' public nutrition facts, kept with their source.
+- **Values:** per serve, as published: energy in kJ, protein, fat, saturated fat, carbohydrate, sugars, fibre and sodium. Available carbohydrate has fibre added back, as for the AFCD. A serve whose weight isn't published is logged by the serve only (no grams).
+- **What's left out:** limited-time items, anything whose figures don't add up (the energy must be within about 15% of 17 kJ/g protein + 37 kJ/g fat + 17 kJ/g carbohydrate + 8 kJ/g fibre), and anything whose figures disagree with another the chain publishes, such as the kJ on its menu.
+- **Suggestions:** the menu's meal-sized mains that fit the calories left today (a meal is planned at up to 40% of the day's target), with the most protein per calorie first (`openmacro_core::eat_out`). Breakfast items count only before 11 am.
+- **Updating:** menus change. To refresh a chain, replace its file from the chain's current guide and update `source.published` and `source.accessed`.
+
 ## Building `foods.db`
 
 1. Download the datasets into `data/raw/`:

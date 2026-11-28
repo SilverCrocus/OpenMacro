@@ -394,7 +394,7 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .plate-head h3 { margin: 0; color: var(--text); }
 
 .sheet-tabs { display: flex; gap: 4px; padding: 10px 16px; border-bottom: 1px solid var(--border); overflow-x: auto; }
-.sheet-tabs button { border: none; background: transparent; color: var(--muted); padding: 6px 12px; }
+.sheet-tabs button { border: none; background: transparent; color: var(--muted); padding: 6px 12px; flex: none; white-space: nowrap; }
 .sheet-tabs button.active { background: var(--surface-2); color: var(--text); }
 
 /* Quick Add supplies its own scrolling fields and footer as sheet rows. */

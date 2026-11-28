@@ -45,6 +45,8 @@ pub fn Logger() -> Element {
     // Set when a scanned barcode isn't found, to prefill a new custom food.
     let mut new_barcode = use_signal(|| None::<String>);
     let query = use_signal(String::new);
+    // The Eat out tab's open chain.
+    let eat_out_chain = use_signal(|| None::<String>);
     let mut saving_recipe = use_signal(|| false);
 
     let plate = state.plate.read().clone();
@@ -216,6 +218,15 @@ pub fn Logger() -> Element {
                             (None, None, Tab::Library) => rsx! {
                                 super::library::LibraryTab { on_select: move |food| detail.set(Some(food)), new_barcode }
                             },
+                            (None, None, Tab::EatOut) => rsx! {
+                                super::eat_out::EatOutTab {
+                                    chain: eat_out_chain,
+                                    kcal_left: target_kcal - day_kcal - plate_kcal,
+                                    kcal_target: target_kcal,
+                                    hour: plate.hour,
+                                    on_select: move |food| detail.set(Some(food)),
+                                }
+                            },
                             (None, None, Tab::Ai) => rsx! {
                                 super::ai_log::AiTab {}
                             },
@@ -366,6 +377,9 @@ fn SearchTab(query: Signal<String>, on_select: EventHandler<Food>) -> Element {
         if !results.common.is_empty() {
             ResultSection { key: "Common-{q}", title: "Common", foods: results.common, on_select }
         }
+        if !results.eat_out.is_empty() {
+            ResultSection { key: "Fast food-{q}", title: "Fast food", foods: results.eat_out, on_select }
+        }
         if !results.branded.is_empty() {
             ResultSection { key: "Branded-{q}", title: "Branded", foods: results.branded, on_select }
         }
@@ -373,7 +387,7 @@ fn SearchTab(query: Signal<String>, on_select: EventHandler<Food>) -> Element {
 }
 
 #[component]
-fn ResultSection(
+pub(super) fn ResultSection(
     title: &'static str,
     foods: Vec<FoundFood>,
     on_select: EventHandler<Food>,

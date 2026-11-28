@@ -85,11 +85,17 @@ pub fn amount_from_label(food: &Food, label: &str) -> Option<(String, Unit)> {
     Some((qty.to_string(), Unit::Serving(index)))
 }
 
-/// Every unit offered for a food: its servings, then grams and ounces.
+/// Every unit offered for a food: its servings, then grams and ounces
+/// (unless its weight isn't known).
 pub fn units(food: &Food) -> Vec<Unit> {
+    let weights: &[Unit] = if crate::eat_out::unweighed(food) {
+        &[]
+    } else {
+        &[Unit::Grams, Unit::Ounces]
+    };
     (0..food.servings.len())
         .map(Unit::Serving)
-        .chain([Unit::Grams, Unit::Ounces])
+        .chain(weights.iter().copied())
         .collect()
 }
 

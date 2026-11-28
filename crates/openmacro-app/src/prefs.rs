@@ -48,15 +48,17 @@ pub enum FoodEntryTab {
     Search,
     Scan,
     Ai,
+    EatOut,
     QuickAdd,
     Library,
 }
 
 impl FoodEntryTab {
-    pub const ALL: [Self; 5] = [
+    pub const ALL: [Self; 6] = [
         Self::Search,
         Self::Scan,
         Self::Ai,
+        Self::EatOut,
         Self::QuickAdd,
         Self::Library,
     ];
@@ -66,6 +68,7 @@ impl FoodEntryTab {
             Self::Search => "Search",
             Self::Scan => "Scan",
             Self::Ai => "AI",
+            Self::EatOut => "Eat out",
             Self::QuickAdd => "Quick Add",
             Self::Library => "Library",
         }
