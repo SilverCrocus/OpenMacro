@@ -46,6 +46,8 @@ pub fn Logger() -> Element {
     let mut new_barcode = use_signal(|| None::<String>);
     let query = use_signal(String::new);
     let mut saving_recipe = use_signal(|| false);
+    // A memo, so typing a correction only re-renders the sheet when this flips.
+    let ai_has_pending = use_memo(super::ai_log::pending);
 
     let plate = state.plate.read().clone();
     let plate_kcal = plate.totals().get_or_zero(Nutrient::Energy);
@@ -66,6 +68,12 @@ pub fn Logger() -> Element {
         && detail().is_none()
         && item_edit().is_none()
         && copying_food().is_none();
+    let ai_pending = tab() == Tab::Ai
+        && !saving_recipe()
+        && detail().is_none()
+        && item_edit().is_none()
+        && copying_food().is_none()
+        && ai_has_pending();
 
     rsx! {
         div { class: "sheet-backdrop",
@@ -226,9 +234,9 @@ pub fn Logger() -> Element {
                         }
                     }
                 }
-                if !quick_add_open && (count > 0 || recipe_edit.is_some()) && detail().is_none() && !saving_recipe() {
-                    PlateActions { count, editing_recipe: recipe_edit.is_some(), on_recipe: move |_| saving_recipe.set(true),
-                        if count > 1 && recipe_edit.is_none() {
+                if !quick_add_open && (count > 0 || recipe_edit.is_some() || ai_pending) && detail().is_none() && !saving_recipe() {
+                    PlateActions { count, editing_recipe: recipe_edit.is_some(), on_recipe: move |_| saving_recipe.set(true), ai_pending,
+                        if count > 1 && recipe_edit.is_none() && !ai_pending {
                             button { onclick: move |_| saving_recipe.set(true), "Save as recipe" }
                         }
                     }
@@ -243,6 +251,9 @@ fn PlateActions(
     count: usize,
     editing_recipe: bool,
     on_recipe: EventHandler<()>,
+    // The AI tab has a photo or a correction to send. Its button comes
+    // last as the main one, and Log steps back.
+    #[props(default)] ai_pending: bool,
     children: Element,
 ) -> Element {
     let state = use_context::<AppState>();
@@ -251,11 +262,14 @@ fn PlateActions(
             {children}
             if editing_recipe {
                 button { onclick: move |_| state.close_plate(), "Cancel" }
-                button { class: "primary", disabled: count == 0, onclick: move |_| on_recipe.call(()), "Update recipe" }
-            } else {
-                button { class: "primary", disabled: count == 0, onclick: move |_| state.log_plate(),
+                button { class: if !ai_pending { "primary" }, disabled: count == 0, onclick: move |_| on_recipe.call(()), "Update recipe" }
+            } else if count > 0 || !ai_pending {
+                button { class: if !ai_pending { "primary" }, disabled: count == 0, onclick: move |_| state.log_plate(),
                     if count == 1 { "Log 1 item" } else { "Log {count} items" }
                 }
+            }
+            if ai_pending {
+                super::ai_log::PendingAction {}
             }
         }
     }
