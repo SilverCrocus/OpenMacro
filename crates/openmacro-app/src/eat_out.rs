@@ -18,6 +18,7 @@ use serde_json::{Map, Value};
 /// The menus. The chain list is sorted by name.
 const FILES: &[&str] = &[
     include_str!("../data/chains/dominos.json"),
+    include_str!("../data/chains/grilld.json"),
     include_str!("../data/chains/guzman-y-gomez.json"),
     include_str!("../data/chains/hungry-jacks.json"),
     include_str!("../data/chains/kfc.json"),

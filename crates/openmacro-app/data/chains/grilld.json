@@ -1,0 +1,2343 @@
+{
+  "id": "grilld",
+  "name": "Grill'd",
+  "source": {
+    "url": "https://grilld.com.au/menu",
+    "title": "Grill'd menu nutrition panels",
+    "published": null,
+    "accessed": "2026-11-28"
+  },
+  "parts_sources": [
+    "https://grilld.com.au/menu (Grill'd menu page; its ordering embed loads the data below)",
+    "https://ordering.digital.grilld.com.au/menu (Grill'd web ordering, embedded in grilld.com.au/menu; product pages and the Customise screen)",
+    "https://api.digital.grilld.com.au/v1/restaurants/2/menu?orderType=106 (menu list, Grill'd Malvern VIC, pickup)",
+    "https://api.digital.grilld.com.au/v1/restaurants/2/menu/<item id>?orderType=106 (product detail for each item in ../chains/grilld.json: description, ingredient list by component, nutrition panel per bun, and the Customise add/remove options; Almighty from restaurant 61)",
+    "https://grilld.com.au/allergen-information (ingredient breakdown: which items contain satay sauce, Caesar dressing etc.)"
+  ],
+  "items": [
+    {
+      "id": "protein-pro",
+      "name": "Protein Pro",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 382,
+      "kj": 3010,
+      "protein_g": 81.0,
+      "fat_g": 27.4,
+      "sat_fat_g": 6.1,
+      "carbs_g": 32.8,
+      "sugars_g": 8.9,
+      "fibre_g": 11.2,
+      "sodium_mg": 691,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004082?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "barbeque-powerhouse",
+      "name": "Barbeque Powerhouse",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 352,
+      "kj": 2920,
+      "protein_g": 79.9,
+      "fat_g": 24.1,
+      "sat_fat_g": 5.8,
+      "carbs_g": 35.6,
+      "sugars_g": 10.5,
+      "fibre_g": 10.7,
+      "sodium_mg": 647,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004083?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "barbeque sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sweet chilli mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "protein-pickle",
+      "name": "Protein Pickle",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 390,
+      "kj": 3830,
+      "protein_g": 55.7,
+      "fat_g": 47.1,
+      "sat_fat_g": 18.8,
+      "carbs_g": 34.0,
+      "sugars_g": 10.3,
+      "fibre_g": 8.0,
+      "sodium_mg": 1780,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004084?orderType=106",
+      "leave_off": [
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "simply-grill-d",
+      "name": "Simply Grill'd",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 254,
+      "kj": 2530,
+      "protein_g": 28.1,
+      "fat_g": 33.3,
+      "sat_fat_g": 9.6,
+      "carbs_g": 30.9,
+      "sugars_g": 8.8,
+      "fibre_g": 7.6,
+      "sodium_mg": 861,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/100?orderType=106",
+      "leave_off": [
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "crispy-bacon-cheese",
+      "name": "Crispy Bacon & Cheese",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 280,
+      "kj": 2670,
+      "protein_g": 30.5,
+      "fat_g": 35.3,
+      "sat_fat_g": 10.9,
+      "carbs_g": 31.9,
+      "sugars_g": 9.2,
+      "fibre_g": 7.6,
+      "sodium_mg": 1015,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/101?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "almighty",
+      "name": "Almighty",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 365,
+      "kj": 2990,
+      "protein_g": 36.0,
+      "fat_g": 39.4,
+      "sat_fat_g": 12.1,
+      "carbs_g": 36.3,
+      "sugars_g": 13.2,
+      "fibre_g": 8.1,
+      "sodium_mg": 1070,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/61/menu/1000630?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "summer-sunset",
+      "name": "Summer Sunset",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 309,
+      "kj": 2830,
+      "protein_g": 30.2,
+      "fat_g": 36.5,
+      "sat_fat_g": 10.4,
+      "carbs_g": 39.4,
+      "sugars_g": 15.1,
+      "fibre_g": 9.3,
+      "sodium_mg": 947,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/103?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "mustard-pickled",
+      "name": "Mustard & Pickled!",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 285,
+      "kj": 2250,
+      "protein_g": 29.2,
+      "fat_g": 24.8,
+      "sat_fat_g": 9.7,
+      "carbs_g": 31.0,
+      "sugars_g": 8.9,
+      "fibre_g": 7.6,
+      "sodium_mg": 1200,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/104?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "chilli-addict",
+      "name": "Chilli Addict",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 283,
+      "kj": 2400,
+      "protein_g": 30.7,
+      "fat_g": 29.6,
+      "sat_fat_g": 13.0,
+      "carbs_g": 27.9,
+      "sugars_g": 5.5,
+      "fibre_g": 7.9,
+      "sodium_mg": 1120,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/121?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "light sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "chilli relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "sweet-chilli-chicken",
+      "name": "Sweet Chilli Chicken",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 330,
+      "kj": 2060,
+      "protein_g": 43.1,
+      "fat_g": 16.9,
+      "sat_fat_g": 2.3,
+      "carbs_g": 38.3,
+      "sugars_g": 13.7,
+      "fibre_g": 9.2,
+      "sodium_mg": 545,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/200?orderType=106",
+      "leave_off": [
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "sweet chilli mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "zen-hen",
+      "name": "Zen Hen",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 285,
+      "kj": 2080,
+      "protein_g": 43.1,
+      "fat_g": 19.9,
+      "sat_fat_g": 2.8,
+      "carbs_g": 32.5,
+      "sugars_g": 8.3,
+      "fibre_g": 9.2,
+      "sodium_mg": 575,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/201?orderType=106",
+      "leave_off": [
+        {
+          "name": "satay sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "simon-says",
+      "name": "Simon Says",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 280,
+      "kj": 2140,
+      "protein_g": 43.7,
+      "fat_g": 21.3,
+      "sat_fat_g": 3.1,
+      "carbs_g": 32.4,
+      "sugars_g": 8.4,
+      "fibre_g": 9.8,
+      "sodium_mg": 585,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/202?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "hotbird",
+      "name": "HotBird",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 275,
+      "kj": 1680,
+      "protein_g": 42.3,
+      "fat_g": 11.8,
+      "sat_fat_g": 3.8,
+      "carbs_g": 27.2,
+      "sugars_g": 4.8,
+      "fibre_g": 9.0,
+      "sodium_mg": 658,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/5210?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "light sour cream",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "chilli relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "bird-brie",
+      "name": "Bird & Brie",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 275,
+      "kj": 2250,
+      "protein_g": 45.7,
+      "fat_g": 24.9,
+      "sat_fat_g": 6.4,
+      "carbs_g": 34.3,
+      "sugars_g": 11.1,
+      "fibre_g": 8.4,
+      "sodium_mg": 528,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/204?orderType=106",
+      "leave_off": [
+        {
+          "name": "brie cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "cranberry sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "caesar-s-palace",
+      "name": "Caesar's Palace",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 290,
+      "kj": 2490,
+      "protein_g": 55.0,
+      "fat_g": 29.0,
+      "sat_fat_g": 8.0,
+      "carbs_g": 24.6,
+      "sugars_g": 3.0,
+      "fibre_g": 8.2,
+      "sodium_mg": 576,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/207?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "parmesan cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "Caesar dressing",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "sweet-holy-cluck",
+      "name": "Sweet Holy Cluck",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 225,
+      "kj": 2690,
+      "protein_g": 28.4,
+      "fat_g": 32.0,
+      "sat_fat_g": 6.9,
+      "carbs_g": 42.6,
+      "sugars_g": 7.2,
+      "fibre_g": 8.6,
+      "sodium_mg": 1020,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004061?orderType=106",
+      "leave_off": [
+        {
+          "name": "goat cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "honey",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "hula-hen",
+      "name": "Hula Hen",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 269,
+      "kj": 2570,
+      "protein_g": 26.4,
+      "fat_g": 25.8,
+      "sat_fat_g": 3.2,
+      "carbs_g": 50.4,
+      "sugars_g": 14.2,
+      "fibre_g": 8.7,
+      "sodium_mg": 984,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003965?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "barbeque sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "chipotle",
+      "name": "Chipotle",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 251,
+      "kj": 2420,
+      "protein_g": 26.2,
+      "fat_g": 26.9,
+      "sat_fat_g": 3.0,
+      "carbs_g": 39.4,
+      "sugars_g": 3.0,
+      "fibre_g": 8.6,
+      "sodium_mg": 1631,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1002943?orderType=106",
+      "leave_off": [
+        {
+          "name": "chipotle mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "blat",
+      "name": "BLAT",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 260,
+      "kj": 2400,
+      "protein_g": 27.3,
+      "fat_g": 26.4,
+      "sat_fat_g": 3.4,
+      "carbs_g": 39.9,
+      "sugars_g": 3.9,
+      "fibre_g": 9.0,
+      "sodium_mg": 1403,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1002945?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "bonfire-bbq",
+      "name": "Bonfire BBQ",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 255,
+      "kj": 3100,
+      "protein_g": 40.2,
+      "fat_g": 48.2,
+      "sat_fat_g": 16.0,
+      "carbs_g": 32.2,
+      "sugars_g": 7.5,
+      "fibre_g": 7.0,
+      "sodium_mg": 1132,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1001333?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "aged cheddar",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "barbeque sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "grand-brie",
+      "name": "Grand Brie",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 280,
+      "kj": 2910,
+      "protein_g": 38.1,
+      "fat_g": 45.6,
+      "sat_fat_g": 14.8,
+      "carbs_g": 36.0,
+      "sugars_g": 10.8,
+      "fibre_g": 7.8,
+      "sodium_mg": 589,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003731?orderType=106",
+      "leave_off": [
+        {
+          "name": "brie cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "berry glaze",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "wagyu-wunder",
+      "name": "Wagyu Wunder",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 245,
+      "kj": 2980,
+      "protein_g": 38.8,
+      "fat_g": 47.1,
+      "sat_fat_g": 15.5,
+      "carbs_g": 29.1,
+      "sugars_g": 5.0,
+      "fibre_g": 7.0,
+      "sodium_mg": 1142,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1000550?orderType=106",
+      "leave_off": [
+        {
+          "name": "aged cheddar",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "zorba-the-sheep",
+      "name": "Zorba the Sheep",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 335,
+      "kj": 2770,
+      "protein_g": 29.3,
+      "fat_g": 44.6,
+      "sat_fat_g": 14.1,
+      "carbs_g": 32.8,
+      "sugars_g": 9.8,
+      "fibre_g": 9.6,
+      "sodium_mg": 1116,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003694?orderType=106",
+      "leave_off": [
+        {
+          "name": "goat cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "baa-baa",
+      "name": "Baa Baa",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 250,
+      "kj": 2390,
+      "protein_g": 26.3,
+      "fat_g": 36.2,
+      "sat_fat_g": 11.2,
+      "carbs_g": 32.1,
+      "sugars_g": 8.7,
+      "fibre_g": 9.4,
+      "sodium_mg": 908,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/301?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "mushroom-magic",
+      "name": "Mushroom Magic",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 323,
+      "kj": 2510,
+      "protein_g": 14.2,
+      "fat_g": 33.0,
+      "sat_fat_g": 6.1,
+      "carbs_g": 57.2,
+      "sugars_g": 11.1,
+      "fibre_g": 10.7,
+      "sodium_mg": 1090,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004132?orderType=106",
+      "leave_off": [
+        {
+          "name": "goat cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "beyond-mustard-pickled",
+      "name": "Beyond Mustard & Pickled!",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 289,
+      "kj": 1750,
+      "protein_g": 24.5,
+      "fat_g": 17.8,
+      "sat_fat_g": 2.9,
+      "carbs_g": 36.4,
+      "sugars_g": 8.0,
+      "fibre_g": 8.4,
+      "sodium_mg": 1034,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003901?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "beyond-garden-goodness",
+      "name": "Beyond Garden Goodness",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 330,
+      "kj": 2280,
+      "protein_g": 25.1,
+      "fat_g": 29.5,
+      "sat_fat_g": 3.8,
+      "carbs_g": 42.5,
+      "sugars_g": 12.0,
+      "fibre_g": 10.1,
+      "sodium_mg": 773,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1001546?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "garden-goodness",
+      "name": "Garden Goodness",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 320,
+      "kj": 2080,
+      "protein_g": 16.9,
+      "fat_g": 25.0,
+      "sat_fat_g": 2.8,
+      "carbs_g": 50.5,
+      "sugars_g": 15.1,
+      "fibre_g": 13.1,
+      "sodium_mg": 889,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/400?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "vegan-mushroom-magic",
+      "name": "Vegan Mushroom Magic",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 310,
+      "kj": 2310,
+      "protein_g": 10.4,
+      "fat_g": 28.0,
+      "sat_fat_g": 4.6,
+      "carbs_g": 59.7,
+      "sugars_g": 10.8,
+      "fibre_g": 10.8,
+      "sodium_mg": 887,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004134?orderType=106",
+      "leave_off": [
+        {
+          "name": "vegan cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "vegan mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "vegan-beyond-mustard-pickled",
+      "name": "Vegan Beyond Mustard & Pickled",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 288,
+      "kj": 1930,
+      "protein_g": 24.7,
+      "fat_g": 18.4,
+      "sat_fat_g": 6.1,
+      "carbs_g": 47.8,
+      "sugars_g": 8.3,
+      "fibre_g": 0.0,
+      "sodium_mg": 996,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003902?orderType=106",
+      "leave_off": [
+        {
+          "name": "vegan cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "vegan-beyond-garden-goodness",
+      "name": "Vegan Beyond Garden Goodness",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 335,
+      "kj": 2480,
+      "protein_g": 25.6,
+      "fat_g": 30.4,
+      "sat_fat_g": 7.2,
+      "carbs_g": 54.3,
+      "sugars_g": 12.4,
+      "fibre_g": 0.0,
+      "sodium_mg": 742,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1001583?orderType=106",
+      "leave_off": [
+        {
+          "name": "vegan cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "vegan mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "vegan-garden-goodness",
+      "name": "Vegan Garden Goodness",
+      "category": "Burgers",
+      "serving": "1 burger (default Panini bun)",
+      "grams": 320,
+      "kj": 2240,
+      "protein_g": 12.2,
+      "fat_g": 28.4,
+      "sat_fat_g": 5.6,
+      "carbs_g": 53.2,
+      "sugars_g": 14.1,
+      "fibre_g": 13.1,
+      "sodium_mg": 858,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1002855?orderType=106",
+      "leave_off": [
+        {
+          "name": "vegan cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "vegan mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-slider",
+      "name": "Classic Slider",
+      "category": "Burgers",
+      "serving": "1 slider",
+      "grams": 129,
+      "kj": 1350,
+      "protein_g": 16.7,
+      "fat_g": 18.5,
+      "sat_fat_g": 5.3,
+      "carbs_g": 19.3,
+      "sugars_g": 3.6,
+      "fibre_g": 5.0,
+      "sodium_mg": 736,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/3200?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "vintage-slider",
+      "name": "Vintage Slider",
+      "category": "Burgers",
+      "serving": "1 slider",
+      "grams": 125,
+      "kj": 1460,
+      "protein_g": 18.5,
+      "fat_g": 20.5,
+      "sat_fat_g": 7.5,
+      "carbs_g": 20.3,
+      "sugars_g": 4.5,
+      "fibre_g": 5.0,
+      "sodium_mg": 621,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/3200?orderType=106",
+      "leave_off": [
+        {
+          "name": "aged cheddar",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "relish",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "brie-chick-slider",
+      "name": "Brie Chick Slider",
+      "category": "Burgers",
+      "serving": "1 slider",
+      "grams": 135,
+      "kj": 1300,
+      "protein_g": 23.0,
+      "fat_g": 13.8,
+      "sat_fat_g": 3.9,
+      "carbs_g": 20.8,
+      "sugars_g": 5.4,
+      "fibre_g": 5.3,
+      "sodium_mg": 313,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/3200?orderType=106",
+      "leave_off": [
+        {
+          "name": "brie cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "cranberry sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "herbed mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "tender-lovin-slider",
+      "name": "Tender Lovin' Slider",
+      "category": "Burgers",
+      "serving": "1 slider",
+      "grams": 132,
+      "kj": 1610,
+      "protein_g": 14.6,
+      "fat_g": 22.9,
+      "sat_fat_g": 2.0,
+      "carbs_g": 27.4,
+      "sugars_g": 2.1,
+      "fibre_g": 5.7,
+      "sodium_mg": 622,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/3200?orderType=106",
+      "leave_off": [
+        {
+          "name": "chipotle mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "lil-caesar-slider",
+      "name": "Lil Caesar Slider",
+      "category": "Burgers",
+      "serving": "1 slider",
+      "grams": 147,
+      "kj": 1510,
+      "protein_g": 26.2,
+      "fat_g": 19.8,
+      "sat_fat_g": 3.3,
+      "carbs_g": 17.1,
+      "sugars_g": 1.7,
+      "fibre_g": 5.5,
+      "sodium_mg": 432,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/3200?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "parmesan cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "Caesar dressing",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "snack-slider",
+      "name": "Snack Slider",
+      "category": "Burgers",
+      "serving": "1 slider",
+      "grams": 130,
+      "kj": 1390,
+      "protein_g": 20.2,
+      "fat_g": 17.3,
+      "sat_fat_g": 8.2,
+      "carbs_g": 20.5,
+      "sugars_g": 4.9,
+      "fibre_g": 4.9,
+      "sodium_mg": 883,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003078?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "the-classic",
+      "name": "The Classic",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": 270,
+      "kj": 2170,
+      "protein_g": 24.2,
+      "fat_g": 28.6,
+      "sat_fat_g": 4.2,
+      "carbs_g": 38.9,
+      "sugars_g": 3.6,
+      "fibre_g": 5.0,
+      "sodium_mg": 881,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004100?orderType=106",
+      "leave_off": [
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "bacon-club",
+      "name": "Bacon Club",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": 336,
+      "kj": 2950,
+      "protein_g": 49.8,
+      "fat_g": 36.3,
+      "sat_fat_g": 8.6,
+      "carbs_g": 41.5,
+      "sugars_g": 4.6,
+      "fibre_g": 9.8,
+      "sodium_mg": 916,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004094?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "aged cheddar",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "Green Goddess dressing",
+          "kind": "dressing",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "cali-green-goddess",
+      "name": "Cali Green Goddess",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": 333,
+      "kj": 2050,
+      "protein_g": 42.5,
+      "fat_g": 17.3,
+      "sat_fat_g": 4.2,
+      "carbs_g": 39.6,
+      "sugars_g": 6.8,
+      "fibre_g": 9.5,
+      "sodium_mg": 519,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004093?orderType=106",
+      "leave_off": [
+        {
+          "name": "Green Goddess dressing",
+          "kind": "dressing",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "golden-caesar",
+      "name": "Golden Caesar",
+      "category": "Wraps & rolls",
+      "serving": "1 wrap",
+      "grams": 313,
+      "kj": 2750,
+      "protein_g": 34.7,
+      "fat_g": 34.1,
+      "sat_fat_g": 8.2,
+      "carbs_g": 48.9,
+      "sugars_g": 4.0,
+      "fibre_g": 7.3,
+      "sodium_mg": 891,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004095?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "parmesan cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "Caesar dressing",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "hfc-original-pocket-rocket",
+      "name": "HFC Original Pocket Rocket",
+      "category": "Wraps & rolls",
+      "serving": "1 pita pocket",
+      "grams": 123,
+      "kj": 1530,
+      "protein_g": 15.8,
+      "fat_g": 16.6,
+      "sat_fat_g": 2.3,
+      "carbs_g": 32.8,
+      "sugars_g": 4.2,
+      "fibre_g": 1.5,
+      "sodium_mg": 904,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003037?orderType=106",
+      "leave_off": [
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "hfc-julius-caesar-pocket-rocket",
+      "name": "HFC Julius Caesar Pocket Rocket",
+      "category": "Wraps & rolls",
+      "serving": "1 pita pocket",
+      "grams": 145,
+      "kj": 1740,
+      "protein_g": 16.6,
+      "fat_g": 24.5,
+      "sat_fat_g": 3.3,
+      "carbs_g": 31.8,
+      "sugars_g": 4.3,
+      "fibre_g": 1.5,
+      "sodium_mg": 560,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003294?orderType=106",
+      "leave_off": [
+        {
+          "name": "parmesan cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "Caesar dressing",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "the-honey-d-hen",
+      "name": "The Honey'd Hen",
+      "category": "Bowls & salads",
+      "serving": "1 salad",
+      "grams": 302,
+      "kj": 1870,
+      "protein_g": 41.2,
+      "fat_g": 20.6,
+      "sat_fat_g": 6.2,
+      "carbs_g": 23.3,
+      "sugars_g": 18.2,
+      "fibre_g": 5.1,
+      "sodium_mg": 605,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003964?orderType=106",
+      "leave_off": [
+        {
+          "name": "goat cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "balsamic vinaigrette",
+          "kind": "dressing",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "honey",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "superpower-salad",
+      "name": "Superpower Salad",
+      "category": "Bowls & salads",
+      "serving": "1 salad",
+      "grams": 380,
+      "kj": 1920,
+      "protein_g": 42.3,
+      "fat_g": 22.4,
+      "sat_fat_g": 3.4,
+      "carbs_g": 21.6,
+      "sugars_g": 9.9,
+      "fibre_g": 8.9,
+      "sodium_mg": 529,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/715?orderType=106",
+      "leave_off": [
+        {
+          "name": "balsamic vinaigrette",
+          "kind": "dressing",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "chicken-caesar-salad",
+      "name": "Chicken Caesar Salad",
+      "category": "Bowls & salads",
+      "serving": "1 salad",
+      "grams": 275,
+      "kj": 2410,
+      "protein_g": 51.1,
+      "fat_g": 33.9,
+      "sat_fat_g": 7.2,
+      "carbs_g": 14.9,
+      "sugars_g": 3.0,
+      "fibre_g": 5.2,
+      "sodium_mg": 688,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/700?orderType=106",
+      "leave_off": [
+        {
+          "name": "crispy bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "parmesan cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "Caesar dressing",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "tenders-3-pack",
+      "name": "Tenders - 3 Pack",
+      "category": "Chicken",
+      "serving": "3 tenders (the chosen dip has its own figures)",
+      "grams": 165,
+      "kj": 1910,
+      "protein_g": 31.2,
+      "fat_g": 21.3,
+      "sat_fat_g": 2.8,
+      "carbs_g": 33.8,
+      "sugars_g": 2.5,
+      "fibre_g": 2.3,
+      "sodium_mg": 858,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003937?orderType=106"
+    },
+    {
+      "id": "tenders-5-pack",
+      "name": "Tenders - 5 Pack",
+      "category": "Chicken",
+      "serving": "5 tenders (the chosen dip has its own figures)",
+      "grams": 275,
+      "kj": 3190,
+      "protein_g": 52.0,
+      "fat_g": 35.5,
+      "sat_fat_g": 4.7,
+      "carbs_g": 56.4,
+      "sugars_g": 4.1,
+      "fibre_g": 3.9,
+      "sodium_mg": 1430,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003938?orderType=106"
+    },
+    {
+      "id": "healthy-fried-chicken-bites-6",
+      "name": "Healthy Fried Chicken Bites - 6",
+      "category": "Chicken",
+      "serving": "6 bites",
+      "grams": 120,
+      "kj": 1090,
+      "protein_g": 23.9,
+      "fat_g": 10.2,
+      "sat_fat_g": 1.7,
+      "carbs_g": 18.0,
+      "sugars_g": 0.6,
+      "fibre_g": 0.6,
+      "sodium_mg": 373,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1002844?orderType=106"
+    },
+    {
+      "id": "healthy-fried-chicken-bites-9",
+      "name": "Healthy Fried Chicken Bites - 9",
+      "category": "Chicken",
+      "serving": "9 bites",
+      "grams": 180,
+      "kj": 1630,
+      "protein_g": 35.8,
+      "fat_g": 15.3,
+      "sat_fat_g": 2.5,
+      "carbs_g": 27.0,
+      "sugars_g": 0.9,
+      "fibre_g": 0.9,
+      "sodium_mg": 560,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1002845?orderType=106"
+    },
+    {
+      "id": "healthy-fried-chicken-bites-12",
+      "name": "Healthy Fried Chicken Bites - 12",
+      "category": "Chicken",
+      "serving": "12 bites",
+      "grams": 240,
+      "kj": 2180,
+      "protein_g": 47.8,
+      "fat_g": 20.4,
+      "sat_fat_g": 3.4,
+      "carbs_g": 36.0,
+      "sugars_g": 1.2,
+      "fibre_g": 1.2,
+      "sodium_mg": 746,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003055?orderType=106"
+    },
+    {
+      "id": "famous-grill-d-chips-snack",
+      "name": "Famous Grill'd Chips - Snack",
+      "category": "Sides",
+      "serving": "1 snack serve",
+      "grams": 140,
+      "kj": 1400,
+      "protein_g": 2.4,
+      "fat_g": 15.8,
+      "sat_fat_g": 1.5,
+      "carbs_g": 39.8,
+      "sugars_g": 0.4,
+      "fibre_g": 3.8,
+      "sodium_mg": 453,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/2001?orderType=106"
+    },
+    {
+      "id": "famous-grill-d-chips-regular",
+      "name": "Famous Grill'd Chips - Regular",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 246,
+      "kj": 2460,
+      "protein_g": 4.1,
+      "fat_g": 27.8,
+      "sat_fat_g": 2.7,
+      "carbs_g": 69.6,
+      "sugars_g": 0.7,
+      "fibre_g": 6.6,
+      "sodium_mg": 696,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/2000?orderType=106"
+    },
+    {
+      "id": "sweet-potato-chips-mini",
+      "name": "Sweet Potato Chips - Mini",
+      "category": "Sides",
+      "serving": "1 mini serve",
+      "grams": 86,
+      "kj": 920,
+      "protein_g": 1.4,
+      "fat_g": 11.8,
+      "sat_fat_g": 1.6,
+      "carbs_g": 25.5,
+      "sugars_g": 12.3,
+      "fibre_g": 3.0,
+      "sodium_mg": 619,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/3301?orderType=106"
+    },
+    {
+      "id": "sweet-potato-chips-regular",
+      "name": "Sweet Potato Chips - Regular",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 180,
+      "kj": 1930,
+      "protein_g": 2.9,
+      "fat_g": 24.7,
+      "sat_fat_g": 3.4,
+      "carbs_g": 53.3,
+      "sugars_g": 25.7,
+      "fibre_g": 6.3,
+      "sodium_mg": 1090,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/3302?orderType=106"
+    },
+    {
+      "id": "zucchini-chips-mini",
+      "name": "Zucchini Chips - Mini",
+      "category": "Sides",
+      "serving": "1 mini serve",
+      "grams": 134,
+      "kj": 1150,
+      "protein_g": 3.5,
+      "fat_g": 12.2,
+      "sat_fat_g": 1.0,
+      "carbs_g": 36.1,
+      "sugars_g": 2.2,
+      "fibre_g": 1.6,
+      "sodium_mg": 429,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1000893?orderType=106"
+    },
+    {
+      "id": "zucchini-chips-regular",
+      "name": "Zucchini Chips - Regular",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 294,
+      "kj": 2530,
+      "protein_g": 7.7,
+      "fat_g": 26.9,
+      "sat_fat_g": 2.1,
+      "carbs_g": 79.5,
+      "sugars_g": 4.9,
+      "fibre_g": 3.5,
+      "sodium_mg": 945,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1000894?orderType=106"
+    },
+    {
+      "id": "saltbush-pepper-onion-rings-snack",
+      "name": "Saltbush & Pepper Onion Rings - Snack",
+      "category": "Sides",
+      "serving": "1 snack serve",
+      "grams": 55,
+      "kj": 870,
+      "protein_g": 1.3,
+      "fat_g": 13.1,
+      "sat_fat_g": 2.1,
+      "carbs_g": 22.9,
+      "sugars_g": 2.8,
+      "fibre_g": 1.5,
+      "sodium_mg": 120,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1002848?orderType=106"
+    },
+    {
+      "id": "saltbush-pepper-onion-rings-regular",
+      "name": "Saltbush & Pepper Onion Rings - Regular",
+      "category": "Sides",
+      "serving": "1 regular serve",
+      "grams": 90,
+      "kj": 1390,
+      "protein_g": 2.2,
+      "fat_g": 21.1,
+      "sat_fat_g": 3.4,
+      "carbs_g": 37.5,
+      "sugars_g": 4.5,
+      "fibre_g": 2.5,
+      "sodium_mg": 197,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1002857?orderType=106"
+    },
+    {
+      "id": "chips-share-plate-w-sweet-potato-zucchini",
+      "name": "Chips Share Plate w/ Sweet Potato & Zucchini",
+      "category": "Sides",
+      "serving": "1 share plate (the 3 chosen dips have their own figures)",
+      "grams": 360,
+      "kj": 3470,
+      "protein_g": 7.3,
+      "fat_g": 39.8,
+      "sat_fat_g": 4.1,
+      "carbs_g": 101.4,
+      "sugars_g": 14.9,
+      "fibre_g": 8.4,
+      "sodium_mg": 1501,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1000677?orderType=106"
+    },
+    {
+      "id": "beef-mini-me-pack-with-water",
+      "name": "Beef Mini Me Pack with Water",
+      "category": "Kids",
+      "serving": "1 pack",
+      "grams": 216,
+      "kj": 2310,
+      "protein_g": 19.6,
+      "fat_g": 25.4,
+      "sat_fat_g": 6.9,
+      "carbs_g": 49.6,
+      "sugars_g": 4.2,
+      "fibre_g": 7.5,
+      "sodium_mg": 713,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/118?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "chicken-mini-me-pack-with-water",
+      "name": "Chicken Mini Me Pack with Water",
+      "category": "Kids",
+      "serving": "1 pack",
+      "grams": 216,
+      "kj": 2010,
+      "protein_g": 26.8,
+      "fat_g": 17.5,
+      "sat_fat_g": 3.0,
+      "carbs_g": 49.2,
+      "sugars_g": 3.8,
+      "fibre_g": 8.1,
+      "sodium_mg": 499,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/212?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "veggie-mini-me-pack-with-water",
+      "name": "Veggie Mini Me Pack with Water",
+      "category": "Kids",
+      "serving": "1 pack",
+      "grams": 216,
+      "kj": 1980,
+      "protein_g": 11.0,
+      "fat_g": 19.9,
+      "sat_fat_g": 2.8,
+      "carbs_g": 57.5,
+      "sugars_g": 5.5,
+      "fibre_g": 9.7,
+      "sodium_mg": 708,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1001337?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "mini-me-chicken-bites-with-water",
+      "name": "Mini Me Chicken Bites with Water",
+      "category": "Kids",
+      "serving": "1 pack",
+      "grams": 210,
+      "kj": 1980,
+      "protein_g": 27.3,
+      "fat_g": 18.6,
+      "sat_fat_g": 2.9,
+      "carbs_g": 47.4,
+      "sugars_g": 0.9,
+      "fibre_g": 5.7,
+      "sodium_mg": 552,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1002868?orderType=106"
+    },
+    {
+      "id": "beef-dynamic",
+      "name": "Beef Dynamic",
+      "category": "Kids",
+      "serving": "1 meal (burger and snack chips)",
+      "grams": 395,
+      "kj": 4050,
+      "protein_g": 31.1,
+      "fat_g": 51.7,
+      "sat_fat_g": 11.9,
+      "carbs_g": 71.4,
+      "sugars_g": 7.3,
+      "fibre_g": 12.0,
+      "sodium_mg": 1473,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1000801?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "chicken-dynamic",
+      "name": "Chicken Dynamic",
+      "category": "Kids",
+      "serving": "1 meal (burger and snack chips)",
+      "grams": 395,
+      "kj": 3470,
+      "protein_g": 44.7,
+      "fat_g": 36.7,
+      "sat_fat_g": 4.6,
+      "carbs_g": 70.7,
+      "sugars_g": 6.6,
+      "fibre_g": 13.1,
+      "sodium_mg": 1075,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1000803?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "veggie-dynamic",
+      "name": "Veggie Dynamic",
+      "category": "Kids",
+      "serving": "1 meal (burger and snack chips)",
+      "grams": 400,
+      "kj": 3470,
+      "protein_g": 15.2,
+      "fat_g": 41.7,
+      "sat_fat_g": 4.3,
+      "carbs_g": 87.5,
+      "sugars_g": 10.0,
+      "fibre_g": 16.5,
+      "sodium_mg": 1493,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1002856?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "egg mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "dynamic-beef-cheeseburger",
+      "name": "Dynamic Beef Cheeseburger",
+      "category": "Kids",
+      "serving": "1 meal (burger and snack chips)",
+      "grams": 330,
+      "kj": 3570,
+      "protein_g": 30.5,
+      "fat_g": 40.4,
+      "sat_fat_g": 11.1,
+      "carbs_g": 67.8,
+      "sugars_g": 5.2,
+      "fibre_g": 10.8,
+      "sodium_mg": 1384,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003007?orderType=106",
+      "leave_off": [
+        {
+          "name": "tasty cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
+    },
+    {
+      "id": "classic-chocolate",
+      "name": "Classic Chocolate",
+      "category": "Drinks",
+      "serving": "1 regular shake",
+      "grams": 360,
+      "kj": 2330,
+      "protein_g": 11.4,
+      "fat_g": 21.0,
+      "sat_fat_g": 13.1,
+      "carbs_g": 78.7,
+      "sugars_g": 73.8,
+      "fibre_g": null,
+      "sodium_mg": 206,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003927?orderType=106"
+    },
+    {
+      "id": "velvety-vanilla",
+      "name": "Velvety Vanilla",
+      "category": "Drinks",
+      "serving": "1 regular shake",
+      "grams": 334,
+      "kj": 1940,
+      "protein_g": 10.1,
+      "fat_g": 16.7,
+      "sat_fat_g": 11.7,
+      "carbs_g": 66.5,
+      "sugars_g": 62.2,
+      "fibre_g": null,
+      "sodium_mg": 189,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003928?orderType=106"
+    },
+    {
+      "id": "salted-caramel",
+      "name": "Salted Caramel",
+      "category": "Drinks",
+      "serving": "1 regular shake",
+      "grams": 361,
+      "kj": 2290,
+      "protein_g": 12.1,
+      "fat_g": 20.7,
+      "sat_fat_g": 13.4,
+      "carbs_g": 76.9,
+      "sugars_g": 70.5,
+      "fibre_g": null,
+      "sodium_mg": 565,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003946?orderType=106"
+    },
+    {
+      "id": "silky-strawberry",
+      "name": "Silky Strawberry",
+      "category": "Drinks",
+      "serving": "1 regular shake",
+      "grams": 353,
+      "kj": 2130,
+      "protein_g": 10.1,
+      "fat_g": 16.7,
+      "sat_fat_g": 11.7,
+      "carbs_g": 78.3,
+      "sugars_g": 73.8,
+      "fibre_g": null,
+      "sodium_mg": 194,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004017?orderType=106"
+    },
+    {
+      "id": "bananarama-shake",
+      "name": "Bananarama Shake",
+      "category": "Drinks",
+      "serving": "1 regular shake",
+      "grams": 345,
+      "kj": 2040,
+      "protein_g": 10.1,
+      "fat_g": 16.7,
+      "sat_fat_g": 11.7,
+      "carbs_g": 72.8,
+      "sugars_g": 69.3,
+      "fibre_g": null,
+      "sodium_mg": 190,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004136?orderType=106"
+    },
+    {
+      "id": "mini-classic-chocolate",
+      "name": "Mini Classic Chocolate",
+      "category": "Drinks",
+      "serving": "1 mini shake",
+      "grams": 209,
+      "kj": 1359,
+      "protein_g": 6.7,
+      "fat_g": 12.1,
+      "sat_fat_g": 7.5,
+      "carbs_g": 45.8,
+      "sugars_g": 43.1,
+      "fibre_g": null,
+      "sodium_mg": 120,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004087?orderType=106"
+    },
+    {
+      "id": "mini-velvety-vanilla",
+      "name": "Mini Velvety Vanilla",
+      "category": "Drinks",
+      "serving": "1 mini shake",
+      "grams": 208,
+      "kj": 1209,
+      "protein_g": 6.2,
+      "fat_g": 10.4,
+      "sat_fat_g": 7.3,
+      "carbs_g": 41.4,
+      "sugars_g": 38.7,
+      "fibre_g": null,
+      "sodium_mg": 117.7,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004089?orderType=106"
+    },
+    {
+      "id": "mini-salted-caramel",
+      "name": "Mini Salted Caramel",
+      "category": "Drinks",
+      "serving": "1 mini shake",
+      "grams": 209,
+      "kj": 1328,
+      "protein_g": 7.1,
+      "fat_g": 11.9,
+      "sat_fat_g": 7.7,
+      "carbs_g": 44.5,
+      "sugars_g": 40.8,
+      "fibre_g": null,
+      "sodium_mg": 565,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004090?orderType=106"
+    },
+    {
+      "id": "mini-silky-strawberry",
+      "name": "Mini Silky Strawberry",
+      "category": "Drinks",
+      "serving": "1 mini shake",
+      "grams": 209,
+      "kj": 1263,
+      "protein_g": 6.1,
+      "fat_g": 9.8,
+      "sat_fat_g": 6.9,
+      "carbs_g": 46.4,
+      "sugars_g": 43.7,
+      "fibre_g": null,
+      "sodium_mg": 115,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004088?orderType=106"
+    },
+    {
+      "id": "mini-bananarama",
+      "name": "Mini Bananarama",
+      "category": "Drinks",
+      "serving": "1 mini shake",
+      "grams": 200,
+      "kj": 1170,
+      "protein_g": 5.9,
+      "fat_g": 9.8,
+      "sat_fat_g": 6.8,
+      "carbs_g": 41.2,
+      "sugars_g": 39.4,
+      "fibre_g": null,
+      "sodium_mg": 110,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1004137?orderType=106"
+    },
+    {
+      "id": "herbed-mayo-dip",
+      "name": "Herbed Mayo Dip",
+      "category": "Sauces",
+      "serving": "1 dip pot",
+      "grams": 20,
+      "kj": 510,
+      "protein_g": 0.4,
+      "fat_g": 12.8,
+      "sat_fat_g": 0.8,
+      "carbs_g": 1.5,
+      "sugars_g": 0.1,
+      "fibre_g": null,
+      "sodium_mg": 111,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/2100?orderType=106"
+    },
+    {
+      "id": "sweet-chilli-mayo-dip",
+      "name": "Sweet Chilli Mayo Dip",
+      "category": "Sauces",
+      "serving": "1 dip pot",
+      "grams": 18,
+      "kj": 460,
+      "protein_g": 0.2,
+      "fat_g": 10.9,
+      "sat_fat_g": 0.7,
+      "carbs_g": 2.9,
+      "sugars_g": 0.1,
+      "fibre_g": null,
+      "sodium_mg": 123,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/2101?orderType=106"
+    },
+    {
+      "id": "chipotle-mayo-dip",
+      "name": "Chipotle Mayo Dip",
+      "category": "Sauces",
+      "serving": "1 dip pot",
+      "grams": 19,
+      "kj": 480,
+      "protein_g": 0.3,
+      "fat_g": 12.2,
+      "sat_fat_g": 0.9,
+      "carbs_g": 1.2,
+      "sugars_g": 0.1,
+      "fibre_g": null,
+      "sodium_mg": 118,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1000567?orderType=106"
+    },
+    {
+      "id": "tomato-relish-dip",
+      "name": "Tomato Relish Dip",
+      "category": "Sauces",
+      "serving": "1 dip pot",
+      "grams": null,
+      "kj": 110,
+      "protein_g": 0.1,
+      "fat_g": 0.2,
+      "sat_fat_g": 0.0,
+      "carbs_g": 5.4,
+      "sugars_g": 4.5,
+      "fibre_g": null,
+      "sodium_mg": 67,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/2102?orderType=106"
+    },
+    {
+      "id": "perfectly-pickl-d-mayo-deluxe-dip",
+      "name": "Perfectly Pickl'd Mayo Deluxe Dip",
+      "category": "Sauces",
+      "serving": "1 dip pot",
+      "grams": 50,
+      "kj": 980,
+      "protein_g": 0.7,
+      "fat_g": 22.4,
+      "sat_fat_g": 1.7,
+      "carbs_g": 7.9,
+      "sugars_g": 6.7,
+      "fibre_g": null,
+      "sodium_mg": 468,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003943?orderType=106"
+    },
+    {
+      "id": "golden-katsu-mayo-deluxe-dip",
+      "name": "Golden Katsu Mayo Deluxe Dip",
+      "category": "Sauces",
+      "serving": "1 dip pot",
+      "grams": 50,
+      "kj": 800,
+      "protein_g": 0.6,
+      "fat_g": 20.0,
+      "sat_fat_g": 1.5,
+      "carbs_g": 2.5,
+      "sugars_g": 0.9,
+      "fibre_g": null,
+      "sodium_mg": 280,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003942?orderType=106"
+    },
+    {
+      "id": "sweet-habanero-deluxe-dip",
+      "name": "Sweet Habanero Deluxe Dip",
+      "category": "Sauces",
+      "serving": "1 dip pot",
+      "grams": 50,
+      "kj": 765,
+      "protein_g": 0.3,
+      "fat_g": 15.1,
+      "sat_fat_g": 1.2,
+      "carbs_g": 11.4,
+      "sugars_g": 9.6,
+      "fibre_g": null,
+      "sodium_mg": 302,
+      "source_url": "https://api.digital.grilld.com.au/v1/restaurants/2/menu/1003939?orderType=106"
+    }
+  ]
+}
