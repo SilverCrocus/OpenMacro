@@ -80,6 +80,9 @@ try {
 enum Phase {
     #[default]
     Camera,
+    /// A photo is taken or chosen. It isn't sent until the user says so,
+    /// so they can first add what the camera can't see.
+    Review,
     /// Waiting for the model.
     Asking,
     /// The model's foods are on the plate.
@@ -103,6 +106,9 @@ struct Round {
     plate_ids: Vec<String>,
     /// The correction being sent, to try again after a failure.
     correction: Option<String>,
+    /// The [`Plate::number`](crate::state::Plate) of the plate this meal is
+    /// for. Once that plate is logged or discarded, the meal is finished.
+    plate: u32,
 }
 
 static ROUND: GlobalSignal<Round> = Signal::global(Round::default);
@@ -129,6 +135,10 @@ fn camera_problem(name: &str) -> String {
 /// asks again with its earlier answer. Its foods replace the ones its
 /// earlier answer put on the plate.
 fn ask(state: AppState, correction: Option<String>) {
+    // One request at a time: a quick second tap doesn't send it again.
+    if ROUND.peek().phase == Phase::Asking {
+        return;
+    }
     let (photo, note, previous) = {
         let mut round = ROUND.write();
         round.phase = Phase::Asking;
@@ -144,6 +154,16 @@ fn ask(state: AppState, correction: Option<String>) {
         let bytes = photo.as_deref().and_then(jpeg_bytes);
         let result = ai::estimate(bytes, note).await;
         let mut round = ROUND.write();
+        // The plate was logged or discarded while waiting: the answer is
+        // for a meal that's finished, so it isn't added to the next one.
+        let number = state.plate.peek().number;
+        if round.plate != number {
+            *round = Round {
+                plate: number,
+                ..Round::default()
+            };
+            return;
+        }
         match result {
             Ok(estimate) if estimate.items.is_empty() => {
                 round.phase =
@@ -172,7 +192,18 @@ fn ask(state: AppState, correction: Option<String>) {
 
 /// Starts a new meal: the camera, with nothing written yet.
 fn start_over() {
-    *ROUND.write() = Round::default();
+    let mut round = ROUND.write();
+    *round = Round {
+        plate: round.plate,
+        ..Round::default()
+    };
+}
+
+/// Holds a new photo for the user to add details to before it's sent.
+fn review(photo: String) {
+    let mut round = ROUND.write();
+    round.photo = Some(photo);
+    round.phase = Phase::Review;
 }
 
 #[component]
@@ -180,18 +211,32 @@ pub fn AiTab() -> Element {
     let state = use_context::<AppState>();
     let mut correction = use_signal(String::new);
 
-    // A meal that's been logged (or taken off the plate) is finished.
+    // A meal is finished once its plate has been logged or discarded, or
+    // its foods taken off the plate. A photo or note left unsent goes too.
     use_hook(move || {
-        let on_plate = {
+        let (number, on_plate) = {
             let plate = state.plate.read();
             let round = ROUND.peek();
-            plate.items.iter().any(|i| {
+            let on_plate = plate.items.iter().any(|i| {
                 i.food_id
                     .as_ref()
                     .is_some_and(|id| round.plate_ids.contains(id))
-            })
+            });
+            (plate.number, on_plate)
         };
-        if ROUND.peek().phase == Phase::Added && !on_plate {
+        let (phase, plate) = {
+            let round = ROUND.peek();
+            (round.phase.clone(), round.plate)
+        };
+        if phase == Phase::Asking {
+            return;
+        }
+        if plate != number {
+            *ROUND.write() = Round {
+                plate: number,
+                ..Round::default()
+            };
+        } else if phase == Phase::Added && !on_plate {
             start_over();
         }
     });
@@ -222,11 +267,36 @@ pub fn AiTab() -> Element {
     rsx! {
         match round.phase.clone() {
             Phase::Camera => rsx! {
-                Camera {
-                    on_photo: move |photo| {
-                        ROUND.write().photo = Some(photo);
-                        ask(state, None);
-                    },
+                Camera { on_photo: review }
+            },
+            Phase::Review => rsx! {
+                if let Some(photo) = &round.photo {
+                    div { class: "ai-view",
+                        img { src: "{photo}", alt: "Your photo" }
+                    }
+                }
+                label { class: "field ai-note",
+                    span { "Add details to help the AI (optional)" }
+                    textarea {
+                        rows: "2",
+                        placeholder: "e.g. it's a peanut curry; about 200 g of rice; fried in butter",
+                        value: "{round.note}",
+                        oninput: move |e| ROUND.write().note = e.value(),
+                    }
+                }
+                div { class: "button-row",
+                    button { class: "primary", onclick: move |_| ask(state, None), "Analyse photo" }
+                    button {
+                        onclick: move |_| {
+                            let mut round = ROUND.write();
+                            round.photo = None;
+                            round.phase = Phase::Camera;
+                        },
+                        "Retake"
+                    }
+                }
+                p { class: "muted small",
+                    "Sent to {service} to estimate the foods and amounts."
                 }
             },
             Phase::Asking => rsx! {
@@ -278,15 +348,19 @@ pub fn AiTab() -> Element {
                     button { class: "primary", onclick: move |_| ask(state, ROUND.peek().correction.clone()), "Try again" }
                     button {
                         onclick: move |_| {
-                            // A failed correction goes back to the answer it was correcting.
+                            // Back to where it was sent from, with what was
+                            // written kept: the answer a correction was
+                            // correcting, the photo's review, or the camera.
                             let mut round = ROUND.write();
-                            if round.correction.take().is_some() && !round.items.is_empty() {
-                                round.phase = Phase::Added;
+                            round.phase = if round.correction.take().is_some() && !round.items.is_empty() {
+                                Phase::Added
+                            } else if round.photo.is_some() {
+                                Phase::Review
                             } else {
-                                *round = Round::default();
-                            }
+                                Phase::Camera
+                            };
                         },
-                        if round.correction.is_some() && !round.items.is_empty() { "Back" } else { "Start over" }
+                        "Back"
                     }
                 }
             },
@@ -306,8 +380,7 @@ pub fn AiTab() -> Element {
                     onclick: move |_| {
                         spawn(async move {
                             if let Ok(Value::String(photo)) = document::eval(PICK_PHOTO_JS).await {
-                                ROUND.write().photo = Some(photo);
-                                ask(state, None);
+                                review(photo);
                             }
                         });
                     },
