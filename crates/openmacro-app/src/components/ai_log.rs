@@ -211,14 +211,18 @@ fn send_correction(state: AppState) {
     }
 }
 
-/// Whether the AI tab has something for the user to send: a photo to
-/// analyse, or a correction. Its button then takes the footer's main
-/// place from Log, so that what's just been written isn't logged by
-/// mistake instead of sent.
+/// Whether the AI tab has something for the user to send (a photo to
+/// analyse, or a correction) or is sending it. Its button then takes the
+/// footer's main place from Log, so that what's just been written isn't
+/// logged by mistake instead of sent. While sending, the button stays
+/// (disabled), so a second tap doesn't land on Log.
 pub fn pending() -> bool {
+    if !ai::ready() {
+        return false;
+    }
     let round = ROUND.read();
     match round.phase {
-        Phase::Review => true,
+        Phase::Review | Phase::Asking => true,
         Phase::Added => !round.draft.trim().is_empty(),
         _ => false,
     }
@@ -228,13 +232,21 @@ pub fn pending() -> bool {
 #[component]
 pub fn PendingAction() -> Element {
     let state = use_context::<AppState>();
-    let phase = ROUND.read().phase.clone();
+    let (phase, correcting) = {
+        let round = ROUND.read();
+        (round.phase.clone(), round.correction.is_some())
+    };
     match phase {
         Phase::Review => rsx! {
             button { class: "primary", onclick: move |_| ask(state, None), "Analyse photo" }
         },
         Phase::Added => rsx! {
             button { class: "primary", onclick: move |_| send_correction(state), "Update" }
+        },
+        Phase::Asking => rsx! {
+            button { class: "primary", disabled: true,
+                if correcting { "Updating…" } else { "Analysing…" }
+            }
         },
         _ => rsx! {},
     }
@@ -379,7 +391,10 @@ pub fn AiTab() -> Element {
                             // written kept: the answer a correction was
                             // correcting, the photo's review, or the camera.
                             let mut round = ROUND.write();
-                            round.phase = if round.correction.take().is_some() && !round.items.is_empty() {
+                            let correction = round.correction.take();
+                            round.phase = if let Some(correction) = correction.filter(|_| !round.items.is_empty()) {
+                                // The correction goes back in its box, to change or send again.
+                                round.draft = correction;
                                 Phase::Added
                             } else if round.photo.is_some() {
                                 Phase::Review
