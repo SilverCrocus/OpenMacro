@@ -109,6 +109,9 @@ struct Round {
     /// The [`Plate::number`](crate::state::Plate) of the plate this meal is
     /// for. Once that plate is logged or discarded, the meal is finished.
     plate: u32,
+    /// A correction being written. Kept here so the sheet's footer can
+    /// offer to send it.
+    draft: String,
 }
 
 static ROUND: GlobalSignal<Round> = Signal::global(Round::default);
@@ -199,6 +202,44 @@ fn start_over() {
     };
 }
 
+/// Sends the correction being written.
+fn send_correction(state: AppState) {
+    let draft = std::mem::take(&mut ROUND.write().draft);
+    let draft = draft.trim();
+    if !draft.is_empty() {
+        ask(state, Some(draft.to_string()));
+    }
+}
+
+/// Whether the AI tab has something for the user to send: a photo to
+/// analyse, or a correction. Its button then takes the footer's main
+/// place from Log, so that what's just been written isn't logged by
+/// mistake instead of sent.
+pub fn pending() -> bool {
+    let round = ROUND.read();
+    match round.phase {
+        Phase::Review => true,
+        Phase::Added => !round.draft.trim().is_empty(),
+        _ => false,
+    }
+}
+
+/// The footer's button for what [`pending`] found.
+#[component]
+pub fn PendingAction() -> Element {
+    let state = use_context::<AppState>();
+    let phase = ROUND.read().phase.clone();
+    match phase {
+        Phase::Review => rsx! {
+            button { class: "primary", onclick: move |_| ask(state, None), "Analyse photo" }
+        },
+        Phase::Added => rsx! {
+            button { class: "primary", onclick: move |_| send_correction(state), "Update" }
+        },
+        _ => rsx! {},
+    }
+}
+
 /// Holds a new photo for the user to add details to before it's sent.
 fn review(photo: String) {
     let mut round = ROUND.write();
@@ -209,7 +250,6 @@ fn review(photo: String) {
 #[component]
 pub fn AiTab() -> Element {
     let state = use_context::<AppState>();
-    let mut correction = use_signal(String::new);
 
     // A meal is finished once its plate has been logged or discarded, or
     // its foods taken off the plate. A photo or note left unsent goes too.
@@ -285,7 +325,7 @@ pub fn AiTab() -> Element {
                     }
                 }
                 div { class: "button-row",
-                    button { class: "primary", onclick: move |_| ask(state, None), "Analyse photo" }
+                    // "Analyse photo" is in the sheet's footer (see PendingAction).
                     button {
                         onclick: move |_| {
                             let mut round = ROUND.write();
@@ -319,27 +359,14 @@ pub fn AiTab() -> Element {
                     textarea {
                         rows: "2",
                         placeholder: "e.g. it was a peanut curry, not chickpea; no rice",
-                        value: "{correction}",
-                        oninput: move |e| correction.set(e.value()),
+                        value: "{round.draft}",
+                        oninput: move |e| ROUND.write().draft = e.value(),
                     }
                 }
                 div { class: "button-row",
-                    button {
-                        class: "primary",
-                        disabled: correction().trim().is_empty(),
-                        onclick: move |_| {
-                            ask(state, Some(correction().trim().to_string()));
-                            correction.set(String::new());
-                        },
-                        "Update"
-                    }
-                    button {
-                        onclick: move |_| {
-                            correction.set(String::new());
-                            start_over();
-                        },
-                        "Another meal"
-                    }
+                    // Once something's written, "Update" is in the sheet's
+                    // footer (see PendingAction).
+                    button { onclick: move |_| start_over(), "Another meal" }
                 }
             },
             Phase::Failed(message) => rsx! {
