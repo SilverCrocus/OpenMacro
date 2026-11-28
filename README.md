@@ -89,7 +89,7 @@ Most calorie apps give you a target from a formula and leave it there. OpenMacro
 
 ## AI logging
 
-Take a photo of your meal, or just describe it ("two eggs on toast with butter"). The AI lists the foods with their weights and puts them on your plate to check before you log. If something's wrong, tell it in plain words, such as "it was a peanut curry, not chickpea", and it looks again.
+Take a photo of your meal and, if you like, add what the camera can't see ("cooked in butter", "about 200 g of rice") before it's sent. Or just describe it ("two eggs on toast with butter"). The AI lists the foods with their weights and puts them on your plate to check before you log. If something's wrong, tell it in plain words, such as "it was a peanut curry, not chickpea", and it looks again.
 
 **Bring your own key.** Use any of these:
 - **Google Gemini:** free tier available.

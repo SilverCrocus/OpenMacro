@@ -80,6 +80,9 @@ try {
 enum Phase {
     #[default]
     Camera,
+    /// A photo is taken or chosen. It isn't sent until the user says so,
+    /// so they can first add what the camera can't see.
+    Review,
     /// Waiting for the model.
     Asking,
     /// The model's foods are on the plate.
@@ -175,6 +178,13 @@ fn start_over() {
     *ROUND.write() = Round::default();
 }
 
+/// Holds a new photo for the user to add details to before it's sent.
+fn review(photo: String) {
+    let mut round = ROUND.write();
+    round.photo = Some(photo);
+    round.phase = Phase::Review;
+}
+
 #[component]
 pub fn AiTab() -> Element {
     let state = use_context::<AppState>();
@@ -222,11 +232,36 @@ pub fn AiTab() -> Element {
     rsx! {
         match round.phase.clone() {
             Phase::Camera => rsx! {
-                Camera {
-                    on_photo: move |photo| {
-                        ROUND.write().photo = Some(photo);
-                        ask(state, None);
-                    },
+                Camera { on_photo: review }
+            },
+            Phase::Review => rsx! {
+                if let Some(photo) = &round.photo {
+                    div { class: "ai-view",
+                        img { src: "{photo}", alt: "Your photo" }
+                    }
+                }
+                label { class: "field ai-note",
+                    span { "Add details to help the AI (optional)" }
+                    textarea {
+                        rows: "2",
+                        placeholder: "e.g. it's a peanut curry; about 200 g of rice; fried in butter",
+                        value: "{round.note}",
+                        oninput: move |e| ROUND.write().note = e.value(),
+                    }
+                }
+                div { class: "button-row",
+                    button { class: "primary", onclick: move |_| ask(state, None), "Analyse photo" }
+                    button {
+                        onclick: move |_| {
+                            let mut round = ROUND.write();
+                            round.photo = None;
+                            round.phase = Phase::Camera;
+                        },
+                        "Retake"
+                    }
+                }
+                p { class: "muted small",
+                    "Sent to {service} to estimate the foods and amounts."
                 }
             },
             Phase::Asking => rsx! {
@@ -306,8 +341,7 @@ pub fn AiTab() -> Element {
                     onclick: move |_| {
                         spawn(async move {
                             if let Ok(Value::String(photo)) = document::eval(PICK_PHOTO_JS).await {
-                                ROUND.write().photo = Some(photo);
-                                ask(state, None);
+                                review(photo);
                             }
                         });
                     },
