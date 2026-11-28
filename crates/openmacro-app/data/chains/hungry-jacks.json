@@ -7,68 +7,75 @@
     "published": "2026-11",
     "accessed": "2026-11-28"
   },
+  "parts": {
+    "cheese_slice": {
+      "name": "Cheese (Cheese SOS slice)",
+      "grams": 11,
+      "kj": 155,
+      "protein_g": 2.3,
+      "fat_g": 2.9,
+      "saturated_fat_g": 2.0,
+      "carbs_g": 0.5,
+      "sugars_g": 0.3,
+      "fibre_g": null,
+      "sodium_mg": 159,
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf",
+      "note": "Cheeseburger minus Hamburger in the Whopper & Beef guide: the two ingredient lists are identical except for Cheese SOS (Hamburger 108 g / 1192 kJ, Cheeseburger 119 g / 1347 kJ). Consistent with the chicken guide: Grilled Chicken Classic Cheese Bacon minus Grilled Chicken Classic (283 kJ) minus the bacon part (128 kJ) = 155 kJ."
+    },
+    "bacon": {
+      "name": "Bacon",
+      "grams": 20,
+      "kj": 128,
+      "protein_g": 3.3,
+      "fat_g": 1.9,
+      "saturated_fat_g": 0.7,
+      "carbs_g": 0.2,
+      "sugars_g": 0.2,
+      "fibre_g": null,
+      "sodium_mg": 216,
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf",
+      "note": "White BBQ Sauce Jack's Fried Chicken Cheese & Bacon minus White BBQ Sauce Jack's Fried Chicken in the Chicken Burgers guide: both already list Cheese SOS, and bacon is the only added ingredient (275 g / 3164 kJ vs 295 g / 3292 kJ). The White BBQ Sauce Grilled Chicken pair gives the same 20 g / 128 kJ."
+    },
+    "spicy_sauce_tub": {
+      "name": "Spicy Sauce Dipping Tub",
+      "grams": 25,
+      "kj": 533,
+      "protein_g": 0.5,
+      "fat_g": 13.5,
+      "saturated_fat_g": 1.1,
+      "carbs_g": 1.4,
+      "sugars_g": 0.9,
+      "fibre_g": null,
+      "sodium_mg": 285,
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-26-September-2026-Final-Extra-Condiments-Nutritionals.pdf",
+      "note": "Panel of the Spicy Sauce Dipping Tub in the Extra Condiments guide. The Chicken Tender Strips ingredient lists include 'Sauce Spicy Tub', and their totals include exactly one tub: 3 pack 2393 kJ = 3 x 620 + 533, 5 pack 3633 kJ = 5 x 620 + 533 (620 kJ per tender from the 2-tender difference)."
+    }
+  },
+  "parts_sources": [
+    "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf",
+    "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf",
+    "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf",
+    "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-30-June-2026-Final-Grill-Masters-Nutritionals_1.pdf",
+    "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-26-September-2026-Final-Sides-Snacks-Nutritionals.pdf",
+    "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-26-September-2026-Final-Extra-Condiments-Nutritionals.pdf",
+    "https://www.hungryjacks.com.au/nutrition-info",
+    "https://www.hungryjacks.com.au/menu/whopper-sup-sup-beef/double-cheeseburger",
+    "https://www.hungryjacks.com.au/menu/whopper-sup-sup-beef/triple-cheeseburger",
+    "https://www.hungryjacks.com.au/menu/whopper-sup-sup-beef/bacon-deluxe",
+    "https://www.hungryjacks.com.au/menu/whopper/ultimate-double-whopper",
+    "https://www.hungryjacks.com.au/menu/whopper/double-whopper-cheese",
+    "https://www.hungryjacks.com.au/menu/whopper/triple-whopper-cheese",
+    "https://www.hungryjacks.com.au/menu/grill-masters-angus/grill-masters-angus-bacon-cheese",
+    "https://www.hungryjacks.com.au/menu/chicken-burgers/grilled-chicken-with-bacon-cheese",
+    "https://www.hungryjacks.com.au/menu/chicken-burgers/cheesy-bacon-spicy-jack-s-fried-chicken",
+    "https://www.hungryjacks.com.au/menu/breakfast/jack-s-brekky-roll",
+    "https://www.hungryjacks.com.au/menu/breakfast/bbq-brekky-wrap",
+    "https://www.hungryjacks.com.au/menu/breakfast/big-bbq-brekky-wrap",
+    "https://www.hungryjacks.com.au/menu/breakfast/sausage-egg-turkish-brekky-roll"
+  ],
   "items": [
     {
-      "name": "Whopper Double Cheese",
-      "category": "Burgers",
-      "serving": "1 burger",
-      "grams": 385,
-      "kj": 4152,
-      "protein_g": 56.4,
-      "fat_g": 78,
-      "sat_fat_g": 31.2,
-      "carbs_g": 53.1,
-      "sugars_g": 14.4,
-      "fibre_g": null,
-      "sodium_mg": 1533,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf"
-    },
-    {
-      "name": "Whopper Triple",
-      "category": "Burgers",
-      "serving": "1 burger",
-      "grams": 438,
-      "kj": 4649,
-      "protein_g": 66.7,
-      "fat_g": 87.4,
-      "sat_fat_g": 33.1,
-      "carbs_g": 51.8,
-      "sugars_g": 13.6,
-      "fibre_g": null,
-      "sodium_mg": 964,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf"
-    },
-    {
-      "name": "Whopper Triple Cheese",
-      "category": "Burgers",
-      "serving": "1 burger",
-      "grams": 486,
-      "kj": 5568,
-      "protein_g": 80.3,
-      "fat_g": 105,
-      "sat_fat_g": 44.8,
-      "carbs_g": 54,
-      "sugars_g": 15.1,
-      "fibre_g": null,
-      "sodium_mg": 1908,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf"
-    },
-    {
-      "name": "Ultimate Double Whopper",
-      "category": "Burgers",
-      "serving": "1 burger",
-      "grams": 424,
-      "kj": 4401,
-      "protein_g": 62.9,
-      "fat_g": 80.8,
-      "sat_fat_g": 32.4,
-      "carbs_g": 53.6,
-      "sugars_g": 14.9,
-      "fibre_g": null,
-      "sodium_mg": 1959,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf"
-    },
-    {
+      "id": "bacon-deluxe",
       "name": "Bacon Deluxe",
       "category": "Burgers",
       "serving": "1 burger",
@@ -81,9 +88,30 @@
       "sugars_g": 6.4,
       "fibre_g": null,
       "sodium_mg": 858,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "hamburger",
       "name": "Hamburger",
       "category": "Burgers",
       "serving": "1 burger",
@@ -96,9 +124,18 @@
       "sugars_g": 7.2,
       "fibre_g": null,
       "sodium_mg": 460,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "cheeseburger",
       "name": "Cheeseburger",
       "category": "Burgers",
       "serving": "1 burger",
@@ -111,9 +148,24 @@
       "sugars_g": 7.5,
       "fibre_g": null,
       "sodium_mg": 619,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "cheeseburger-double",
       "name": "Cheeseburger Double",
       "category": "Burgers",
       "serving": "1 burger",
@@ -126,9 +178,24 @@
       "sugars_g": 7.8,
       "fibre_g": null,
       "sodium_mg": 802,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 2,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "cheeseburger-triple",
       "name": "Cheeseburger Triple",
       "category": "Burgers",
       "serving": "1 burger",
@@ -141,9 +208,24 @@
       "sugars_g": 8.1,
       "fibre_g": null,
       "sodium_mg": 986,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Whopper-Beef-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 3,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "tomato sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "grill-masters-angus-bacon-cheese",
       "name": "Grill Masters Angus Bacon & Cheese",
       "category": "Burgers",
       "serving": "1 burger",
@@ -156,9 +238,30 @@
       "sugars_g": 7.6,
       "fibre_g": null,
       "sodium_mg": 1242,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-30-June-2026-Final-Grill-Masters-Nutritionals_1.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-30-June-2026-Final-Grill-Masters-Nutritionals_1.pdf",
+      "leave_off": [
+        {
+          "name": "cheddar cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "grilled-chicken-classic",
       "name": "Grilled Chicken Classic",
       "category": "Chicken",
       "serving": "1 burger",
@@ -171,9 +274,18 @@
       "sugars_g": 5.8,
       "fibre_g": null,
       "sodium_mg": 661,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "ranch",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "grilled-chicken-classic-cheese-bacon",
       "name": "Grilled Chicken Classic Cheese Bacon",
       "category": "Chicken",
       "serving": "1 burger",
@@ -186,9 +298,30 @@
       "sugars_g": 6.3,
       "fibre_g": null,
       "sodium_mg": 1036,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "ranch",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "grilled-chicken-spicy",
       "name": "Grilled Chicken Spicy",
       "category": "Chicken",
       "serving": "1 burger",
@@ -201,9 +334,18 @@
       "sugars_g": 6.6,
       "fibre_g": null,
       "sodium_mg": 723,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "Signature Spicy Sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "jack-s-fried-chicken-spicy",
       "name": "Jack's Fried Chicken Spicy",
       "category": "Chicken",
       "serving": "1 burger",
@@ -216,9 +358,18 @@
       "sugars_g": 7,
       "fibre_g": null,
       "sodium_mg": 1351,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "Signature Spicy Sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "jack-s-fried-chicken-spicy-cheese-bacon",
       "name": "Jack's Fried Chicken Spicy Cheese & Bacon",
       "category": "Chicken",
       "serving": "1 burger",
@@ -231,9 +382,30 @@
       "sugars_g": 7.5,
       "fibre_g": null,
       "sodium_mg": 1726,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Chicken-Burgers-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "Signature Spicy Sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "chicken-tender-strips-3-pack",
       "name": "Chicken Tender Strips 3 Pack",
       "category": "Chicken",
       "serving": "3 pieces",
@@ -246,9 +418,18 @@
       "sugars_g": 1.5,
       "fibre_g": null,
       "sodium_mg": 1816,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-26-September-2026-Final-Sides-Snacks-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-26-September-2026-Final-Sides-Snacks-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "spicy sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "spicy_sauce_tub"
+        }
+      ]
     },
     {
+      "id": "chicken-tender-strips-5-pack",
       "name": "Chicken Tender Strips 5 Pack",
       "category": "Chicken",
       "serving": "5 pieces",
@@ -261,9 +442,18 @@
       "sugars_g": 1.9,
       "fibre_g": null,
       "sodium_mg": 2835,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-26-September-2026-Final-Sides-Snacks-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-26-September-2026-Final-Sides-Snacks-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "spicy sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "spicy_sauce_tub"
+        }
+      ]
     },
     {
+      "id": "chips-small",
       "name": "Chips Small",
       "category": "Sides",
       "serving": "1 small serve",
@@ -279,6 +469,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-26-September-2026-Final-Sides-Snacks-Nutritionals.pdf"
     },
     {
+      "id": "chips-medium",
       "name": "Chips Medium",
       "category": "Sides",
       "serving": "1 medium serve",
@@ -294,6 +485,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-26-September-2026-Final-Sides-Snacks-Nutritionals.pdf"
     },
     {
+      "id": "chips-large",
       "name": "Chips Large",
       "category": "Sides",
       "serving": "1 large serve",
@@ -309,8 +501,9 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-26-September-2026-Final-Sides-Snacks-Nutritionals.pdf"
     },
     {
+      "id": "hash-brown",
       "name": "Hash Brown",
-      "category": "Breakfast",
+      "category": "Sides",
       "serving": "1 hash brown",
       "grams": 58,
       "kj": 685,
@@ -324,6 +517,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf"
     },
     {
+      "id": "jack-s-brekky-roll",
       "name": "Jack's Brekky Roll",
       "category": "Breakfast",
       "serving": "1 roll",
@@ -336,9 +530,30 @@
       "sugars_g": 8.4,
       "fibre_g": null,
       "sodium_mg": 1083,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "sausage-brekky-wrap",
       "name": "Sausage Brekky Wrap",
       "category": "Breakfast",
       "serving": "1 wrap",
@@ -351,9 +566,30 @@
       "sugars_g": 2.6,
       "fibre_g": null,
       "sodium_mg": 774,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "big-bbq-brekky-wrap",
       "name": "Big BBQ Brekky Wrap",
       "category": "Breakfast",
       "serving": "1 wrap",
@@ -366,9 +602,30 @@
       "sugars_g": 6.4,
       "fibre_g": null,
       "sodium_mg": 1016,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "turkish-bread-sausage-egg",
       "name": "Turkish Bread Sausage & Egg",
       "category": "Breakfast",
       "serving": "1 roll",
@@ -381,9 +638,24 @@
       "sugars_g": 5,
       "fibre_g": null,
       "sodium_mg": 798,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "turkish-bread-double-sausage-egg",
       "name": "Turkish Bread Double Sausage & Egg",
       "category": "Breakfast",
       "serving": "1 roll",
@@ -396,9 +668,24 @@
       "sugars_g": 5.5,
       "fibre_g": null,
       "sodium_mg": 1090,
-      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf"
+      "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "cheese-toastie",
       "name": "Cheese Toastie",
       "category": "Breakfast",
       "serving": "1 toastie",
@@ -414,6 +701,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf"
     },
     {
+      "id": "ham-cheese-toastie",
       "name": "Ham & Cheese Toastie",
       "category": "Breakfast",
       "serving": "1 toastie",
@@ -429,6 +717,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf"
     },
     {
+      "id": "ham-cheese-tomato-toastie",
       "name": "Ham, Cheese & Tomato Toastie",
       "category": "Breakfast",
       "serving": "1 toastie",
@@ -444,6 +733,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf"
     },
     {
+      "id": "french-toast-fingers-4-pack",
       "name": "French Toast Fingers 4 Pack",
       "category": "Breakfast",
       "serving": "4 pieces",
@@ -459,6 +749,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf"
     },
     {
+      "id": "french-toast-fingers-6-pack",
       "name": "French Toast Fingers 6 Pack",
       "category": "Breakfast",
       "serving": "6 pieces",
@@ -474,6 +765,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-10-November-2026-Final-Breakfast-Nutritionals.pdf"
     },
     {
+      "id": "soft-serve-cone",
       "name": "Soft Serve Cone",
       "category": "Desserts",
       "serving": "1 cone",
@@ -489,6 +781,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "chocolate-sundae-small",
       "name": "Chocolate Sundae Small",
       "category": "Desserts",
       "serving": "1 small sundae",
@@ -504,6 +797,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "chocolate-sundae-large",
       "name": "Chocolate Sundae Large",
       "category": "Desserts",
       "serving": "1 large sundae",
@@ -519,6 +813,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "caramel-sundae-small",
       "name": "Caramel Sundae Small",
       "category": "Desserts",
       "serving": "1 small sundae",
@@ -534,6 +829,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "caramel-sundae-large",
       "name": "Caramel Sundae Large",
       "category": "Desserts",
       "serving": "1 large sundae",
@@ -549,6 +845,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "strawberry-sundae-small",
       "name": "Strawberry Sundae Small",
       "category": "Desserts",
       "serving": "1 small sundae",
@@ -564,6 +861,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "strawberry-sundae-large",
       "name": "Strawberry Sundae Large",
       "category": "Desserts",
       "serving": "1 large sundae",
@@ -579,6 +877,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "oreo-storm",
       "name": "Oreo Storm",
       "category": "Desserts",
       "serving": "1 Storm",
@@ -594,6 +893,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "flake-storm",
       "name": "Flake Storm",
       "category": "Desserts",
       "serving": "1 Storm",
@@ -609,6 +909,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "biscoff-storm",
       "name": "Biscoff Storm",
       "category": "Desserts",
       "serving": "1 Storm",
@@ -624,6 +925,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "sticky-date-pudding",
       "name": "Sticky Date Pudding",
       "category": "Desserts",
       "serving": "1 pudding",
@@ -639,6 +941,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "sticky-date-pudding-with-ice-cream",
       "name": "Sticky Date Pudding with Ice Cream",
       "category": "Desserts",
       "serving": "1 pudding with ice cream",
@@ -654,6 +957,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "drumstick-mini",
       "name": "Drumstick Mini",
       "category": "Desserts",
       "serving": "1 ice cream",
@@ -669,6 +973,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Desserts-Nutritionals.pdf"
     },
     {
+      "id": "coke-medium",
       "name": "Coke Medium",
       "category": "Drinks",
       "serving": "1 medium drink",
@@ -684,6 +989,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Cold-Drinks-Nutritionals_1.pdf"
     },
     {
+      "id": "sprite-medium",
       "name": "Sprite Medium",
       "category": "Drinks",
       "serving": "1 medium drink",
@@ -699,6 +1005,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Cold-Drinks-Nutritionals_1.pdf"
     },
     {
+      "id": "fanta-orange-medium",
       "name": "Fanta Orange Medium",
       "category": "Drinks",
       "serving": "1 medium drink",
@@ -714,6 +1021,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Cold-Drinks-Nutritionals_1.pdf"
     },
     {
+      "id": "keri-apple-juice",
       "name": "Keri Apple Juice",
       "category": "Drinks",
       "serving": "1 bottle",
@@ -729,6 +1037,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Cold-Drinks-Nutritionals_1.pdf"
     },
     {
+      "id": "chocolate-shake-medium",
       "name": "Chocolate Shake Medium",
       "category": "Drinks",
       "serving": "1 medium shake",
@@ -744,6 +1053,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Cold-Drinks-Nutritionals_1.pdf"
     },
     {
+      "id": "vanilla-shake-medium",
       "name": "Vanilla Shake Medium",
       "category": "Drinks",
       "serving": "1 medium shake",
@@ -759,6 +1069,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Cold-Drinks-Nutritionals_1.pdf"
     },
     {
+      "id": "strawberry-shake-medium",
       "name": "Strawberry Shake Medium",
       "category": "Drinks",
       "serving": "1 medium shake",
@@ -774,6 +1085,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Cold-Drinks-Nutritionals_1.pdf"
     },
     {
+      "id": "caramel-shake-medium",
       "name": "Caramel Shake Medium",
       "category": "Drinks",
       "serving": "1 medium shake",
@@ -789,6 +1101,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-3-November-2026-Final-Cold-Drinks-Nutritionals_1.pdf"
     },
     {
+      "id": "jack-s-café-cappuccino-medium",
       "name": "Jack's Café Cappuccino Medium",
       "category": "Drinks",
       "serving": "1 medium cup",
@@ -804,6 +1117,7 @@
       "source_url": "https://www.hungryjacks.com.au/Upload/HJ/Media/Media/Nutritional-Guide-26-September-2026-Final-Jack-s-Cafe-Nutritionals.pdf"
     },
     {
+      "id": "ketchup-sachet",
       "name": "Ketchup Sachet",
       "category": "Sauces",
       "serving": "1 sachet",

@@ -7,9 +7,32 @@
     "published": null,
     "accessed": "2026-11-28"
   },
+  "parts": {
+    "bbq_sauce_wings_5pk": {
+      "name": "BBQ sauce (on 5 wings)",
+      "grams": 27,
+      "kj": 340,
+      "protein_g": 0.4,
+      "fat_g": 0.0,
+      "saturated_fat_g": 0.0,
+      "carbs_g": 19.3,
+      "sugars_g": 16.5,
+      "fibre_g": null,
+      "sodium_mg": 260,
+      "source_url": "https://www.dominos.com.au/menu/nutritional-information",
+      "note": "Derived from the nutrition page: 'Saucy Chicken Wings BBQ Sauce' 5 Pack (252 g, 2100 kJ) minus 'Saucy Chicken Wings No Sauce' 5 Pack (225 g, 1760 kJ), nutrient by nutrient."
+    }
+  },
+  "parts_sources": [
+    "https://www.dominos.com.au/menu/nutritional-information",
+    "https://order.dominos.com.au/menu (online ordering, store 98661 Sydney CBD, pickup): recipe toppings and sauce per pizza from the site's data feed https://olo-graph.dominos.com.au/graphql (product ingredients flagged inRecipe, with ingredient names)",
+    "https://www.dominos.com.au/menu-pizza and product pages https://www.dominos.com.au/menu-pizza/<name>-pXXX (product descriptions)",
+    "https://www.dominos.com.au/menu-side/*, /menu-chicken/*, /menu-dessert/* product pages (side and dessert descriptions)"
+  ],
   "items": [
     {
-      "name": "Cheesy Garlic, 1 slice (large, classic crust)",
+      "id": "cheesy-garlic-1-slice-large-classic-crust",
+      "name": "Cheesy Garlic (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 46,
@@ -20,10 +43,19 @@
       "carbs_g": 15.0,
       "sugars_g": 0.7,
       "fibre_g": null,
-      "sodium_mg": 162
+      "sodium_mg": 162,
+      "leave_off": [
+        {
+          "name": "crème fraîche base",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Margherita, 1 slice (large, classic crust)",
+      "id": "margherita-1-slice-large-classic-crust",
+      "name": "Margherita (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 52,
@@ -37,7 +69,8 @@
       "sodium_mg": 182
     },
     {
-      "name": "Simply Cheese, 1 slice (large, classic crust)",
+      "id": "simply-cheese-1-slice-large-classic-crust",
+      "name": "Simply Cheese (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 51,
@@ -51,7 +84,8 @@
       "sodium_mg": 195
     },
     {
-      "name": "Pepperoni, 1 slice (large, classic crust)",
+      "id": "pepperoni-1-slice-large-classic-crust",
+      "name": "Pepperoni (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 50,
@@ -65,7 +99,8 @@
       "sodium_mg": 237
     },
     {
-      "name": "Ham and Cheese, 1 slice (large, classic crust)",
+      "id": "ham-and-cheese-1-slice-large-classic-crust",
+      "name": "Ham and Cheese (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 52,
@@ -79,7 +114,8 @@
       "sodium_mg": 282
     },
     {
-      "name": "BBQ Sausage and Onion, 1 slice (large, classic crust)",
+      "id": "bbq-sausage-and-onion-1-slice-large-classic-crust",
+      "name": "BBQ Sausage and Onion (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 53,
@@ -90,10 +126,19 @@
       "carbs_g": 18.1,
       "sugars_g": 2.6,
       "fibre_g": null,
-      "sodium_mg": 281
+      "sodium_mg": 281,
+      "leave_off": [
+        {
+          "name": "BBQ sauce base",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Spicy Spinach and Feta, 1 slice (large, classic crust)",
+      "id": "spicy-spinach-and-feta-1-slice-large-classic-crust",
+      "name": "Spicy Spinach and Feta (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 49,
@@ -104,10 +149,19 @@
       "carbs_g": 14.9,
       "sugars_g": 0.7,
       "fibre_g": null,
-      "sodium_mg": 173
+      "sodium_mg": 173,
+      "leave_off": [
+        {
+          "name": "feta",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Double Beef and Onion, 1 slice (large, classic crust)",
+      "id": "double-beef-and-onion-1-slice-large-classic-crust",
+      "name": "Double Beef and Onion (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 60,
@@ -118,10 +172,19 @@
       "carbs_g": 17.1,
       "sugars_g": 2.5,
       "fibre_g": null,
-      "sodium_mg": 264
+      "sodium_mg": 264,
+      "leave_off": [
+        {
+          "name": "BBQ sauce base",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Spicy Veg Supreme, 1 slice (large, classic crust)",
+      "id": "spicy-veg-supreme-1-slice-large-classic-crust",
+      "name": "Spicy Veg Supreme (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 66,
@@ -135,7 +198,8 @@
       "sodium_mg": 206
     },
     {
-      "name": "Loaded Pepperoni, 1 slice (large, classic crust)",
+      "id": "loaded-pepperoni-1-slice-large-classic-crust",
+      "name": "Loaded Pepperoni (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 53,
@@ -149,7 +213,8 @@
       "sodium_mg": 270
     },
     {
-      "name": "Hawaiian, 1 slice (large, classic crust)",
+      "id": "hawaiian-1-slice-large-classic-crust",
+      "name": "Hawaiian (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 60,
@@ -163,7 +228,8 @@
       "sodium_mg": 282
     },
     {
-      "name": "Godfather, 1 slice (large, classic crust)",
+      "id": "godfather-1-slice-large-classic-crust",
+      "name": "Godfather (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 65,
@@ -177,7 +243,8 @@
       "sodium_mg": 287
     },
     {
-      "name": "BBQ Meatovers, 1 slice (large, classic crust)",
+      "id": "bbq-meatovers-1-slice-large-classic-crust",
+      "name": "BBQ Meatovers (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 59,
@@ -188,10 +255,25 @@
       "carbs_g": 17.1,
       "sugars_g": 2.6,
       "fibre_g": null,
-      "sodium_mg": 350
+      "sodium_mg": 350,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ sauce base",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Vegorama, 1 slice (large, classic crust)",
+      "id": "vegorama-1-slice-large-classic-crust",
+      "name": "Vegorama (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 60,
@@ -202,10 +284,19 @@
       "carbs_g": 15.6,
       "sugars_g": 1.2,
       "fibre_g": null,
-      "sodium_mg": 207
+      "sodium_mg": 207,
+      "leave_off": [
+        {
+          "name": "parmesan",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Supreme, 1 slice (large, classic crust)",
+      "id": "supreme-1-slice-large-classic-crust",
+      "name": "Supreme (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 65,
@@ -216,10 +307,19 @@
       "carbs_g": 16.1,
       "sugars_g": 1.8,
       "fibre_g": null,
-      "sodium_mg": 309
+      "sodium_mg": 309,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Double Bacon Cheeseburger, 1 slice (large, classic crust)",
+      "id": "double-bacon-cheeseburger-1-slice-large-classic-crust",
+      "name": "Double Bacon Cheeseburger (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 63,
@@ -230,10 +330,31 @@
       "carbs_g": 17.8,
       "sugars_g": 3.3,
       "fibre_g": null,
-      "sodium_mg": 382
+      "sodium_mg": 382,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "mayonnaise",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ sauce base",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Chicken Supreme, 1 slice (large, classic crust)",
+      "id": "chicken-supreme-1-slice-large-classic-crust",
+      "name": "Chicken Supreme (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 63,
@@ -247,7 +368,8 @@
       "sodium_mg": 230
     },
     {
-      "name": "Capriciosa, 1 slice (large, classic crust)",
+      "id": "capriciosa-1-slice-large-classic-crust",
+      "name": "Capriciosa (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 60,
@@ -261,7 +383,8 @@
       "sodium_mg": 399
     },
     {
-      "name": "Butter Chicken, 1 slice (large, classic crust)",
+      "id": "butter-chicken-1-slice-large-classic-crust",
+      "name": "Butter Chicken (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 67,
@@ -275,7 +398,8 @@
       "sodium_mg": 256
     },
     {
-      "name": "Super Spicy Lovers, 1 slice (large, classic crust)",
+      "id": "super-spicy-lovers-1-slice-large-classic-crust",
+      "name": "Super Spicy Lovers (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 62,
@@ -286,10 +410,19 @@
       "carbs_g": 15.9,
       "sugars_g": 1.5,
       "fibre_g": null,
-      "sodium_mg": 359
+      "sodium_mg": 359,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "BBQ Steak, 1 slice (large, classic crust)",
+      "id": "bbq-steak-1-slice-large-classic-crust",
+      "name": "BBQ Steak (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 62,
@@ -300,10 +433,19 @@
       "carbs_g": 17.9,
       "sugars_g": 2.8,
       "fibre_g": null,
-      "sodium_mg": 288
+      "sodium_mg": 288,
+      "leave_off": [
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Mega Meatlovers, 1 slice (large, classic crust)",
+      "id": "mega-meatlovers-1-slice-large-classic-crust",
+      "name": "Mega Meatlovers (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 70,
@@ -314,10 +456,31 @@
       "carbs_g": 19.2,
       "sugars_g": 4.2,
       "fibre_g": null,
-      "sodium_mg": 449
+      "sodium_mg": 449,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ sauce base",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Peri Peri Chicken, 1 slice (large, classic crust)",
+      "id": "peri-peri-chicken-1-slice-large-classic-crust",
+      "name": "Peri Peri Chicken (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 66,
@@ -328,10 +491,19 @@
       "carbs_g": 16.3,
       "sugars_g": 1.7,
       "fibre_g": null,
-      "sodium_mg": 255
+      "sodium_mg": 255,
+      "leave_off": [
+        {
+          "name": "peri peri sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Garlic Prawn, 1 slice (large, classic crust)",
+      "id": "garlic-prawn-1-slice-large-classic-crust",
+      "name": "Garlic Prawn (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 61,
@@ -342,10 +514,19 @@
       "carbs_g": 15.1,
       "sugars_g": 0.9,
       "fibre_g": null,
-      "sodium_mg": 185
+      "sodium_mg": 185,
+      "leave_off": [
+        {
+          "name": "crème fraîche base",
+          "kind": "sour_cream",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "BBQ Chicken and Bacon, 1 slice (large, classic crust)",
+      "id": "bbq-chicken-and-bacon-1-slice-large-classic-crust",
+      "name": "BBQ Chicken and Bacon (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 63,
@@ -356,10 +537,25 @@
       "carbs_g": 17.4,
       "sugars_g": 2.6,
       "fibre_g": null,
-      "sodium_mg": 354
+      "sodium_mg": 354,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ sauce base",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Chicken and Camembert, 1 slice (large, classic crust)",
+      "id": "chicken-and-camembert-1-slice-large-classic-crust",
+      "name": "Chicken and Camembert (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 74,
@@ -370,10 +566,31 @@
       "carbs_g": 16.0,
       "sugars_g": 1.5,
       "fibre_g": null,
-      "sodium_mg": 351
+      "sodium_mg": 351,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "camembert",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "hollandaise",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "The Lot, 1 slice (large, classic crust)",
+      "id": "the-lot-1-slice-large-classic-crust",
+      "name": "The Lot (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 77,
@@ -384,10 +601,25 @@
       "carbs_g": 16.7,
       "sugars_g": 1.9,
       "fibre_g": null,
-      "sodium_mg": 433
+      "sodium_mg": 433,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "garlic butter",
+          "kind": "butter",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Surf and Turf, 1 slice (large, classic crust)",
+      "id": "surf-and-turf-1-slice-large-classic-crust",
+      "name": "Surf and Turf (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 65,
@@ -398,10 +630,19 @@
       "carbs_g": 16.1,
       "sugars_g": 1.3,
       "fibre_g": null,
-      "sodium_mg": 260
+      "sodium_mg": 260,
+      "leave_off": [
+        {
+          "name": "hollandaise",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Steak Carnivore, 1 slice (large, classic crust)",
+      "id": "steak-carnivore-1-slice-large-classic-crust",
+      "name": "Steak Carnivore (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 63,
@@ -412,10 +653,25 @@
       "carbs_g": 16.0,
       "sugars_g": 1.4,
       "fibre_g": null,
-      "sodium_mg": 344
+      "sodium_mg": 344,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "hollandaise",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Vegan Margherita, 1 slice (large, classic crust)",
+      "id": "vegan-margherita-1-slice-large-classic-crust",
+      "name": "Vegan Margherita (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 52,
@@ -429,7 +685,8 @@
       "sodium_mg": 273
     },
     {
-      "name": "Vegan Spicy Veg Supreme, 1 slice (large, classic crust)",
+      "id": "vegan-spicy-veg-supreme-1-slice-large-classic-crust",
+      "name": "Vegan Spicy Veg Supreme (large, classic crust)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": 68,
@@ -443,6 +700,7 @@
       "sodium_mg": 294
     },
     {
+      "id": "garlic-bread",
       "name": "Garlic Bread",
       "category": "Sides",
       "serving": "1 serve",
@@ -457,6 +715,7 @@
       "sodium_mg": 928
     },
     {
+      "id": "cheesy-garlic-bread",
       "name": "Cheesy Garlic Bread",
       "category": "Sides",
       "serving": "1 serve",
@@ -471,6 +730,7 @@
       "sodium_mg": 2000
     },
     {
+      "id": "cheese-and-garlic-scrolls-4-pack",
       "name": "Cheese and Garlic Scrolls 4 Pack",
       "category": "Sides",
       "serving": "1 pack (4 scrolls)",
@@ -485,6 +745,7 @@
       "sodium_mg": 763
     },
     {
+      "id": "pepperoni-stuffed-cheesy-bread",
       "name": "Pepperoni Stuffed Cheesy Bread",
       "category": "Sides",
       "serving": "1 serve",
@@ -499,6 +760,7 @@
       "sodium_mg": 889
     },
     {
+      "id": "crispy-chips-with-domino-s-pizza-salt",
       "name": "Crispy Chips with Domino's Pizza Salt",
       "category": "Sides",
       "serving": "1 serve",
@@ -513,6 +775,7 @@
       "sodium_mg": 727
     },
     {
+      "id": "triple-cheese-bites-5-pack",
       "name": "Triple Cheese Bites 5 Pack",
       "category": "Sides",
       "serving": "1 pack (5 bites)",
@@ -527,6 +790,7 @@
       "sodium_mg": 644
     },
     {
+      "id": "southern-chicken-bites-20-pack",
       "name": "Southern Chicken Bites 20 Pack",
       "category": "Chicken",
       "serving": "1 pack (20 bites)",
@@ -541,6 +805,7 @@
       "sodium_mg": 902
     },
     {
+      "id": "saucy-chicken-wings-no-sauce-5-pack",
       "name": "Saucy Chicken Wings No Sauce, 5 Pack",
       "category": "Chicken",
       "serving": "5 wings",
@@ -555,6 +820,7 @@
       "sodium_mg": 1290
     },
     {
+      "id": "saucy-chicken-wings-bbq-sauce-5-pack",
       "name": "Saucy Chicken Wings BBQ Sauce, 5 Pack",
       "category": "Chicken",
       "serving": "5 wings",
@@ -566,9 +832,18 @@
       "carbs_g": 24.9,
       "sugars_g": 16.7,
       "fibre_g": null,
-      "sodium_mg": 1550
+      "sodium_mg": 1550,
+      "leave_off": [
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "bbq_sauce_wings_5pk"
+        }
+      ]
     },
     {
+      "id": "saucy-chicken-wings-hot-sauce-5-pack",
       "name": "Saucy Chicken Wings Hot Sauce, 5 Pack",
       "category": "Chicken",
       "serving": "5 wings",
@@ -583,6 +858,7 @@
       "sodium_mg": 2030
     },
     {
+      "id": "mozzarella-cheese-twists",
       "name": "Mozzarella Cheese Twists",
       "category": "Sides",
       "serving": "1 serve (1/4 of a 4 pack)",
@@ -597,6 +873,7 @@
       "sodium_mg": 381
     },
     {
+      "id": "creamy-garlic-aioli-dipping-sauce",
       "name": "Creamy Garlic Aioli Dipping Sauce",
       "category": "Sauces",
       "serving": "1 dipping sauce",
@@ -611,6 +888,7 @@
       "sodium_mg": 212
     },
     {
+      "id": "choc-lava-cake",
       "name": "Choc Lava Cake",
       "category": "Desserts",
       "serving": "1 cake",
@@ -625,6 +903,7 @@
       "sodium_mg": 147
     },
     {
+      "id": "hot-choc-fudge-brownies",
       "name": "Hot Choc Fudge Brownies",
       "category": "Desserts",
       "serving": "1 serve",
@@ -639,6 +918,7 @@
       "sodium_mg": 184
     },
     {
+      "id": "oven-baked-churros-4-pack",
       "name": "Oven Baked Churros, 4 Pack",
       "category": "Desserts",
       "serving": "1 pack (4 churros)",
@@ -653,6 +933,7 @@
       "sodium_mg": 304
     },
     {
+      "id": "mini-dutch-pancakes-12-pack",
       "name": "Mini Dutch Pancakes 12 Pack",
       "category": "Desserts",
       "serving": "1 pack (12 pancakes)",
@@ -667,6 +948,7 @@
       "sodium_mg": 428
     },
     {
+      "id": "brownies-with-nutella",
       "name": "Brownies with Nutella",
       "category": "Desserts",
       "serving": "1 serve",

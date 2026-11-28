@@ -7,8 +7,244 @@
     "published": null,
     "accessed": "2026-11-28"
   },
+  "parts": {
+    "big_mac_sauce": {
+      "name": "Big Mac Special Sauce",
+      "grams": 29.4,
+      "kj": 376,
+      "protein_g": 0.2,
+      "fat_g": 8.1,
+      "saturated_fat_g": 0.7,
+      "carbs_g": 4.3,
+      "sugars_g": 2.7,
+      "fibre_g": null,
+      "sodium_mg": 175,
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/condiments/big-mac-special-sauce.html",
+      "note": "Panel of the Big Mac Special Sauce dipping serve (30 ml, item 200030). The Big Mac build lists 29.4 g of the same sauce (product 300075) at the same 376 kJ."
+    },
+    "ketchup": {
+      "name": "Ketchup",
+      "grams": 11.5,
+      "kj": 56,
+      "protein_g": 0.2,
+      "fat_g": 0.0,
+      "saturated_fat_g": 0.0,
+      "carbs_g": 3.0,
+      "sugars_g": 2.5,
+      "fibre_g": null,
+      "sodium_mg": 112,
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/condiments/ketchup.html",
+      "note": "Panel of the Ketchup condiment (item 200151, 12 g serve, 56 kJ). The burger builds list 11.5 g ketchup at the same 56 kJ."
+    },
+    "ketchup_17g": {
+      "name": "Ketchup",
+      "grams": 17.25,
+      "kj": 84,
+      "protein_g": 0.3,
+      "fat_g": 0.0,
+      "saturated_fat_g": 0.0,
+      "carbs_g": 4.5,
+      "sugars_g": 3.7,
+      "fibre_g": null,
+      "sodium_mg": 168,
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/condiments/ketchup.html",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). Macros and sodium are the Ketchup condiment's per-100 g panel scaled to 17.25 g."
+    },
+    "mcchicken_sauce": {
+      "name": "McChicken Sauce",
+      "grams": 18.89,
+      "kj": 290,
+      "protein_g": 0.1,
+      "fat_g": 6.9,
+      "saturated_fat_g": 0.6,
+      "carbs_g": 1.8,
+      "sugars_g": 0.6,
+      "fibre_g": null,
+      "sodium_mg": 109,
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/condiments/mcchicken-sauce.html",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). Macros and sodium are the McChicken Sauce condiment's per-100 panel (item 200150, 1530 kJ/100; build 1536 kJ/100 g) scaled to 18.89 g."
+    },
+    "mcchicken_sauce_9g": {
+      "name": "McChicken Sauce",
+      "grams": 9.445,
+      "kj": 145,
+      "protein_g": 0.1,
+      "fat_g": 3.5,
+      "saturated_fat_g": 0.3,
+      "carbs_g": 0.9,
+      "sugars_g": 0.3,
+      "fibre_g": null,
+      "sodium_mg": 55,
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/condiments/mcchicken-sauce.html",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). Macros and sodium are the McChicken Sauce condiment's per-100 panel scaled to 9.445 g (half the burger portion)."
+    },
+    "mcchicken_sauce_snack": {
+      "name": "McChicken Sauce",
+      "grams": 9.19,
+      "kj": 141,
+      "protein_g": 0.1,
+      "fat_g": 3.4,
+      "saturated_fat_g": 0.3,
+      "carbs_g": 0.9,
+      "sugars_g": 0.3,
+      "fibre_g": null,
+      "sodium_mg": 53,
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/condiments/mcchicken-sauce.html",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). Macros and sodium are the McChicken Sauce condiment's per-100 panel scaled to 9.19 g."
+    },
+    "tartare_sauce": {
+      "name": "Tartare Sauce",
+      "grams": 19.56,
+      "kj": 194,
+      "protein_g": 0.1,
+      "fat_g": 4.3,
+      "saturated_fat_g": 0.4,
+      "carbs_g": 1.8,
+      "sugars_g": 0.5,
+      "fibre_g": null,
+      "sodium_mg": 126,
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/condiments/tartare-sauce.html",
+      "note": "Panel of the Tartare Sauce condiment (item 200028, 20 ml serve). The Filet-O-Fish build lists 19.56 g of the same sauce at the same 194 kJ."
+    },
+    "whipped_butter": {
+      "name": "Whipped Butter",
+      "grams": 5.67,
+      "kj": 171,
+      "protein_g": 0.0,
+      "fat_g": 4.6,
+      "saturated_fat_g": 3.1,
+      "carbs_g": 0.0,
+      "sugars_g": 0.0,
+      "fibre_g": null,
+      "sodium_mg": 39,
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/condiments/whipped-butter.html",
+      "note": "Panel of one Whipped Butter portion (item 200003, 6 g serve, 5.67 g in its build). Hotcakes list 11.34 g / 342 kJ, i.e. two portions."
+    },
+    "hotcake_syrup": {
+      "name": "Hotcake Syrup",
+      "grams": 60.5,
+      "kj": 744,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://www.mcdonalds.com/dnaapp/itemDetails?country=AU&language=en&showLiveData=true&item=200002",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). Energy only: the build gives this component's kJ and weight but no macros, and McDonald's sells no matching condiment with a panel."
+    },
+    "cheese_slice": {
+      "name": "Sliced Cheese",
+      "grams": 14.2,
+      "kj": 202,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://www.mcdonalds.com/dnaapp/itemDetails?country=AU&language=en&showLiveData=true&item=200398",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). One slice is 14.2 g / 202 kJ; items with 28.4 g or 42.6 g have 2 or 3 slices. Energy only: the build gives this component's kJ and weight but no macros, and McDonald's sells no matching condiment with a panel."
+    },
+    "cheese_half_slice": {
+      "name": "Sliced Cheese (half slice)",
+      "grams": 7.1,
+      "kj": 101,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://www.mcdonalds.com/dnaapp/itemDetails?country=AU&language=en&showLiveData=true&item=200636",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). Filet-O-Fish and Chicken 'n' Cheese list 7.1 g, half a regular slice. Energy only: the build gives this component's kJ and weight but no macros, and McDonald's sells no matching condiment with a panel."
+    },
+    "white_cheddar_slice": {
+      "name": "White Cheddar Cheese",
+      "grams": 14.2,
+      "kj": 205,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://www.mcdonalds.com/dnaapp/itemDetails?country=AU&language=en&showLiveData=true&item=200751",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). One slice is 14.2 g / 205 kJ; Big Arch lists 42.6 g / 616 kJ (3 slices). Energy only: the build gives this component's kJ and weight but no macros, and McDonald's sells no matching condiment with a panel."
+    },
+    "bacon_rasher": {
+      "name": "Bacon",
+      "grams": 16.1,
+      "kj": 116,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://www.mcdonalds.com/dnaapp/itemDetails?country=AU&language=en&showLiveData=true&item=200486",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). One rasher is 16.1 g / 116 kJ; items with 32.2 g / 232 kJ have 2. Energy only: the build gives this component's kJ and weight but no macros, and McDonald's sells no matching condiment with a panel."
+    },
+    "mccrispy_sauce": {
+      "name": "McCrispy Sauce",
+      "grams": 27.0,
+      "kj": 508,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://www.mcdonalds.com/dnaapp/itemDetails?country=AU&language=en&showLiveData=true&item=200759",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). Energy only: the build gives this component's kJ and weight but no macros, and McDonald's sells no matching condiment with a panel."
+    },
+    "big_arch_sauce": {
+      "name": "Big Arch Sauce",
+      "grams": 40.0,
+      "kj": 514,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://www.mcdonalds.com/dnaapp/itemDetails?country=AU&language=en&showLiveData=true&item=200784",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). Energy only: the build gives this component's kJ and weight but no macros, and McDonald's sells no matching condiment with a panel."
+    },
+    "house_bbq_sauce": {
+      "name": "House Grilled BBQ Sauce",
+      "grams": 13.16,
+      "kj": 79,
+      "protein_g": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fibre_g": null,
+      "sodium_mg": null,
+      "source_url": "https://www.mcdonalds.com/dnaapp/itemDetails?country=AU&language=en&showLiveData=true&item=200709",
+      "note": "Grams and kJ are the component's own figures in the item's build (itemDetails 'components', quantity x 100 g). Energy only: the build gives this component's kJ and weight but no macros, and McDonald's sells no matching condiment with a panel."
+    }
+  },
+  "parts_sources": [
+    "https://www.mcdonalds.com/dnaapp/itemDetails?country=AU&language=en&showLiveData=true&item=<id> (data feed behind each mcdonalds.com.au product page; its \"components\" list each part with weight and kJ). Read for every food item in the menu file (ids 200534, 200825, 200705, 200708, 200784, 200398, 200400, 200646, 200402, 200677, 200759, 200751, 200631, 200826, 200635, 200636, 200648, 200757, 200725, 200742, 200443-200447, 200441, 200521, 200140, 200486, 200620, 200617, 200599, 200621, 200489, 200734, 200687, 200709, 200670, 200698, 200002, desserts and shakes)",
+    "https://www.mcdonalds.com/au/en-au/menu/condiments/big-mac-special-sauce.html",
+    "https://www.mcdonalds.com/au/en-au/menu/condiments/ketchup.html",
+    "https://www.mcdonalds.com/au/en-au/menu/condiments/mcchicken-sauce.html",
+    "https://www.mcdonalds.com/au/en-au/menu/condiments/tartare-sauce.html",
+    "https://www.mcdonalds.com/au/en-au/menu/condiments/whipped-butter.html",
+    "https://www.mcdonalds.com/au/en-au/menu/condiments.html"
+  ],
   "items": [
     {
+      "id": "big-mac",
       "name": "Big Mac",
       "category": "Burgers",
       "serving": "1 burger",
@@ -21,9 +257,24 @@
       "sugars_g": 8,
       "fibre_g": null,
       "sodium_mg": 1119,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/big-mac.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/big-mac.html",
+      "leave_off": [
+        {
+          "name": "Big Mac sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "big_mac_sauce"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        }
+      ]
     },
     {
+      "id": "double-big-mac",
       "name": "Double Big Mac",
       "category": "Burgers",
       "serving": "1 burger",
@@ -36,9 +287,24 @@
       "sugars_g": 8.4,
       "fibre_g": null,
       "sodium_mg": 1692,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/double-big-mac.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/double-big-mac.html",
+      "leave_off": [
+        {
+          "name": "Big Mac sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "big_mac_sauce"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        }
+      ]
     },
     {
+      "id": "quarter-pounder",
       "name": "Quarter Pounder",
       "category": "Burgers",
       "serving": "1 burger",
@@ -51,9 +317,24 @@
       "sugars_g": 11.7,
       "fibre_g": null,
       "sodium_mg": 1263,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/quarter-pounder.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/quarter-pounder.html",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 2,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "ketchup",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "ketchup_17g"
+        }
+      ]
     },
     {
+      "id": "double-quarter-pounder",
       "name": "Double Quarter Pounder",
       "category": "Burgers",
       "serving": "1 burger",
@@ -66,9 +347,24 @@
       "sugars_g": 12.3,
       "fibre_g": null,
       "sodium_mg": 1827,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/double-quarter-pounder.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/double-quarter-pounder.html",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 3,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "ketchup",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "ketchup_17g"
+        }
+      ]
     },
     {
+      "id": "big-arch",
       "name": "Big Arch",
       "category": "Burgers",
       "serving": "1 burger",
@@ -81,9 +377,24 @@
       "sugars_g": 14.8,
       "fibre_g": null,
       "sodium_mg": 2121,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/big-arch.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/big-arch.html",
+      "leave_off": [
+        {
+          "name": "Big Arch sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "big_arch_sauce"
+        },
+        {
+          "name": "white cheddar",
+          "kind": "cheese",
+          "count": 3,
+          "part": "white_cheddar_slice"
+        }
+      ]
     },
     {
+      "id": "cheeseburger",
       "name": "Cheeseburger",
       "category": "Burgers",
       "serving": "1 burger",
@@ -96,9 +407,24 @@
       "sugars_g": 7.4,
       "fibre_g": null,
       "sodium_mg": 792,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/cheeseburger.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/cheeseburger.html",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "ketchup",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "ketchup"
+        }
+      ]
     },
     {
+      "id": "double-cheeseburger",
       "name": "Double Cheeseburger",
       "category": "Burgers",
       "serving": "1 burger",
@@ -111,9 +437,24 @@
       "sugars_g": 8.2,
       "fibre_g": null,
       "sodium_mg": 1223,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/double-cheeseburger.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/double-cheeseburger.html",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 2,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "ketchup",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "ketchup"
+        }
+      ]
     },
     {
+      "id": "triple-cheeseburger",
       "name": "Triple Cheeseburger",
       "category": "Burgers",
       "serving": "1 burger",
@@ -126,9 +467,24 @@
       "sugars_g": 8.9,
       "fibre_g": null,
       "sodium_mg": 1413,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/triple-cheeseburger.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/triple-cheeseburger.html",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 3,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "ketchup",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "ketchup"
+        }
+      ]
     },
     {
+      "id": "hamburger",
       "name": "Hamburger",
       "category": "Burgers",
       "serving": "1 burger",
@@ -141,9 +497,18 @@
       "sugars_g": 6.8,
       "fibre_g": null,
       "sodium_mg": 678,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/hamburger.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/beef/hamburger.html",
+      "leave_off": [
+        {
+          "name": "ketchup",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "ketchup"
+        }
+      ]
     },
     {
+      "id": "mcspicy",
       "name": "McSpicy",
       "category": "Chicken",
       "serving": "1 burger",
@@ -156,9 +521,18 @@
       "sugars_g": 7.2,
       "fibre_g": null,
       "sodium_mg": 1162,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/mcspicy.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/mcspicy.html",
+      "leave_off": [
+        {
+          "name": "McChicken sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mcchicken_sauce"
+        }
+      ]
     },
     {
+      "id": "mccrispy",
       "name": "McCrispy",
       "category": "Chicken",
       "serving": "1 burger",
@@ -171,9 +545,18 @@
       "sugars_g": 5.8,
       "fibre_g": null,
       "sodium_mg": 991,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/mccrispy.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/mccrispy.html",
+      "leave_off": [
+        {
+          "name": "McCrispy sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mccrispy_sauce"
+        }
+      ]
     },
     {
+      "id": "mccrispy-deluxe",
       "name": "McCrispy Deluxe",
       "category": "Chicken",
       "serving": "1 burger",
@@ -186,9 +569,24 @@
       "sugars_g": 6.6,
       "fibre_g": null,
       "sodium_mg": 1149,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/mccrispy-deluxe.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/mccrispy-deluxe.html",
+      "leave_off": [
+        {
+          "name": "McCrispy sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mccrispy_sauce"
+        },
+        {
+          "name": "white cheddar",
+          "kind": "cheese",
+          "count": 1,
+          "part": "white_cheddar_slice"
+        }
+      ]
     },
     {
+      "id": "mcchicken",
       "name": "McChicken",
       "category": "Chicken",
       "serving": "1 burger",
@@ -201,9 +599,18 @@
       "sugars_g": 7.6,
       "fibre_g": null,
       "sodium_mg": 652,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/mcchicken.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/mcchicken.html",
+      "leave_off": [
+        {
+          "name": "McChicken sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mcchicken_sauce"
+        }
+      ]
     },
     {
+      "id": "double-mcchicken",
       "name": "Double McChicken",
       "category": "Chicken",
       "serving": "1 burger",
@@ -216,9 +623,18 @@
       "sugars_g": 7.8,
       "fibre_g": null,
       "sodium_mg": 937,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/double-mcchicken.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/double-mcchicken.html",
+      "leave_off": [
+        {
+          "name": "McChicken sauce",
+          "kind": "mayo",
+          "count": 2,
+          "part": "mcchicken_sauce"
+        }
+      ]
     },
     {
+      "id": "chicken-n-cheese",
       "name": "Chicken 'n' Cheese",
       "category": "Chicken",
       "serving": "1 burger",
@@ -231,9 +647,24 @@
       "sugars_g": 5.3,
       "fibre_g": null,
       "sodium_mg": 701,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/chicken-n-cheese.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/chicken-n-cheese.html",
+      "leave_off": [
+        {
+          "name": "McChicken sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mcchicken_sauce"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_half_slice"
+        }
+      ]
     },
     {
+      "id": "filet-o-fish",
       "name": "Filet-O-Fish",
       "category": "Burgers",
       "serving": "1 burger",
@@ -246,9 +677,24 @@
       "sugars_g": 5.2,
       "fibre_g": null,
       "sodium_mg": 618,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/filet-o-fish.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/filet-o-fish.html",
+      "leave_off": [
+        {
+          "name": "tartare sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "tartare_sauce"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_half_slice"
+        }
+      ]
     },
     {
+      "id": "double-filet-o-fish",
       "name": "Double Filet-O-Fish",
       "category": "Burgers",
       "serving": "1 burger",
@@ -261,9 +707,24 @@
       "sugars_g": 5.8,
       "fibre_g": null,
       "sodium_mg": 876,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/double-filet-o-fish.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/double-filet-o-fish.html",
+      "leave_off": [
+        {
+          "name": "tartare sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "tartare_sauce"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        }
+      ]
     },
     {
+      "id": "classic-chicken-mcwrap",
       "name": "Classic Chicken McWrap",
       "category": "Wraps & rolls",
       "serving": "1 wrap",
@@ -276,9 +737,18 @@
       "sugars_g": 3.8,
       "fibre_g": null,
       "sodium_mg": 1137,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/classic-chicken-mcwrap.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/classic-chicken-mcwrap.html",
+      "leave_off": [
+        {
+          "name": "McCrispy sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mccrispy_sauce"
+        }
+      ]
     },
     {
+      "id": "spicy-chicken-mcwrap",
       "name": "Spicy Chicken McWrap",
       "category": "Wraps & rolls",
       "serving": "1 wrap",
@@ -291,9 +761,18 @@
       "sugars_g": 4.1,
       "fibre_g": null,
       "sodium_mg": 1260,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/spicy-chicken-mcwrap.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/spicy-chicken-mcwrap.html",
+      "leave_off": [
+        {
+          "name": "McChicken sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mcchicken_sauce"
+        }
+      ]
     },
     {
+      "id": "crispy-chicken-snack-wrap",
       "name": "Crispy Chicken Snack Wrap",
       "category": "Wraps & rolls",
       "serving": "1 wrap",
@@ -306,9 +785,18 @@
       "sugars_g": 1.7,
       "fibre_g": null,
       "sodium_mg": 491,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/crispy-chicken-snack-wrap.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/crispy-chicken-snack-wrap.html",
+      "leave_off": [
+        {
+          "name": "McChicken sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mcchicken_sauce_snack"
+        }
+      ]
     },
     {
+      "id": "3pc-chicken-mcnuggets",
       "name": "3pc Chicken McNuggets",
       "category": "Chicken",
       "serving": "3 pieces",
@@ -324,6 +812,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/3pc-chicken-mcnuggets.html"
     },
     {
+      "id": "6pc-chicken-mcnuggets",
       "name": "6pc Chicken McNuggets",
       "category": "Chicken",
       "serving": "6 pieces",
@@ -339,6 +828,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/6pc-chicken-mcnuggets.html"
     },
     {
+      "id": "10pc-chicken-mcnuggets",
       "name": "10pc Chicken McNuggets",
       "category": "Chicken",
       "serving": "10 pieces",
@@ -354,6 +844,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/10pc-chicken-mcnuggets.html"
     },
     {
+      "id": "20pc-chicken-mcnuggets",
       "name": "20pc Chicken McNuggets",
       "category": "Chicken",
       "serving": "20 pieces",
@@ -369,6 +860,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/20pc-chicken-mcnuggets.html"
     },
     {
+      "id": "40pc-chicken-mcnuggets",
       "name": "40pc Chicken McNuggets",
       "category": "Chicken",
       "serving": "40 pieces",
@@ -384,6 +876,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/40pc-chicken-mcnuggets.html"
     },
     {
+      "id": "3pc-chicken-mcwings",
       "name": "3pc Chicken McWings",
       "category": "Chicken",
       "serving": "3 pieces",
@@ -399,6 +892,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/chicken-fish/chicken-mcwings.html"
     },
     {
+      "id": "small-fries",
       "name": "Small Fries",
       "category": "Sides",
       "serving": "1 small serve",
@@ -414,6 +908,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/sides/small-fries.html"
     },
     {
+      "id": "medium-fries",
       "name": "Medium Fries",
       "category": "Sides",
       "serving": "1 medium serve",
@@ -429,6 +924,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/sides/medium-fries.html"
     },
     {
+      "id": "large-fries",
       "name": "Large Fries",
       "category": "Sides",
       "serving": "1 large serve",
@@ -444,8 +940,9 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/sides/large-fries.html"
     },
     {
+      "id": "hash-brown",
       "name": "Hash Brown",
-      "category": "Breakfast",
+      "category": "Sides",
       "serving": "1 hash brown",
       "grams": null,
       "kj": 600,
@@ -459,6 +956,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/sides/hash-brown.html"
     },
     {
+      "id": "bacon-egg-mcmuffin",
       "name": "Bacon & Egg McMuffin",
       "category": "Breakfast",
       "serving": "1 muffin",
@@ -471,9 +969,24 @@
       "sugars_g": 2.7,
       "fibre_g": null,
       "sodium_mg": 608,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/bacon-egg-mcmuffin.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/bacon-egg-mcmuffin.html",
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon_rasher"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        }
+      ]
     },
     {
+      "id": "double-bacon-egg-mcmuffin",
       "name": "Double Bacon & Egg McMuffin",
       "category": "Breakfast",
       "serving": "1 muffin",
@@ -486,9 +999,24 @@
       "sugars_g": 3,
       "fibre_g": null,
       "sodium_mg": 899,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/double-bacon-egg-mcmuffin.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/double-bacon-egg-mcmuffin.html",
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 2,
+          "part": "bacon_rasher"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        }
+      ]
     },
     {
+      "id": "sausage-mcmuffin",
       "name": "Sausage McMuffin",
       "category": "Breakfast",
       "serving": "1 muffin",
@@ -501,9 +1029,18 @@
       "sugars_g": 2.5,
       "fibre_g": null,
       "sodium_mg": 540,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/sausage-mcmuffin.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/sausage-mcmuffin.html",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        }
+      ]
     },
     {
+      "id": "sausage-egg-mcmuffin",
       "name": "Sausage & Egg McMuffin",
       "category": "Breakfast",
       "serving": "1 muffin",
@@ -516,9 +1053,18 @@
       "sugars_g": 2.7,
       "fibre_g": null,
       "sodium_mg": 592,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/sausage-egg-mcmuffin.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/sausage-egg-mcmuffin.html",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        }
+      ]
     },
     {
+      "id": "double-sausage-egg-mcmuffin",
       "name": "Double Sausage & Egg McMuffin",
       "category": "Breakfast",
       "serving": "1 muffin",
@@ -531,9 +1077,18 @@
       "sugars_g": 3.1,
       "fibre_g": null,
       "sodium_mg": 797,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/double-sausage-egg-mcmuffin.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/double-sausage-egg-mcmuffin.html",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        }
+      ]
     },
     {
+      "id": "mighty-mcmuffin",
       "name": "Mighty McMuffin",
       "category": "Breakfast",
       "serving": "1 muffin",
@@ -546,9 +1101,30 @@
       "sugars_g": 7,
       "fibre_g": null,
       "sodium_mg": 1111,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/mighty-mcmuffin.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/mighty-mcmuffin.html",
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 2,
+          "part": "bacon_rasher"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "ketchup",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "ketchup_17g"
+        }
+      ]
     },
     {
+      "id": "chicken-mcmuffin",
       "name": "Chicken McMuffin",
       "category": "Breakfast",
       "serving": "1 muffin",
@@ -561,9 +1137,24 @@
       "sugars_g": 2.9,
       "fibre_g": null,
       "sodium_mg": 705,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/chicken-mcmuffin.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/chicken-mcmuffin.html",
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "McChicken sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mcchicken_sauce_9g"
+        }
+      ]
     },
     {
+      "id": "chicken-bacon-mcmuffin",
       "name": "Chicken & Bacon McMuffin",
       "category": "Breakfast",
       "serving": "1 muffin",
@@ -576,9 +1167,30 @@
       "sugars_g": 3.1,
       "fibre_g": null,
       "sodium_mg": 882,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/chicken-bacon-mcmuffin.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/chicken-bacon-mcmuffin.html",
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon_rasher"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "McChicken sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mcchicken_sauce_9g"
+        }
+      ]
     },
     {
+      "id": "big-brekkie-burger",
       "name": "Big Brekkie Burger",
       "category": "Breakfast",
       "serving": "1 burger",
@@ -591,9 +1203,30 @@
       "sugars_g": 11.5,
       "fibre_g": null,
       "sodium_mg": 1504,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/big-brekkie-burger.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/big-brekkie-burger.html",
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 2,
+          "part": "bacon_rasher"
+        },
+        {
+          "name": "white cheddar",
+          "kind": "cheese",
+          "count": 1,
+          "part": "white_cheddar_slice"
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "house_bbq_sauce"
+        }
+      ]
     },
     {
+      "id": "brekkie-mcwrap",
       "name": "Brekkie McWrap",
       "category": "Breakfast",
       "serving": "1 wrap",
@@ -606,9 +1239,30 @@
       "sugars_g": 6.1,
       "fibre_g": null,
       "sodium_mg": 1061,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/brekkie-mcwrap.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/brekkie-mcwrap.html",
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "bacon_rasher"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "ketchup",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "ketchup_17g"
+        }
+      ]
     },
     {
+      "id": "mega-brekkie-mcwrap",
       "name": "Mega Brekkie McWrap",
       "category": "Breakfast",
       "serving": "1 wrap",
@@ -621,9 +1275,30 @@
       "sugars_g": 7.6,
       "fibre_g": null,
       "sodium_mg": 1734,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/mega-brekkie-mcwrap.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/mega-brekkie-mcwrap.html",
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 2,
+          "part": "bacon_rasher"
+        },
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "cheese_slice"
+        },
+        {
+          "name": "ketchup",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "ketchup_17g"
+        }
+      ]
     },
     {
+      "id": "hotcakes-with-butter-syrup",
       "name": "Hotcakes with Butter & Syrup",
       "category": "Breakfast",
       "serving": "1 serve",
@@ -636,9 +1311,24 @@
       "sugars_g": 44.5,
       "fibre_g": null,
       "sodium_mg": 578,
-      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/hotcakes-butter-and-syrup.html"
+      "source_url": "https://www.mcdonalds.com/au/en-au/menu/breakfast/hotcakes-butter-and-syrup.html",
+      "leave_off": [
+        {
+          "name": "whipped butter",
+          "kind": "butter",
+          "count": 2,
+          "part": "whipped_butter"
+        },
+        {
+          "name": "hotcake syrup",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "hotcake_syrup"
+        }
+      ]
     },
     {
+      "id": "hot-fudge-sundae-small",
       "name": "Hot Fudge Sundae (Small)",
       "category": "Desserts",
       "serving": "1 small sundae",
@@ -654,6 +1344,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/desserts/hot-fudge-sundae-small.html"
     },
     {
+      "id": "caramel-sundae-small",
       "name": "Caramel Sundae (Small)",
       "category": "Desserts",
       "serving": "1 small sundae",
@@ -669,6 +1360,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/desserts/caramel-sundae-small.html"
     },
     {
+      "id": "strawberry-sundae-small",
       "name": "Strawberry Sundae (Small)",
       "category": "Desserts",
       "serving": "1 small sundae",
@@ -684,6 +1376,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/desserts/strawberry-sundae-small.html"
     },
     {
+      "id": "oreo-cookies-mcflurry",
       "name": "Oreo Cookies McFlurry",
       "category": "Desserts",
       "serving": "1 McFlurry",
@@ -699,6 +1392,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/desserts/oreo-cookie-mcflurry.html"
     },
     {
+      "id": "m-m-s-minis-mcflurry",
       "name": "M&M's Minis McFlurry",
       "category": "Desserts",
       "serving": "1 McFlurry",
@@ -714,6 +1408,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/desserts/mm-minis-mcflurry.html"
     },
     {
+      "id": "soft-serve-cone",
       "name": "Soft Serve Cone",
       "category": "Desserts",
       "serving": "1 cone",
@@ -729,6 +1424,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/desserts/soft-serve-cone.html"
     },
     {
+      "id": "hot-apple-pie",
       "name": "Hot Apple Pie",
       "category": "Desserts",
       "serving": "1 pie",
@@ -744,6 +1440,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/desserts/hot-apple-pie.html"
     },
     {
+      "id": "coca-cola-medium",
       "name": "Coca-Cola (Medium)",
       "category": "Drinks",
       "serving": "1 medium drink",
@@ -759,6 +1456,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/cold-and-frozen-drinks/coca-cola-medium.html"
     },
     {
+      "id": "coca-cola-zero-sugar-medium",
       "name": "Coca-Cola Zero Sugar (Medium)",
       "category": "Drinks",
       "serving": "1 medium drink",
@@ -774,6 +1472,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/cold-and-frozen-drinks/coca-cola-zero-sugar-medium.html"
     },
     {
+      "id": "sprite-medium",
       "name": "Sprite (Medium)",
       "category": "Drinks",
       "serving": "1 medium drink",
@@ -789,6 +1488,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/cold-and-frozen-drinks/sprite-medium.html"
     },
     {
+      "id": "fanta-medium",
       "name": "Fanta (Medium)",
       "category": "Drinks",
       "serving": "1 medium drink",
@@ -804,6 +1504,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/cold-and-frozen-drinks/fanta-medium.html"
     },
     {
+      "id": "orange-apple-juice-medium",
       "name": "Orange Apple Juice (Medium)",
       "category": "Drinks",
       "serving": "1 medium drink",
@@ -819,6 +1520,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/cold-and-frozen-drinks/orange-apple-juice-medium.html"
     },
     {
+      "id": "chocolate-shake-medium",
       "name": "Chocolate Shake (Medium)",
       "category": "Drinks",
       "serving": "1 medium shake",
@@ -834,6 +1536,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/shakes-frappes/chocolate-shake-medium.html"
     },
     {
+      "id": "strawberry-shake-medium",
       "name": "Strawberry Shake (Medium)",
       "category": "Drinks",
       "serving": "1 medium shake",
@@ -849,6 +1552,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/shakes-frappes/strawberry-shake-medium.html"
     },
     {
+      "id": "vanilla-shake-medium",
       "name": "Vanilla Shake (Medium)",
       "category": "Drinks",
       "serving": "1 medium shake",
@@ -864,6 +1568,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/shakes-frappes/vanilla-shake-medium.html"
     },
     {
+      "id": "cappuccino-medium",
       "name": "Cappuccino (Medium)",
       "category": "Drinks",
       "serving": "1 medium cup, full cream milk",
@@ -879,6 +1584,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/mccafe-drinks/cappuccino-medium.html"
     },
     {
+      "id": "flat-white-medium",
       "name": "Flat White (Medium)",
       "category": "Drinks",
       "serving": "1 medium cup, full cream milk",
@@ -894,6 +1600,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/mccafe-drinks/flat-white-medium.html"
     },
     {
+      "id": "latte-medium",
       "name": "Latte (Medium)",
       "category": "Drinks",
       "serving": "1 medium cup, full cream milk",
@@ -909,6 +1616,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/mccafe-drinks/latte-medium.html"
     },
     {
+      "id": "long-black-medium",
       "name": "Long Black (Medium)",
       "category": "Drinks",
       "serving": "1 medium cup",
@@ -924,6 +1632,7 @@
       "source_url": "https://www.mcdonalds.com/au/en-au/menu/mccafe-drinks/long-black-medium.html"
     },
     {
+      "id": "hot-chocolate-medium",
       "name": "Hot Chocolate (Medium)",
       "category": "Drinks",
       "serving": "1 medium cup, full cream milk",

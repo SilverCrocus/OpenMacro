@@ -219,8 +219,11 @@ pub fn resolve(db: Option<&Database>, custom: &[Food], id: &str) -> Option<Found
     if id.starts_with("custom:") {
         return custom.iter().find(|f| f.id == id).map(yours);
     }
-    if let Some(item) = crate::eat_out::item(id) {
-        return Some(menu_item(item));
+    if let Some(food) = crate::eat_out::food(id) {
+        return Some(FoundFood {
+            food,
+            source: EAT_OUT_SOURCE,
+        });
     }
     if id.starts_with("sample:") {
         return crate::foods::food_by_id(id).map(|f| FoundFood {

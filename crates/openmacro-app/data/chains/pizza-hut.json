@@ -7,9 +7,17 @@
     "published": null,
     "accessed": "2026-11-28"
   },
+  "parts_sources": [
+    "https://a.storyblok.com/f/293203740241008/x/5257ad5f27/main-menu-nutritional-information.pdf",
+    "https://a.storyblok.com/f/293203740241008/1043a9bfd6/nutritional-information-wing-street.pdf",
+    "https://www.pizzahut.com.au/menu/pizza (online menu) and its data feed https://product.prod.pizzahutaustralia.com.au/api/v1/product/products?primaryCategory=<pizza|sides|desserts|wings>&storeCode=0&fulfilmentType=Delivery&includeIngredientDetails=true (product descriptions and recipe ingredients with defaultQuantity)",
+    "https://product.prod.pizzahutaustralia.com.au/api/v1/product/products/slug/BBQ-Meatlovers (product detail feed: energy per size only, no per-ingredient nutrition)",
+    "https://api.storyblok.com/v2/cdn/stories (site CMS, nutrition-information page: lists only the main menu, wings, allergen and vegan PDFs)"
+  ],
   "items": [
     {
-      "name": "Super Supreme, 1 slice (large)",
+      "id": "super-supreme-1-slice-large",
+      "name": "Super Supreme (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -23,7 +31,8 @@
       "fibre_g": null
     },
     {
-      "name": "BBQ Meatlovers, 1 slice (large)",
+      "id": "bbq-meatlovers-1-slice-large",
+      "name": "BBQ Meatlovers (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -34,10 +43,25 @@
       "carbs_g": 27,
       "sugars_g": 5,
       "sodium_mg": 536,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ sauce base",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Hawaiian, 1 slice (large)",
+      "id": "hawaiian-1-slice-large",
+      "name": "Hawaiian (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -51,7 +75,8 @@
       "fibre_g": null
     },
     {
-      "name": "Ham Lovers, 1 slice (large)",
+      "id": "ham-lovers-1-slice-large",
+      "name": "Ham Lovers (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -65,7 +90,8 @@
       "fibre_g": null
     },
     {
-      "name": "Chicken Supreme, 1 slice (large)",
+      "id": "chicken-supreme-1-slice-large",
+      "name": "Chicken Supreme (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -79,7 +105,8 @@
       "fibre_g": null
     },
     {
-      "name": "Veggie Sensation, 1 slice (large)",
+      "id": "veggie-sensation-1-slice-large",
+      "name": "Veggie Sensation (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -90,10 +117,25 @@
       "carbs_g": 25,
       "sugars_g": 2,
       "sodium_mg": 419,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "cheddar",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "aioli drizzle",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Hot and Spicy Veg, 1 slice (large)",
+      "id": "hot-and-spicy-veg-1-slice-large",
+      "name": "Hot and Spicy Veg (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -104,10 +146,19 @@
       "carbs_g": 25,
       "sugars_g": 2,
       "sodium_mg": 395,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "aioli drizzle",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Cheese Lovers, 1 slice (large)",
+      "id": "cheese-lovers-1-slice-large",
+      "name": "Cheese Lovers (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -118,10 +169,19 @@
       "carbs_g": 23,
       "sugars_g": 1,
       "sodium_mg": 452,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "cheddar",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Butchers Block, 1 slice (large)",
+      "id": "butchers-block-1-slice-large",
+      "name": "Butchers Block (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -132,10 +192,31 @@
       "carbs_g": 27,
       "sugars_g": 5,
       "sodium_mg": 627,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "hollandaise drizzle",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "BBQ sauce base",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Creamy Garlic Prawn, 1 slice (large)",
+      "id": "creamy-garlic-prawn-1-slice-large",
+      "name": "Creamy Garlic Prawn (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -146,10 +227,19 @@
       "carbs_g": 26,
       "sugars_g": 2,
       "sodium_mg": 406,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "alfredo base",
+          "kind": "cheese_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Ultimate Hot & Spicy, 1 slice (large)",
+      "id": "ultimate-hot-spicy-1-slice-large",
+      "name": "Ultimate Hot & Spicy (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -160,10 +250,19 @@
       "carbs_g": 24,
       "sugars_g": 1,
       "sodium_mg": 488,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "aioli drizzle",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Pepperoni Lovers, 1 slice (large)",
+      "id": "pepperoni-lovers-1-slice-large",
+      "name": "Pepperoni Lovers (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -177,7 +276,8 @@
       "fibre_g": null
     },
     {
-      "name": "BBQ Beef, 1 slice (large)",
+      "id": "bbq-beef-1-slice-large",
+      "name": "BBQ Beef (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -188,10 +288,19 @@
       "carbs_g": 27,
       "sugars_g": 5,
       "sodium_mg": 463,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "BBQ sauce base",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "BBQ Chicken, 1 slice (large)",
+      "id": "bbq-chicken-1-slice-large",
+      "name": "BBQ Chicken (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -202,10 +311,25 @@
       "carbs_g": 29,
       "sugars_g": 7,
       "sodium_mg": 476,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "BBQ sauce base",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        },
+        {
+          "name": "smoky BBQ drizzle",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Margherita, 1 slice (large)",
+      "id": "margherita-1-slice-large",
+      "name": "Margherita (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -219,7 +343,8 @@
       "fibre_g": null
     },
     {
-      "name": "Hot and Spicy Chicken, 1 slice (large)",
+      "id": "hot-and-spicy-chicken-1-slice-large",
+      "name": "Hot and Spicy Chicken (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -230,10 +355,19 @@
       "carbs_g": 25,
       "sugars_g": 3,
       "sodium_mg": 468,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "aioli drizzle",
+          "kind": "mayo",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Smoky Chicken and Bacon, 1 slice (large)",
+      "id": "smoky-chicken-and-bacon-1-slice-large",
+      "name": "Smoky Chicken and Bacon (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -244,10 +378,19 @@
       "carbs_g": 25,
       "sugars_g": 3,
       "sodium_mg": 513,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
-      "name": "Surf and Turf, 1 slice (large)",
+      "id": "surf-and-turf-1-slice-large",
+      "name": "Surf and Turf (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -261,7 +404,8 @@
       "fibre_g": null
     },
     {
-      "name": "Hot & Spicy Paneer, 1 slice (large)",
+      "id": "hot-spicy-paneer-1-slice-large",
+      "name": "Hot & Spicy Paneer (large)",
       "category": "Pizza",
       "serving": "1 slice",
       "grams": null,
@@ -275,6 +419,7 @@
       "fibre_g": null
     },
     {
+      "id": "garlic-bread",
       "name": "Garlic Bread",
       "category": "Sides",
       "serving": "1 item",
@@ -289,6 +434,7 @@
       "fibre_g": null
     },
     {
+      "id": "cheesy-garlic-bread",
       "name": "Cheesy Garlic Bread",
       "category": "Sides",
       "serving": "1 item",
@@ -303,6 +449,7 @@
       "fibre_g": null
     },
     {
+      "id": "loaded-garlic-bread-bbq-meatlovers",
       "name": "Loaded Garlic Bread - BBQ Meatlovers",
       "category": "Sides",
       "serving": "1 item",
@@ -314,9 +461,18 @@
       "carbs_g": 45,
       "sugars_g": 9,
       "sodium_mg": 1539,
-      "fibre_g": null
+      "fibre_g": null,
+      "leave_off": [
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "loaded-garlic-bread-pepperoni",
       "name": "Loaded Garlic Bread - Pepperoni",
       "category": "Sides",
       "serving": "1 item",
@@ -331,6 +487,7 @@
       "fibre_g": null
     },
     {
+      "id": "loaded-garlic-bread-buffalo-chicken",
       "name": "Loaded Garlic Bread - Buffalo Chicken",
       "category": "Sides",
       "serving": "1 item",
@@ -345,6 +502,7 @@
       "fibre_g": null
     },
     {
+      "id": "triple-dippers",
       "name": "Triple Dippers",
       "category": "Sides",
       "serving": "1 pack",
@@ -359,6 +517,7 @@
       "fibre_g": null
     },
     {
+      "id": "spud-bites-30-pack",
       "name": "Spud Bites, 30 Pack",
       "category": "Sides",
       "serving": "1 pack (30 pieces)",
@@ -373,6 +532,7 @@
       "fibre_g": null
     },
     {
+      "id": "cheesy-spud-bites-8-pack",
       "name": "Cheesy Spud Bites, 8 Pack",
       "category": "Sides",
       "serving": "1 pack (8 pieces)",
@@ -387,6 +547,7 @@
       "fibre_g": null
     },
     {
+      "id": "jalapeno-cheese-bites",
       "name": "Jalapeno Cheese Bites",
       "category": "Sides",
       "serving": "1 piece",
@@ -401,6 +562,7 @@
       "fibre_g": null
     },
     {
+      "id": "chips-regular",
       "name": "Chips - Regular",
       "category": "Sides",
       "serving": "1 regular serve",
@@ -415,6 +577,7 @@
       "fibre_g": null
     },
     {
+      "id": "chips-large",
       "name": "Chips - Large",
       "category": "Sides",
       "serving": "1 large serve",
@@ -429,6 +592,7 @@
       "fibre_g": null
     },
     {
+      "id": "cookie-with-hershey-s-choc",
       "name": "Cookie with Hershey's Choc",
       "category": "Desserts",
       "serving": "1 item",
@@ -443,6 +607,7 @@
       "fibre_g": null
     },
     {
+      "id": "brownie-with-hershey-s-choc",
       "name": "Brownie with Hershey's Choc",
       "category": "Desserts",
       "serving": "1 item",
@@ -457,20 +622,7 @@
       "fibre_g": null
     },
     {
-      "name": "Cookie with Nutella",
-      "category": "Desserts",
-      "serving": "1 item",
-      "grams": null,
-      "kj": 12126,
-      "protein_g": 30,
-      "fat_g": 144,
-      "sat_fat_g": 66,
-      "carbs_g": 378,
-      "sugars_g": 264,
-      "sodium_mg": 2058,
-      "fibre_g": null
-    },
-    {
+      "id": "chocolate-mousse",
       "name": "Chocolate Mousse",
       "category": "Desserts",
       "serving": "1 item",
@@ -485,6 +637,7 @@
       "fibre_g": null
     },
     {
+      "id": "boneless-wings-no-sauce",
       "name": "Boneless Wings (no sauce)",
       "category": "Chicken",
       "serving": "1 piece",
@@ -500,6 +653,7 @@
       "source_url": "https://a.storyblok.com/f/293203740241008/1043a9bfd6/nutritional-information-wing-street.pdf"
     },
     {
+      "id": "traditional-wings-no-sauce",
       "name": "Traditional Wings (no sauce)",
       "category": "Chicken",
       "serving": "1 piece",
@@ -515,6 +669,7 @@
       "source_url": "https://a.storyblok.com/f/293203740241008/1043a9bfd6/nutritional-information-wing-street.pdf"
     },
     {
+      "id": "seasoned-wings",
       "name": "Seasoned Wings",
       "category": "Chicken",
       "serving": "1 piece",

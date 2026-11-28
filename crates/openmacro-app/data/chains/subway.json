@@ -7,8 +7,210 @@
     "published": "2026-05",
     "accessed": "2026-11-28"
   },
+  "parts": {
+    "mayonnaise": {
+      "name": "Mayonnaise",
+      "grams": 15.0,
+      "kj": 184,
+      "protein_g": 0.1,
+      "fat_g": 4.6,
+      "saturated_fat_g": 0.7,
+      "carbs_g": 0.6,
+      "sugars_g": 0.0,
+      "fibre_g": 0.0,
+      "sodium_mg": 65.8,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Sauces & Dressings."
+    },
+    "garlic_aioli": {
+      "name": "Garlic Aioli",
+      "grams": 21.0,
+      "kj": 284,
+      "protein_g": 0.3,
+      "fat_g": 6.4,
+      "saturated_fat_g": 0.5,
+      "carbs_g": 2.2,
+      "sugars_g": 1.2,
+      "fibre_g": 0.6,
+      "sodium_mg": 197,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Sauces & Dressings."
+    },
+    "chipotle_southwest_sauce": {
+      "name": "Chipotle Southwest Sauce",
+      "grams": 21.0,
+      "kj": 418,
+      "protein_g": 0.3,
+      "fat_g": 10.4,
+      "saturated_fat_g": 0.9,
+      "carbs_g": 1.5,
+      "sugars_g": 1.1,
+      "fibre_g": 0.0,
+      "sodium_mg": 154,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Sauces & Dressings."
+    },
+    "ranch_dressing": {
+      "name": "Ranch Dressing",
+      "grams": 21.0,
+      "kj": 290,
+      "protein_g": 0.4,
+      "fat_g": 7.2,
+      "saturated_fat_g": 1.2,
+      "carbs_g": 0.9,
+      "sugars_g": 0.4,
+      "fibre_g": 0.0,
+      "sodium_mg": 153,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Sauces & Dressings."
+    },
+    "honey_mustard": {
+      "name": "Honey Mustard",
+      "grams": 21.0,
+      "kj": 124,
+      "protein_g": 0.3,
+      "fat_g": 0.3,
+      "saturated_fat_g": 0.0,
+      "carbs_g": 6.5,
+      "sugars_g": 4.4,
+      "fibre_g": 0.0,
+      "sodium_mg": 94.5,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Sauces & Dressings."
+    },
+    "smoky_bbq_sauce": {
+      "name": "Smoky BBQ Sauce",
+      "grams": 21.0,
+      "kj": 149,
+      "protein_g": 0.3,
+      "fat_g": 0.0,
+      "saturated_fat_g": 0.0,
+      "carbs_g": 8.4,
+      "sugars_g": 7.2,
+      "fibre_g": 0.1,
+      "sodium_mg": 210,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Sauces & Dressings."
+    },
+    "sweet_chilli_sauce": {
+      "name": "Sweet Chilli Sauce",
+      "grams": 21.0,
+      "kj": 169,
+      "protein_g": 0.1,
+      "fat_g": 0.1,
+      "saturated_fat_g": 0.0,
+      "carbs_g": 9.6,
+      "sugars_g": 8.7,
+      "fibre_g": 0.0,
+      "sodium_mg": 181,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Sauces & Dressings."
+    },
+    "sweet_onion_sauce": {
+      "name": "Sweet Onion Sauce",
+      "grams": 21.0,
+      "kj": 155,
+      "protein_g": 0.1,
+      "fat_g": 0.1,
+      "saturated_fat_g": 0.0,
+      "carbs_g": 9.1,
+      "sugars_g": 7.9,
+      "fibre_g": 0.1,
+      "sodium_mg": 73.5,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Sauces & Dressings."
+    },
+    "mozzarella_cheese": {
+      "name": "Mozzarella Cheese (shredded)",
+      "grams": 14.0,
+      "kj": 192,
+      "protein_g": 2.9,
+      "fat_g": 3.6,
+      "saturated_fat_g": 2.5,
+      "carbs_g": 0.6,
+      "sugars_g": 0.1,
+      "fibre_g": 0.1,
+      "sodium_mg": 70.0,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Cheeses."
+    },
+    "natural_cheddar_cheese": {
+      "name": "Natural Cheddar Cheese (slices)",
+      "grams": 14.3,
+      "kj": 236,
+      "protein_g": 3.4,
+      "fat_g": 4.8,
+      "saturated_fat_g": 2.9,
+      "carbs_g": 0.1,
+      "sugars_g": 0.1,
+      "fibre_g": 0.0,
+      "sodium_mg": 102,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Cheeses."
+    },
+    "old_english_cheese": {
+      "name": "Old English-Style Processed Cheese (slices)",
+      "grams": 11.3,
+      "kj": 163,
+      "protein_g": 2.3,
+      "fat_g": 3.1,
+      "saturated_fat_g": 2.1,
+      "carbs_g": 0.5,
+      "sugars_g": 0.3,
+      "fibre_g": 0.1,
+      "sodium_mg": 203,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Cheeses."
+    },
+    "philly_three_cheese": {
+      "name": "Philly-Style Three-Cheese (mozzarella, natural cheddar, old English-style)",
+      "grams": 39.6,
+      "kj": 591,
+      "protein_g": 8.7,
+      "fat_g": 11.5,
+      "saturated_fat_g": 7.4,
+      "carbs_g": 1.2,
+      "sugars_g": 0.5,
+      "fibre_g": 0.3,
+      "sodium_mg": 375,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Cheeses."
+    },
+    "smoky_bacon": {
+      "name": "Bacon, Smoky",
+      "grams": 20.0,
+      "kj": 240,
+      "protein_g": 3.0,
+      "fat_g": 5.0,
+      "saturated_fat_g": 2.0,
+      "carbs_g": 0.2,
+      "sugars_g": 0.2,
+      "fibre_g": 0.0,
+      "sodium_mg": 210,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Subway AU nutrition guide (May 2026), component table: amount on a 6-Inch sub, regular wrap or regular salad. Section: Meat, Poultry, Egg, Seafood & Vegetarian Items."
+    },
+    "mozzarella_garlic_cheese_bread": {
+      "name": "Mozzarella cheese on Creamy Garlic Cheese Bread",
+      "grams": 30.0,
+      "kj": 410,
+      "protein_g": 6.3,
+      "fat_g": 7.8,
+      "saturated_fat_g": 5.4,
+      "carbs_g": 1.2,
+      "sugars_g": 0.1,
+      "fibre_g": 0.3,
+      "sodium_mg": 150,
+      "source_url": "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf",
+      "note": "Derived: Creamy Garlic Cheese Bread (mozzarella cheese, garlic aioli, parmesan oregano topping on white bread) minus Creamy Garlic Herb Bread (garlic aioli, parmesan oregano topping on white bread), both per serve in the same guide (Sides & Snacks)."
+    }
+  },
+  "parts_sources": [
+    "https://media.subway.com/dam/urn:aaid:aem:07679edc-a6f3-424c-a167-f7864b20da6e/original/as/AUS%20Nutritional%20Web%20Guide%20May%202026.pdf"
+  ],
   "items": [
     {
+      "id": "bbq-southern-style-chicken-6-inch-sub",
       "name": "BBQ Southern-Style Chicken 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -20,9 +222,24 @@
       "carbs_g": 63.1,
       "sugars_g": 12.7,
       "fibre_g": 3.3,
-      "sodium_mg": 1630
+      "sodium_mg": 1630,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "old_english_cheese"
+        },
+        {
+          "name": "smoky bbq sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "smoky_bbq_sauce"
+        }
+      ]
     },
     {
+      "id": "chicken-bacon-ranch-6-inch-sub",
       "name": "Chicken & Bacon Ranch 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -34,9 +251,30 @@
       "carbs_g": 39.1,
       "sugars_g": 5.7,
       "fibre_g": 3.1,
-      "sodium_mg": 953
+      "sodium_mg": 953,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "natural_cheddar_cheese"
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "smoky_bacon"
+        },
+        {
+          "name": "ranch dressing",
+          "kind": "mayo",
+          "count": 1,
+          "part": "ranch_dressing"
+        }
+      ]
     },
     {
+      "id": "chicken-classic-6-inch-sub",
       "name": "Chicken Classic 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -48,9 +286,24 @@
       "carbs_g": 47.5,
       "sugars_g": 6.9,
       "fibre_g": 4.8,
-      "sodium_mg": 1410
+      "sodium_mg": 1410,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "old_english_cheese"
+        },
+        {
+          "name": "garlic aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": "garlic_aioli"
+        }
+      ]
     },
     {
+      "id": "chicken-schnitzel-6-inch-sub",
       "name": "Chicken Schnitzel 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -62,9 +315,24 @@
       "carbs_g": 50.2,
       "sugars_g": 7.5,
       "fibre_g": 3.9,
-      "sodium_mg": 1300
+      "sodium_mg": 1300,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "old_english_cheese"
+        },
+        {
+          "name": "garlic aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": "garlic_aioli"
+        }
+      ]
     },
     {
+      "id": "chicken-strips-6-inch-sub",
       "name": "Chicken Strips 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -76,9 +344,24 @@
       "carbs_g": 38.3,
       "sugars_g": 4.9,
       "fibre_g": 3.9,
-      "sodium_mg": 688
+      "sodium_mg": 688,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "natural_cheddar_cheese"
+        },
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayonnaise"
+        }
+      ]
     },
     {
+      "id": "chipotle-steak-melt-6-inch-sub",
       "name": "Chipotle Steak Melt 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -90,9 +373,24 @@
       "carbs_g": 42.4,
       "sugars_g": 5.5,
       "fibre_g": 3.1,
-      "sodium_mg": 1450
+      "sodium_mg": 1450,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "old_english_cheese"
+        },
+        {
+          "name": "chipotle southwest sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "chipotle_southwest_sauce"
+        }
+      ]
     },
     {
+      "id": "honey-mustard-leg-ham-6-inch-sub",
       "name": "Honey Mustard Leg Ham 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -104,9 +402,24 @@
       "carbs_g": 48.0,
       "sugars_g": 10.2,
       "fibre_g": 5.6,
-      "sodium_mg": 1110
+      "sodium_mg": 1110,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "natural_cheddar_cheese"
+        },
+        {
+          "name": "honey mustard",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "honey_mustard"
+        }
+      ]
     },
     {
+      "id": "italian-b-m-t-6-inch-sub",
       "name": "Italian B.M.T. 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -118,9 +431,24 @@
       "carbs_g": 42.5,
       "sugars_g": 5.8,
       "fibre_g": 3.3,
-      "sodium_mg": 1420
+      "sodium_mg": 1420,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_cheese"
+        },
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayonnaise"
+        }
+      ]
     },
     {
+      "id": "italian-meatball-6-inch-sub",
       "name": "Italian Meatball 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -132,9 +460,24 @@
       "carbs_g": 51.8,
       "sugars_g": 10.6,
       "fibre_g": 5.2,
-      "sodium_mg": 1190
+      "sodium_mg": 1190,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_cheese"
+        },
+        {
+          "name": "garlic aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": "garlic_aioli"
+        }
+      ]
     },
     {
+      "id": "philly-style-three-cheese-steak-6-inch-sub",
       "name": "Philly-Style Three-Cheese Steak 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -146,9 +489,24 @@
       "carbs_g": 41.5,
       "sugars_g": 5.8,
       "fibre_g": 3.3,
-      "sodium_mg": 1410
+      "sodium_mg": 1410,
+      "leave_off": [
+        {
+          "name": "three-cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "philly_three_cheese"
+        },
+        {
+          "name": "garlic aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": "garlic_aioli"
+        }
+      ]
     },
     {
+      "id": "pizza-melt-6-inch-sub",
       "name": "Pizza Melt 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -160,9 +518,18 @@
       "carbs_g": 42.6,
       "sugars_g": 6.2,
       "fibre_g": 3.5,
-      "sodium_mg": 1150
+      "sodium_mg": 1150,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_cheese"
+        }
+      ]
     },
     {
+      "id": "rotisserie-style-chicken-6-inch-sub",
       "name": "Rotisserie-Style Chicken 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -174,9 +541,24 @@
       "carbs_g": 42.5,
       "sugars_g": 6.6,
       "fibre_g": 3.2,
-      "sodium_mg": 1360
+      "sodium_mg": 1360,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "old_english_cheese"
+        },
+        {
+          "name": "chipotle southwest sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "chipotle_southwest_sauce"
+        }
+      ]
     },
     {
+      "id": "seafood-sensation-6-inch-sub",
       "name": "Seafood Sensation 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -188,9 +570,18 @@
       "carbs_g": 46.7,
       "sugars_g": 5.7,
       "fibre_g": 2.8,
-      "sodium_mg": 770
+      "sodium_mg": 770,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "natural_cheddar_cheese"
+        }
+      ]
     },
     {
+      "id": "smashed-falafel-6-inch-sub",
       "name": "Smashed Falafel 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -202,9 +593,24 @@
       "carbs_g": 57.6,
       "sugars_g": 9.8,
       "fibre_g": 7.7,
-      "sodium_mg": 1250
+      "sodium_mg": 1250,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "natural_cheddar_cheese"
+        },
+        {
+          "name": "garlic aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": "garlic_aioli"
+        }
+      ]
     },
     {
+      "id": "sweet-onion-chicken-teriyaki-6-inch-sub",
       "name": "Sweet Onion Chicken Teriyaki 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -216,9 +622,24 @@
       "carbs_g": 54.5,
       "sugars_g": 18.0,
       "fibre_g": 3.2,
-      "sodium_mg": 822
+      "sodium_mg": 822,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_cheese"
+        },
+        {
+          "name": "sweet onion sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "sweet_onion_sauce"
+        }
+      ]
     },
     {
+      "id": "tuna-mayo-6-inch-sub",
       "name": "Tuna Mayo 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -230,9 +651,18 @@
       "carbs_g": 38.2,
       "sugars_g": 4.4,
       "fibre_g": 3.6,
-      "sodium_mg": 740
+      "sodium_mg": 740,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "natural_cheddar_cheese"
+        }
+      ]
     },
     {
+      "id": "turkey-on-rye-6-inch-sub",
       "name": "Turkey on Rye 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -244,9 +674,24 @@
       "carbs_g": 47.7,
       "sugars_g": 9.6,
       "fibre_g": 5.9,
-      "sodium_mg": 869
+      "sodium_mg": 869,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "natural_cheddar_cheese"
+        },
+        {
+          "name": "honey mustard",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "honey_mustard"
+        }
+      ]
     },
     {
+      "id": "veggie-delite-with-avo-6-inch-sub",
       "name": "Veggie Delite with Avo 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -258,9 +703,18 @@
       "carbs_g": 44.5,
       "sugars_g": 5.0,
       "fibre_g": 8.1,
-      "sodium_mg": 480
+      "sodium_mg": 480,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "natural_cheddar_cheese"
+        }
+      ]
     },
     {
+      "id": "veggie-patty-6-inch-sub",
       "name": "Veggie Patty 6-Inch Sub",
       "category": "Wraps & rolls",
       "serving": "1 6-Inch sub, standard recipe",
@@ -272,9 +726,30 @@
       "carbs_g": 67.1,
       "sugars_g": 16.7,
       "fibre_g": 9.7,
-      "sodium_mg": 1040
+      "sodium_mg": 1040,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_cheese"
+        },
+        {
+          "name": "garlic aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": "garlic_aioli"
+        },
+        {
+          "name": "sweet chilli sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "sweet_chilli_sauce"
+        }
+      ]
     },
     {
+      "id": "chicken-bacon-ranch-wrap",
       "name": "Chicken & Bacon Ranch Wrap",
       "category": "Wraps & rolls",
       "serving": "1 wrap on a regular flour wrap, standard recipe",
@@ -286,9 +761,30 @@
       "carbs_g": 40.4,
       "sugars_g": 3.9,
       "fibre_g": 2.9,
-      "sodium_mg": 1090
+      "sodium_mg": 1090,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "natural_cheddar_cheese"
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "smoky_bacon"
+        },
+        {
+          "name": "ranch dressing",
+          "kind": "mayo",
+          "count": 1,
+          "part": "ranch_dressing"
+        }
+      ]
     },
     {
+      "id": "chicken-schnitzel-wrap",
       "name": "Chicken Schnitzel Wrap",
       "category": "Wraps & rolls",
       "serving": "1 wrap on a regular flour wrap, standard recipe",
@@ -300,9 +796,24 @@
       "carbs_g": 49.3,
       "sugars_g": 5.4,
       "fibre_g": 3.3,
-      "sodium_mg": 1230
+      "sodium_mg": 1230,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "old_english_cheese"
+        },
+        {
+          "name": "garlic aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": "garlic_aioli"
+        }
+      ]
     },
     {
+      "id": "italian-b-m-t-wrap",
       "name": "Italian B.M.T. Wrap",
       "category": "Wraps & rolls",
       "serving": "1 wrap on a regular flour wrap, standard recipe",
@@ -314,9 +825,24 @@
       "carbs_g": 41.7,
       "sugars_g": 3.7,
       "fibre_g": 2.7,
-      "sodium_mg": 1360
+      "sodium_mg": 1360,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_cheese"
+        },
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayonnaise"
+        }
+      ]
     },
     {
+      "id": "sweet-onion-chicken-teriyaki-wrap",
       "name": "Sweet Onion Chicken Teriyaki Wrap",
       "category": "Wraps & rolls",
       "serving": "1 wrap on a regular flour wrap, standard recipe",
@@ -328,9 +854,24 @@
       "carbs_g": 55.8,
       "sugars_g": 16.2,
       "fibre_g": 3.0,
-      "sodium_mg": 963
+      "sodium_mg": 963,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_cheese"
+        },
+        {
+          "name": "sweet onion sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "sweet_onion_sauce"
+        }
+      ]
     },
     {
+      "id": "chicken-bacon-ranch-salad",
       "name": "Chicken & Bacon Ranch Salad",
       "category": "Bowls & salads",
       "serving": "1 regular salad, standard recipe",
@@ -342,9 +883,30 @@
       "carbs_g": 6.3,
       "sugars_g": 5.0,
       "fibre_g": 2.7,
-      "sodium_mg": 755
+      "sodium_mg": 755,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "natural_cheddar_cheese"
+        },
+        {
+          "name": "bacon",
+          "kind": "bacon",
+          "count": 1,
+          "part": "smoky_bacon"
+        },
+        {
+          "name": "ranch dressing",
+          "kind": "mayo",
+          "count": 1,
+          "part": "ranch_dressing"
+        }
+      ]
     },
     {
+      "id": "chicken-strips-salad",
       "name": "Chicken Strips Salad",
       "category": "Bowls & salads",
       "serving": "1 regular salad, standard recipe",
@@ -356,9 +918,24 @@
       "carbs_g": 5.9,
       "sugars_g": 4.4,
       "fibre_g": 2.7,
-      "sodium_mg": 458
+      "sodium_mg": 458,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "natural_cheddar_cheese"
+        },
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayonnaise"
+        }
+      ]
     },
     {
+      "id": "sweet-onion-chicken-teriyaki-salad",
       "name": "Sweet Onion Chicken Teriyaki Salad",
       "category": "Bowls & salads",
       "serving": "1 regular salad, standard recipe",
@@ -370,9 +947,24 @@
       "carbs_g": 21.7,
       "sugars_g": 17.6,
       "fibre_g": 2.9,
-      "sodium_mg": 625
+      "sodium_mg": 625,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_cheese"
+        },
+        {
+          "name": "sweet onion sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "sweet_onion_sauce"
+        }
+      ]
     },
     {
+      "id": "bacon-egg-cheese-6-inch-sub",
       "name": "Bacon, Egg & Cheese 6-Inch Sub",
       "category": "Breakfast",
       "serving": "1 6-Inch breakfast sub, standard recipe",
@@ -384,9 +976,24 @@
       "carbs_g": 40.3,
       "sugars_g": 5.9,
       "fibre_g": 3.2,
-      "sodium_mg": 919
+      "sodium_mg": 919,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "old_english_cheese"
+        },
+        {
+          "name": "garlic aioli",
+          "kind": "mayo",
+          "count": 1,
+          "part": "garlic_aioli"
+        }
+      ]
     },
     {
+      "id": "classic-ham-egg-6-inch-sub",
       "name": "Classic Ham & Egg 6-Inch Sub",
       "category": "Breakfast",
       "serving": "1 6-Inch breakfast sub, standard recipe",
@@ -398,9 +1005,24 @@
       "carbs_g": 38.4,
       "sugars_g": 4.2,
       "fibre_g": 2.0,
-      "sodium_mg": 1010
+      "sodium_mg": 1010,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "old_english_cheese"
+        },
+        {
+          "name": "mayo",
+          "kind": "mayo",
+          "count": 1,
+          "part": "mayonnaise"
+        }
+      ]
     },
     {
+      "id": "steak-egg-brekkie-6-inch-sub",
       "name": "Steak & Egg Brekkie 6-Inch Sub",
       "category": "Breakfast",
       "serving": "1 6-Inch breakfast sub, standard recipe",
@@ -412,9 +1034,24 @@
       "carbs_g": 50.9,
       "sugars_g": 12.7,
       "fibre_g": 3.5,
-      "sodium_mg": 1330
+      "sodium_mg": 1330,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_cheese"
+        },
+        {
+          "name": "BBQ sauce",
+          "kind": "sweet_sauce",
+          "count": 1,
+          "part": "smoky_bbq_sauce"
+        }
+      ]
     },
     {
+      "id": "mexican-style-brekkie-wrap",
       "name": "Mexican-Style Brekkie Wrap",
       "category": "Breakfast",
       "serving": "1 breakfast wrap, standard recipe",
@@ -426,9 +1063,24 @@
       "carbs_g": 45.9,
       "sugars_g": 4.8,
       "fibre_g": 4.5,
-      "sodium_mg": 1170
+      "sodium_mg": 1170,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_cheese"
+        },
+        {
+          "name": "chipotle southwest sauce",
+          "kind": "mayo",
+          "count": 1,
+          "part": "chipotle_southwest_sauce"
+        }
+      ]
     },
     {
+      "id": "spinach-egg-wrap",
       "name": "Spinach & Egg Wrap",
       "category": "Breakfast",
       "serving": "1 breakfast wrap, standard recipe",
@@ -440,9 +1092,18 @@
       "carbs_g": 39.0,
       "sugars_g": 2.1,
       "fibre_g": 2.3,
-      "sodium_mg": 520
+      "sodium_mg": 520,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_cheese"
+        }
+      ]
     },
     {
+      "id": "nachos",
       "name": "Nachos",
       "category": "Sides",
       "serving": "1 serve nachos",
@@ -454,9 +1115,18 @@
       "carbs_g": 33.0,
       "sugars_g": 2.2,
       "fibre_g": 4.7,
-      "sodium_mg": 596
+      "sodium_mg": 596,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "creamy-garlic-cheese-bread",
       "name": "Creamy Garlic Cheese Bread",
       "category": "Sides",
       "serving": "1 serve",
@@ -468,9 +1138,18 @@
       "carbs_g": 41.2,
       "sugars_g": 4.4,
       "fibre_g": 3.1,
-      "sodium_mg": 820
+      "sodium_mg": 820,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": "mozzarella_garlic_cheese_bread"
+        }
+      ]
     },
     {
+      "id": "meatball-mozza-pot",
       "name": "Meatball Mozza Pot",
       "category": "Sides",
       "serving": "1 pot",
@@ -482,9 +1161,18 @@
       "carbs_g": 15.0,
       "sugars_g": 7.6,
       "fibre_g": 2.3,
-      "sodium_mg": 702
+      "sodium_mg": 702,
+      "leave_off": [
+        {
+          "name": "cheese",
+          "kind": "cheese",
+          "count": 1,
+          "part": null
+        }
+      ]
     },
     {
+      "id": "smashed-avo-on-toast",
       "name": "Smashed Avo on Toast",
       "category": "Sides",
       "serving": "1 serve, on white bread",
@@ -499,6 +1187,7 @@
       "sodium_mg": 239
     },
     {
+      "id": "southern-style-chicken-bites",
       "name": "Southern Style Chicken Bites",
       "category": "Chicken",
       "serving": "1 serve, no sauce",
@@ -513,6 +1202,7 @@
       "sodium_mg": 1290
     },
     {
+      "id": "chocolate-chip-cookie",
       "name": "Chocolate Chip Cookie",
       "category": "Desserts",
       "serving": "1 cookie",
@@ -527,6 +1217,7 @@
       "sodium_mg": 137
     },
     {
+      "id": "double-chocolate-chip-cookie",
       "name": "Double Chocolate Chip Cookie",
       "category": "Desserts",
       "serving": "1 cookie",
@@ -541,6 +1232,7 @@
       "sodium_mg": 150
     },
     {
+      "id": "white-chip-macadamia-nut-cookie",
       "name": "White Chip Macadamia Nut Cookie",
       "category": "Desserts",
       "serving": "1 cookie",
@@ -555,6 +1247,7 @@
       "sodium_mg": 153
     },
     {
+      "id": "mango-smoothie",
       "name": "Mango Smoothie",
       "category": "Drinks",
       "serving": "1 smoothie (selected locations only)",
@@ -569,6 +1262,7 @@
       "sodium_mg": 2.2
     },
     {
+      "id": "tropical-smoothie",
       "name": "Tropical Smoothie",
       "category": "Drinks",
       "serving": "1 smoothie (selected locations only)",
@@ -583,6 +1277,7 @@
       "sodium_mg": 2.1
     },
     {
+      "id": "natural-cheddar-cheese",
       "name": "Natural Cheddar Cheese",
       "category": "Sides",
       "serving": "1 serve as added to a 6-Inch sub, regular wrap or regular salad",
@@ -597,6 +1292,7 @@
       "sodium_mg": 102
     },
     {
+      "id": "smoky-bacon",
       "name": "Smoky Bacon",
       "category": "Sides",
       "serving": "1 serve as added to a 6-Inch sub, regular wrap or regular salad",

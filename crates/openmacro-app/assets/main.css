@@ -316,6 +316,8 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .segmented button { border: none; background: transparent; padding: 6px 12px; font-size: 13px; }
 .segmented.even { display: flex; flex-wrap: nowrap; }
 .segmented.even button { flex: 1; padding: 6px 0; }
+.segmented.even.two-rows { flex-wrap: wrap; border-radius: 20px; }
+.segmented.even.two-rows button { flex: 1 0 30%; white-space: nowrap; }
 
 .day-status { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; }
 
@@ -410,6 +412,9 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .result-main { flex: 1; min-width: 0; text-align: left; background: none; border: none; border-radius: 0; padding: 12px 0; }
 .icon-btn.add { width: 34px; height: 34px; }
 .entry-origin { font-size: 11px; color: var(--muted); opacity: 0.8; margin-top: 2px; }
+.entry-tip { font-size: 12px; color: var(--accent); margin-top: 2px; }
+.leave-off { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 12px; }
+.chip-note { opacity: 0.75; }
 .result-section { margin: 16px 0 0; }
 .detail-brand { margin: -8px 0 12px; }
 

@@ -75,7 +75,7 @@ Most calorie apps give you a target from a formula and leave it there. OpenMacro
 - 58,000 foods from USDA FoodData Central, the Australian Food Composition Database and Open Food Facts
 - Live barcode scanning, with Open Food Facts lookup for products not in the database
 - Custom foods, recipes with cooked weights, favourites, recent foods and quick add
-- Menus of Australian fast-food chains (McDonald's, KFC, Oporto, Subway, GYG and more), with suggestions of what to order that fit the rest of your day
+- Menus of Australian fast-food chains (McDonald's, KFC, Oporto, Subway, GYG and more), with suggestions of what to order that fit the rest of your day, and what to leave off (no mayo, no cheese) to make it lighter
 - Copy a meal or a whole day; a timeline by hour; water tracking
 - AI logging from a photo or a description, with corrections in plain words
 

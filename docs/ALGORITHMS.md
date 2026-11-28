@@ -250,3 +250,17 @@ The nutrient explorer averages each nutrient over complete days (excluding parti
 - **Over:** above the ceiling.
 
 Nutrients that none of the logged foods report show as *No data*, because food databases are often incomplete. The explorer also shows what share of logged foods report each nutrient.
+
+---
+
+## 7. Eat out suggestions (`openmacro-core::eat_out`)
+
+A chain's menu suggests up to three orders that fit the rest of the day:
+- **The meal's budget:** what's left of today's calorie target, but at most 40 % of the target. Without the cap, a whole day left would make the biggest order look best.
+- **Meal-sized:** an order fits when it's within the budget and at least 15 % of the day's target (or half the budget, when less is left than that). Smaller is a snack, such as one taco or one piece of chicken.
+- **Mains only:** burgers, chicken, wraps and rolls, pizza, tacos and burritos, bowls and salads, and breakfast before 11 am. Sides, drinks, desserts and sauces aren't suggested.
+- **By the slice:** pizza is listed per slice, so it's ordered as the most slices that fit the budget, up to eight (a large pizza).
+- **Ranking:** protein per calorie, highest first; ties go to the bigger meal. Protein keeps a meal filling and the day's protein on track within the budget.
+- **Nothing fits:** the lightest mains are shown instead, one of each, and the text says nothing is meal-sized (or that today's target is reached).
+- **Tips:** under each suggestion, the part that saves the most energy, if it saves at least 40 kcal: "Ask for no mayo to save 146 kcal". An estimate reads "about 70 kcal". See FOOD_DATA.md for where parts come from.
+- **Leaving off:** in an item's detail, each part can be toggled off. The item's serve loses that part's nutrients and its weight, and that's what's logged.

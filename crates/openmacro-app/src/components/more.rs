@@ -421,7 +421,8 @@ fn DisplaySettings() -> Element {
             }
             div { class: "choice",
                 span { class: "choice-label", "Default food entry tab" }
-                div { class: "segmented even",
+                // Six tabs don't fit one row on a phone: two rows of three.
+                div { class: "segmented even two-rows",
                     for tab in FoodEntryTab::ALL {
                         button {
                             key: "{tab.label()}",
